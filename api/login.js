@@ -1,22 +1,37 @@
 const admin = require('firebase-admin');
 
-// 1. serviceAccount ကို environment variable ကနေ အရင်ယူပါ
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-
-// 2. admin.apps.length ကို စစ်မယ့်အစား app ရှိမရှိပဲ စစ်ပါ
+// Firebase ကို တစ်ခါပဲ Initialize လုပ်ဖို့ စစ်ဆေးခြင်း
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
+    try {
+        // Vercel Environment Variable ထဲက JSON ကို ပုံမှန်အတိုင်း ခေါ်ယူခြင်း
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+    }
 }
 
 const db = admin.firestore();
 
 export default async function handler(req, res) {
     try {
+        // Database ကို စမ်းသပ်ခြင်း
         const snapshot = await db.collection('users').get();
-        res.status(200).json({ status: 'Success', dataLength: snapshot.size });
+        const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        return res.status(200).json({ 
+            status: 'Success', 
+            count: users.length,
+            data: users 
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Database error:", error);
+        return res.status(500).json({ 
+            status: 'Error', 
+            message: error.message 
+        });
     }
 }
