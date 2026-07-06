@@ -1,13 +1,12 @@
 const admin = require('firebase-admin');
 
 // Backend Initialize
-if (!admin.apps.length) {
+if (!admin.apps || admin.apps.length === 0) {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
     });
 }
-
 const db = admin.firestore();
 
 // Vercel Serverless Function
