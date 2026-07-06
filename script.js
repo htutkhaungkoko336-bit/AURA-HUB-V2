@@ -1,3 +1,18 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCqIFh8-OzlDPQAqboKHaq8-Jx_4jlVd4M",
+    authDomain: "mlbb-matchmaking.firebaseapp.com",
+    projectId: "mlbb-matchmaking",
+    storageBucket: "mlbb-matchmaking.firebasestorage.app",
+    messagingSenderId: "539846137130",
+    appId: "1:539846137130:web:74f413b22ea5488564ba53"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const checkbox = document.getElementById("welcomeCheckbox");
 const enterBtn = document.getElementById("welcomeAgreeBtn");
 const modal = document.getElementById("welcomeModal");
@@ -42,9 +57,9 @@ async function registerOrLogin() {
     // API ကို Request ပို့မယ်
 // အရင်က code နေရာမှာ ဒါကို ပြင်ရေးပါ
     const response = await fetch('https://aura-hub-new.vercel.app/api/login', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phoneNo, deviceId: deviceId })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: phoneNo, deviceId: deviceId })
     });
     const data = await response.json();
 
@@ -56,18 +71,3 @@ async function registerOrLogin() {
     }
 }
 // firebase နဲ့ frontend နဲ့ ချိတ်ပေးတဲ့ firebase SDK သူက user မြင်လဲ ဘာမှ မဖြစ်ဘူး 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// အရင်က ရှိပြီးသား firebaseConfig ကို ဒီနေရာမှာ ထားပါ
-const firebaseConfig = {
-    apiKey: "AIzaSyCqIFh8-OzlDPQAqboKHaq8-Jx_4jlVd4M",
-    authDomain: "mlbb-matchmaking.firebaseapp.com",
-    projectId: "mlbb-matchmaking",
-    storageBucket: "mlbb-matchmaking.firebasestorage.app",
-    messagingSenderId: "539846137130",
-    appId: "1:539846137130:web:74f413b22ea5488564ba53"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app); // Database ကိုသုံးချင်ရင် ဒီလိုခေါ်ရပါမယ်
