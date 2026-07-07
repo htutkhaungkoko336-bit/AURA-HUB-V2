@@ -15,10 +15,10 @@ export default async function handler(req, res) {
         const { phone } = req.body;
 
         // ၁။ ဖုန်းနံပါတ် အရှည်ကို စစ်ဆေးခြင်း
-        if (!phone || phone.length < 9 || phone.length > 11) {
+        if (!phone || phone.length < 8 || phone.length > 11) {
             return res.status(400).json({ 
                 success: false, 
-                message: "ဖုန်းနံပါတ် မမှန်ကန်ပါ။ 9 လုံးမှ 11 လုံးကြား ဖြစ်ရပါမည်။" 
+                message: "ဖုန်းနံပါတ် မမှန်ကန်ပါ။ 8 လုံးမှ 11 လုံးကြား ဖြစ်ရပါမည်။" 
             });
         }
 
@@ -39,3 +39,10 @@ export default async function handler(req, res) {
         res.status(405).json({ success: false, message: "Method not allowed" });
     }
 }
+const { phone, deviceId } = req.body; // လက်ခံခြင်း
+
+await db.collection('users').doc(phone).set({
+    phone: phone,
+    deviceId: deviceId, // သိမ်းခြင်း
+    loginAt: new Date().toISOString()
+});

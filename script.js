@@ -50,3 +50,16 @@ async function registerOrLogin(phoneNumber) {
         console.error("Error:", error);
     }
 }
+
+// User ပထမဆုံး Login ဝင်တဲ့အခါ ID တစ်ခု generate လုပ်မယ်
+let deviceId = localStorage.getItem('aura_device_id');
+if (!deviceId) {
+    deviceId = 'dev_' + Math.random().toString(36).substr(2, 9); // အတိုကောက် ID ဆောက်
+    localStorage.setItem('aura_device_id', deviceId);
+}
+
+// API ကို ပို့တဲ့အခါ
+fetch('/api/login', {
+    method: 'POST',
+    body: JSON.stringify({ phone: phoneNumber, deviceId: deviceId }) // ပို့လိုက်ပါ
+});
