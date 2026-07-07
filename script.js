@@ -1,3 +1,4 @@
+console.log("script.js loaded successfully!"); // ဒါလေး Console မှာ ပေါ်မပေါ် စစ်ပါ
 // HTML element များကို ရယူခြင်း
 const checkbox = document.getElementById('welcomeCheckbox');
 const enterBtn = document.getElementById('welcomeAgreeBtn');
@@ -25,6 +26,7 @@ enterBtn.addEventListener('click', function() {
 });
 
 async function registerOrLogin(phoneNumber) {
+    console.log("Button clicked, number:", phoneNumber);
     if (!phoneNumber) {
         alert("ကျေးဇူးပြု၍ ဖုန်းနံပါတ်ထည့်သွင်းပေးပါ။");
         return;
