@@ -25,7 +25,7 @@ export default async function handler(req, res) {
             if (!deviceCheck.empty && deviceCheck.docs[0].id !== phone) {
                 return res.status(403).json({ 
                     success: false, 
-                    message: "အမှား - ဤ Device ကို တခြားဖုန်းနံပါတ်တစ်ခုဖြင့် အသုံးပြုထားပါသည်။" 
+                    message: "ယခင်ဝင်ခဲ့သည့် Phone Number ဖြင့် ဝင်ပေးပါ။" 
                 });
             }
 
