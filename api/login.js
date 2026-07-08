@@ -13,12 +13,22 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { phone, deviceId } = req.body;
 
-        // ၁။ ဖုန်းနံပါတ်နှင့် Device ID ပါဝင်မှု စစ်ဆေးခြင်း
         if (!phone || !deviceId || phone.length < 8 || phone.length > 11) {
             return res.status(400).json({ success: false, message: "Invalid phone number or device ID" });
         }
 
         try {
+            // ၁။ အရေးကြီးဆုံး: ဒီ Device ID ကို တခြားဖုန်းနံပါတ်တွေမှာ သုံးထားလား အရင်စစ်မယ်
+            const deviceCheck = await db.collection('users').where('deviceId', '==', deviceId).get();
+            
+            // တခြားဖုန်းနံပါတ်မှာ ဒီ Device ID ရှိနေပြီး၊ အဲ့ဒီဖုန်းက လက်ရှိရိုက်လိုက်တဲ့ဖုန်းနဲ့ မတူရင်
+            if (!deviceCheck.empty && deviceCheck.docs[0].id !== phone) {
+                return res.status(403).json({ 
+                    success: false, 
+                    message: "အမှား - ဤ Device ကို တခြားဖုန်းနံပါတ်တစ်ခုဖြင့် အသုံးပြုထားပါသည်။" 
+                });
+            }
+
             // ၂။ ဖုန်းနံပါတ် ရှိမရှိ စစ်ဆေးခြင်း
             const userRef = db.collection('users').doc(phone);
             const userDoc = await userRef.get();
@@ -29,7 +39,7 @@ export default async function handler(req, res) {
                 if (userData.deviceId !== deviceId) {
                     return res.status(403).json({ 
                         success: false, 
-                        message: "ဤဖုန်းနံပါတ်ကို တခြား Device တစ်ခုတွင် အသုံးပြုထားပါသည်။ ဝင်ရောက်ခွင့်မရှိပါ။" 
+                        message: "အမှား - ဤဖုန်းနံပါတ်ကို တခြား Device တွင် အသုံးပြုထားပါသည်။" 
                     });
                 }
             } else {
