@@ -67,8 +67,8 @@ export function openGuide(mapData, currentIndex) {
 
     // Mode အလိုက် ပုံစာရင်းခွဲခြင်း
     const images = (currentMode === '5vs5') 
-        ? ['51.jpg', '52.jpg', '53.jpg', '54.jpg', '55.jpg', '56.jpg', '57.jpg', '58.jpg'] 
-        : ['1v1_1.jpg', '1v1_2.jpg', '1v1_3.jpg', '1v1_4.jpg', '1v1_5.jpg'];
+        ? ['5vs5.png', '52.jpg', '53.jpg', '54.jpg', '55.jpg', '56.jpg', '57.jpg', '58.jpg'] 
+        : ['1vs1.png', '1v1_2.jpg', '1v1_3.jpg', '1v1_4.jpg', '1v1_5.jpg'];
 
     guideSwiper.removeAllSlides(); 
     images.forEach(src => {
