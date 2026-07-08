@@ -25,10 +25,10 @@ export default async function handler(req, res) {
         try {
             // ၂။ Firebase ထဲတွင် ဖုန်းနှင့် deviceId ကို တွဲသိမ်းခြင်း
             await db.collection('users').doc(phone).set({
-                phone: phone,
+                phoneNumber: phone,
                 deviceId: deviceId || "unknown", // deviceId မပါလာရင် unknown လို့ မှတ်မယ်
-                loginAt: new Date().toISOString()
-            });
+                loginAt: timeString 
+                       });
 
             res.status(200).json({ success: true, message: "Login အောင်မြင်ပါသည်။" });
         } catch (error) {
