@@ -39,7 +39,7 @@ export default async function handler(req, res) {
                 if (userData.deviceId !== deviceId) {
                     return res.status(403).json({ 
                         success: false, 
-                        message: "အမှား - ဤဖုန်းနံပါတ်ကို တခြား Device တွင် အသုံးပြုထားပါသည်။" 
+                        message: "ယခင်ဝင်ခဲ့သည့် Phone Number ဖြင့် ဝင်ပေးပါ။" 
                     });
                 }
             } else {
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
                 });
             }
 
-            res.status(200).json({ success: true, message: "Login အောင်မြင်ပါသည်။" });
+            res.status(200).json({ success: true, message: "Login Successful!" });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
         }
