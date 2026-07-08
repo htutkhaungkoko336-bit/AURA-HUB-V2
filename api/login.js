@@ -1,5 +1,5 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore'; // FieldValue ကို ဒီမှာ ထည့်လိုက်ပါတယ်
 
 const app = getApps().length === 0 
   ? initializeApp({
@@ -18,10 +18,9 @@ export default async function handler(req, res) {
         }
 
         try {
-            // ၁။ အရေးကြီးဆုံး: ဒီ Device ID ကို တခြားဖုန်းနံပါတ်တွေမှာ သုံးထားလား အရင်စစ်မယ်
+            // ၁။ Device ID ကို တခြားဖုန်းနံပါတ်တွေမှာ သုံးထားလား စစ်မယ်
             const deviceCheck = await db.collection('users').where('deviceId', '==', deviceId).get();
             
-            // တခြားဖုန်းနံပါတ်မှာ ဒီ Device ID ရှိနေပြီး၊ အဲ့ဒီဖုန်းက လက်ရှိရိုက်လိုက်တဲ့ဖုန်းနဲ့ မတူရင်
             if (!deviceCheck.empty && deviceCheck.docs[0].id !== phone) {
                 return res.status(403).json({ 
                     success: false, 
@@ -31,32 +30,22 @@ export default async function handler(req, res) {
 
             // ၂။ ဖုန်းနံပါတ် ရှိမရှိ စစ်ဆေးခြင်း
             const userRef = db.collection('users').doc(phone);
-            const userDoc = await userRef.get();
+            
+            // Login အချိန်ကို ပြင်ဆင်ခြင်း
+            const now = new Date();
+            const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Yangon',
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
+            }).format(now);
 
-            if (userDoc.exists) {
-                // ၃။ ရှိနေလျှင် Device ID တူမတူ စစ်ခြင်း
-                const userData = userDoc.data();
-                if (userData.deviceId !== deviceId) {
-                    return res.status(403).json({ 
-                        success: false, 
-                        message: "ယခင်ဝင်ခဲ့သည့် Phone Number ဖြင့် ဝင်ပေးပါ။" 
-                    });
-                }
-            } else {
-                // ၄။ အသစ်ဝင်လျှင် အချိန်နှင့်တကွ မှတ်သားခြင်း
-                const now = new Date();
-                const formattedDate = new Intl.DateTimeFormat('en-GB', {
-                    timeZone: 'Asia/Yangon',
-                    day: '2-digit', month: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', hour12: true
-                }).format(now);
-
-                await userRef.set({
-                    phoneNumber: phone,
-                    deviceId: deviceId,
-                    loginAt: formattedDate
-                });
-            }
+            // ၃။ User အချက်အလက်များ သိမ်းဆည်းခြင်း / Update လုပ်ခြင်း
+            await userRef.set({
+                phoneNumber: phone,
+                deviceId: deviceId,
+                lastLoginAt: formattedDate, // နောက်ဆုံးဝင်တဲ့အချိန်
+                loginHistory: FieldValue.arrayUnion(formattedDate) // Login History ကို Array ထဲထည့်မယ်
+            }, { merge: true });
 
             res.status(200).json({ success: true, message: "Login Successful!" });
         } catch (error) {
