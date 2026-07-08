@@ -5,8 +5,8 @@ import { showDashboard, setupWelcomeModal, initGuideSwiper, openGuide, toggleGui
 // ၁။ ဒီမှာ Data တွေကို အရင် သတ်မှတ်ပေးပါ (သင့် Project က Data တွေနဲ့ အစားထိုးပါ)
 let currentIndex = 0;
 const mapData = [
-    { mode: '5vs5', name: 'Map 5v5' },
-    { mode: '1v1', name: 'Map 1v1' }
+    { mode: '5vs5', img: '5vs5.png', title: '5vs5 Preview', teams: 5 },
+    { mode: '1v1', img: '1v1.png', title: '1v1 Preview', teams: 1 } // 1v1 အတွက်
 ];
 
 // ၂။ UI စတင်ခြင်း
@@ -44,12 +44,6 @@ window.openGuide = () => {
 window.toggleGuide = (show) => {
     toggleGuide(show);
 };
-
-let currentIndex = 0;
-const mapData = [
-    { mode: '5vs5', img: '5vs5.png', title: '5vs5 Preview', teams: 5 },
-    { mode: '1v1', img: '1v1.png', title: '1v1 Preview', teams: 1 } // 1v1 အတွက်
-];
 
 window.nextMap = () => {
     currentIndex = (currentIndex + 1) % mapData.length;
