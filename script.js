@@ -50,15 +50,14 @@ window.nextMap = () => {
     updateUI();
 };
 
+// script.js ထဲက updateUI() function
 function updateUI() {
     const map = mapData[currentIndex];
     
-    // ပုံနဲ့ စာသားပြောင်းခြင်း
     document.getElementById('mapImg').src = map.img;
     document.querySelector('.map-tag').innerText = `Enter ${map.mode} Mode`;
     document.getElementById('preview-title').innerText = map.title;
 
-    // Bracket ပြောင်းခြင်း (1v1 ဆိုရင် Player 1 ခုပဲ ကျန်အောင်လုပ်)
     const sideA = document.getElementById('side-a-list');
     const sideB = document.getElementById('side-b-list');
     
@@ -66,8 +65,9 @@ function updateUI() {
         sideA.innerHTML = '<div class="team">Player 1</div>';
         sideB.innerHTML = '<div class="team">Player 1</div>';
     } else {
-        // 5vs5 ပြန်ဖြစ်ရင် 5 ခုပြန်ပြ
-        sideA.innerHTML = Array(5).fill('<div class="team">Player</div>').join('');
-        sideB.innerHTML = Array(5).fill('<div class="team">Player</div>').join('');
+        // Player 1 ကနေ 5 အထိ အလိုအလျောက် generate လုပ်ပေးခြင်း
+        const players = Array.from({length: 5}, (_, i) => `<div class="team">Player ${i + 1}</div>`).join('');
+        sideA.innerHTML = players;
+        sideB.innerHTML = players;
     }
 }
