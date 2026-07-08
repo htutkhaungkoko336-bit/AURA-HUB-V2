@@ -18,19 +18,25 @@ export default async function handler(req, res) {
         if (!phone || phone.length < 8 || phone.length > 11) {
             return res.status(400).json({ 
                 success: false, 
-                message: "ဖုန်းနံပါတ် မမှန်ကန်ပါ။" 
+                message: "Invalid Phone Number" 
             });
         }
 
         try {
+            // AM/PM Format ရယူခြင်း
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', { 
+                dateStyle: 'short', 
+                timeStyle: 'medium' 
+            });
             // ၂။ Firebase ထဲတွင် ဖုန်းနှင့် deviceId ကို တွဲသိမ်းခြင်း
             await db.collection('users').doc(phone).set({
                 phoneNumber: phone,
                 deviceId: deviceId || "unknown", // deviceId မပါလာရင် unknown လို့ မှတ်မယ်
                 loginAt: timeString 
-                       });
+            });
 
-            res.status(200).json({ success: true, message: "Login အောင်မြင်ပါသည်။" });
+            res.status(200).json({ success: true, message: "Login Successful" });
         } catch (error) {
             res.status(500).json({ success: false, message: "Database Error: " + error.message });
         }
