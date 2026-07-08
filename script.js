@@ -54,11 +54,31 @@ async function registerOrLogin(phoneNumber) {
         // response.ok သည် status code 200-299 ဖြစ်မှ true ဖြစ်ပါမည်
         if (response.ok) {
             alert("Login အောင်မြင်ပါသည်။");
+            showDashboard();
         } else {
             // 403 error တက်ရင် ဒီအောက်က message ပေါ်လာပါမယ်
             alert("Error: " + data.message); 
         }
     } catch (error) {
         console.error("Error:", error);
+    }
+}
+function showDashboard() {
+    // ၁။ Login page ကို ဖျောက်မည် (Login Modal သို့မဟုတ် Page ကိုဖျောက်)
+    const loginPage = document.getElementById("page-login"); // သင့် login container id နဲ့ ကိုက်ညီအောင်စစ်ပါ
+    if (loginPage) {
+        loginPage.style.display = "none";
+    }
+    
+    // ၂။ Dashboard ကို ပြမည်
+    const dashboard = document.getElementById("main-dashboard");
+    if (dashboard) {
+        // opacity နဲ့ pointer-events ကို ပြန်ဖွင့်ပေးလိုက်ခြင်း
+        dashboard.style.opacity = "1";
+        dashboard.style.pointerEvents = "auto";
+        dashboard.style.display = "flex";
+        dashboard.style.flexDirection = "column";
+        
+        console.log("Dashboard is now active!");
     }
 }
