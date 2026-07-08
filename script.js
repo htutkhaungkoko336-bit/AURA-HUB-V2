@@ -42,18 +42,21 @@ async function registerOrLogin(phoneNumber) {
 
     try {
         // ၂။ API ကို ခေါ်ယူခြင်း
+        // script.js ထဲက fetch အပိုင်း
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: phoneNumber, deviceId: deviceId }) // နှစ်ခုလုံး ပို့ပေးခြင်း
+            body: JSON.stringify({ phone: phoneNumber, deviceId: deviceId })
         });
 
         const data = await response.json();
-        
-        if (data.success) {
+
+        // response.ok သည် status code 200-299 ဖြစ်မှ true ဖြစ်ပါမည်
+        if (response.ok) {
             alert("Login အောင်မြင်ပါသည်။");
         } else {
-            alert("Login ကျရှုံးပါသည်။: " + data.message);
+            // 403 error တက်ရင် ဒီအောက်က message ပေါ်လာပါမယ်
+            alert("Error: " + data.message); 
         }
     } catch (error) {
         console.error("Error:", error);
