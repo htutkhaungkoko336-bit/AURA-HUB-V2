@@ -28,7 +28,7 @@ export function setupWelcomeModal() {
         document.getElementById('welcomeModal').style.display = 'none';
     });
 }
-//user guide
+// ui.js
 let guideSwiper; 
 
 export function initGuideSwiper() {
@@ -59,6 +59,12 @@ function checkButtons(swiper) {
 }
 
 export function openGuide(mapData, currentIndex) {
+    // ဤနေရာတွင် guideSwiper မရှိသေးပါက မလုပ်ဆောင်စေရန် စစ်ဆေးခြင်း
+    if (!guideSwiper) {
+        console.error("Swiper မစတင်သေးပါ!");
+        return;
+    }
+
     const overlay = document.getElementById("user-guide-overlay");
     const currentMode = mapData[currentIndex].mode; 
 
@@ -68,10 +74,12 @@ export function openGuide(mapData, currentIndex) {
 
     guideSwiper.removeAllSlides(); 
     images.forEach(src => {
+        // ပုံလမ်းကြောင်းကို စစ်ဆေးရန် သင့်တော်သလို ပြင်ပါ (ဥပမာ: /images/51.jpg)
         guideSwiper.appendSlide(`<div class="swiper-slide"><img src="${src}" style="width:100%"></div>`);
     });
 
     overlay.style.display = "flex";
+    guideSwiper.update(); // slide အသစ်တွေထည့်ပြီးရင် update လုပ်ပေးခြင်း
     guideSwiper.slideTo(0);
     checkButtons(guideSwiper);
 }

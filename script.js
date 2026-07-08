@@ -2,12 +2,20 @@
 import { performLogin } from './auth.js';
 import { showDashboard, setupWelcomeModal, initGuideSwiper, openGuide, toggleGuide } from './ui.js';
 
+// ၁။ ဒီမှာ Data တွေကို အရင် သတ်မှတ်ပေးပါ (သင့် Project က Data တွေနဲ့ အစားထိုးပါ)
+let currentIndex = 0;
+const mapData = [
+    { mode: '5vs5', name: 'Map 5v5' },
+    { mode: '1v1', name: 'Map 1v1' }
+];
+
+// ၂။ UI စတင်ခြင်း
 document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
     initGuideSwiper();
 });
 
-// Login အတွက်
+// ၃။ Login လုပ်ဆောင်ချက်
 window.registerOrLogin = async (phoneNumber) => {
     let deviceId = localStorage.getItem('aura_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9));
     localStorage.setItem('aura_device_id', deviceId);
@@ -27,14 +35,12 @@ window.registerOrLogin = async (phoneNumber) => {
     }
 };
 
-// Guide အတွက် (သင့် HTML က onclick="openGuide()" ဖြစ်နေလို့ window.openGuide လို့ သုံးပေးရပါမယ်)
+// ၄။ Guide လုပ်ဆောင်ချက် (HTML က onclick="openGuide()" ကို ဒီ function က ဖမ်းယူမှာပါ)
 window.openGuide = () => {
-    // mapData နှင့် currentIndex တို့သည် ဤဖိုင် (script.js) ထဲတွင် ရှိနေရပါမည်
-    // အကယ်၍ တခြားဖိုင်တွင်ရှိပါက ထိုဖိုင်မှ import လုပ်ပါ
     openGuide(mapData, currentIndex); 
 };
 
-// CLOSE ခလုတ်အတွက်
+// ၅။ Close လုပ်ဆောင်ချက်
 window.toggleGuide = (show) => {
     toggleGuide(show);
 };
