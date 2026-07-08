@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
 });
 
-// HTML ထဲက ခလုတ်မှာ onclick="handleLoginInput()" လို့ ပြင်ပေးရပါမယ်
-window.handleLoginInput = async (phoneNumber) => {
+// HTML ထဲက onclick အတွက် ဒီလိုင်းလေးထည့်ပါ
+window.handleLogin = async (phoneNumber) => {
     let deviceId = localStorage.getItem('aura_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9));
     localStorage.setItem('aura_device_id', deviceId);
 
