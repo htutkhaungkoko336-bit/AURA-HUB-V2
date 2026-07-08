@@ -11,36 +11,49 @@ const db = getFirestore(app);
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        // deviceId ပါ ပေါင်းပြီး လက်ခံလိုက်ပါတယ်
         const { phone, deviceId } = req.body;
 
-        // ၁။ Validation (ဖုန်းနံပါတ် စစ်ဆေးခြင်း)
         if (!phone || phone.length < 8 || phone.length > 11) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "Invalid Phone Number" 
-            });
+            return res.status(400).json({ success: false, message: "Invalid Phone" });
         }
 
         try {
-            // AM/PM Format ရယူခြင်း
+            // မြန်မာစံတော်ချိန်ဖြင့် အချိန်ရယူခြင်း
             const now = new Date();
-            const timeString = now.toLocaleString('en-US', { 
-                dateStyle: 'short', 
-                timeStyle: 'medium' 
-            });
-            // ၂။ Firebase ထဲတွင် ဖုန်းနှင့် deviceId ကို တွဲသိမ်းခြင်း
+            const options = { 
+                timeZone: 'Asia/Yangon',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true 
+            };
+            
+            // ရက်-လ-နှစ် ပုံစံရယူရန် formatter
+            const formatter = new Intl.DateTimeFormat('en-GB', options);
+            const parts = formatter.formatToParts(now);
+            
+            // 8-7-2026 10:30 PM ပုံစံဖန်တီးခြင်း
+            const day = parts.find(p => p.type === 'day').value;
+            const month = parts.find(p => p.type === 'month').value;
+            const year = parts.find(p => p.type === 'year').value;
+            const time = `${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value} ${parts.find(p => p.type === 'dayPeriod').value}`;
+            
+            const formattedDate = `${day}-${month}-${year} ${time}`;
+
+            // Firebase ထဲတွင် သိမ်းခြင်း
             await db.collection('users').doc(phone).set({
                 phoneNumber: phone,
-                deviceId: deviceId || "unknown", // deviceId မပါလာရင် unknown လို့ မှတ်မယ်
-                loginAt: timeString 
+                deviceId: deviceId || "unknown",
+                loginAt: formattedDate // 8-7-2026 08:45 PM ပုံစံ ဖြစ်သွားပါမည်
             });
 
-            res.status(200).json({ success: true, message: "Login Successful" });
+            res.status(200).json({ success: true, message: "Login အောင်မြင်ပါသည်။" });
         } catch (error) {
-            res.status(500).json({ success: false, message: "Database Error: " + error.message });
+            res.status(500).json({ success: false, message: error.message });
         }
     } else {
-        res.status(405).json({ success: false, message: "Method not allowed" });
+        res.status(405).json({ message: "Method not allowed" });
     }
 }
