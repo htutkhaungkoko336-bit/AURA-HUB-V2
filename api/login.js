@@ -43,10 +43,10 @@ export default async function handler(req, res) {
             await userRef.set({
                 phoneNumber: phone,
                 deviceId: deviceId,
-                lastLoginAt: formattedDate, // နောက်ဆုံးဝင်တဲ့အချိန်
-                loginHistory: FieldValue.arrayUnion(formattedDate) // Login History ကို Array ထဲထည့်မယ်
+                loginAt: formattedDate,          // ဒါလေးကို ထပ်ထည့်လိုက်ပါ
+                lastLoginAt: formattedDate,      // ဒါက နောက်ဆုံးအချိန်
+                loginHistory: FieldValue.arrayUnion(formattedDate)
             }, { merge: true });
-
             res.status(200).json({ success: true, message: "Login Successful!" });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
