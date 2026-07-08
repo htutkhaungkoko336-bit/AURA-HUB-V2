@@ -1,9 +1,11 @@
 // script.js
 import { performLogin } from './auth.js';
 import { showDashboard, setupWelcomeModal } from './ui.js';
+import { initGuideSwiper, openGuide, toggleGuide } from './ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
+    initGuideSwiper();
 });
 
 // window အောက်မှာ ထည့်ပေးလိုက်ခြင်းဖြင့် HTML ထဲက onclick က ခေါ်လို့ရသွားပါပြီ
@@ -27,3 +29,8 @@ window.registerOrLogin = async (phoneNumber) => {
         alert("Error: " + result.data.message);
     }
 };
+window.viewGuide = () => {
+    openGuide(mapData, currentIndex); 
+};
+
+window.toggleGuide = toggleGuide;
