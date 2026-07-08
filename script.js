@@ -44,3 +44,36 @@ window.openGuide = () => {
 window.toggleGuide = (show) => {
     toggleGuide(show);
 };
+
+let currentIndex = 0;
+const mapData = [
+    { mode: '5vs5', img: '5vs5.png', title: '5vs5 Preview', teams: 5 },
+    { mode: '1v1', img: '1v1.png', title: '1v1 Preview', teams: 1 } // 1v1 အတွက်
+];
+
+window.nextMap = () => {
+    currentIndex = (currentIndex + 1) % mapData.length;
+    updateUI();
+};
+
+function updateUI() {
+    const map = mapData[currentIndex];
+    
+    // ပုံနဲ့ စာသားပြောင်းခြင်း
+    document.getElementById('mapImg').src = map.img;
+    document.querySelector('.map-tag').innerText = `Enter ${map.mode} Mode`;
+    document.getElementById('preview-title').innerText = map.title;
+
+    // Bracket ပြောင်းခြင်း (1v1 ဆိုရင် Player 1 ခုပဲ ကျန်အောင်လုပ်)
+    const sideA = document.getElementById('side-a-list');
+    const sideB = document.getElementById('side-b-list');
+    
+    if (map.mode === '1v1') {
+        sideA.innerHTML = '<div class="team">Player 1</div>';
+        sideB.innerHTML = '<div class="team">Player 1</div>';
+    } else {
+        // 5vs5 ပြန်ဖြစ်ရင် 5 ခုပြန်ပြ
+        sideA.innerHTML = Array(5).fill('<div class="team">Player</div>').join('');
+        sideB.innerHTML = Array(5).fill('<div class="team">Player</div>').join('');
+    }
+}
