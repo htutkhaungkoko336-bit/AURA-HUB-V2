@@ -1,3 +1,6 @@
+import { performLogin } from './auth.js';
+import { showDashboard } from './ui.js';
+
 console.log("script.js loaded successfully!");
 
 // HTML element များကို ရယူခြင်း
