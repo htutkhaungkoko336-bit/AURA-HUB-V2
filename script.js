@@ -1,19 +1,16 @@
 // script.js
 import { performLogin } from './auth.js';
-import { showDashboard, setupWelcomeModal } from './ui.js';
-import { initGuideSwiper, openGuide, toggleGuide } from './ui.js';
+import { showDashboard, setupWelcomeModal, initGuideSwiper, openGuide, toggleGuide } from './ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
     initGuideSwiper();
 });
 
-// window အောက်မှာ ထည့်ပေးလိုက်ခြင်းဖြင့် HTML ထဲက onclick က ခေါ်လို့ရသွားပါပြီ
+// Login အတွက်
 window.registerOrLogin = async (phoneNumber) => {
     let deviceId = localStorage.getItem('aura_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9));
     localStorage.setItem('aura_device_id', deviceId);
-
-    console.log("Button clicked, number:", phoneNumber);
 
     if (!phoneNumber) {
         alert("ကျေးဇူးပြု၍ ဖုန်းနံပါတ်ထည့်သွင်းပေးပါ။");
@@ -29,8 +26,15 @@ window.registerOrLogin = async (phoneNumber) => {
         alert("Error: " + result.data.message);
     }
 };
-window.viewGuide = () => {
+
+// Guide အတွက် (သင့် HTML က onclick="openGuide()" ဖြစ်နေလို့ window.openGuide လို့ သုံးပေးရပါမယ်)
+window.openGuide = () => {
+    // mapData နှင့် currentIndex တို့သည် ဤဖိုင် (script.js) ထဲတွင် ရှိနေရပါမည်
+    // အကယ်၍ တခြားဖိုင်တွင်ရှိပါက ထိုဖိုင်မှ import လုပ်ပါ
     openGuide(mapData, currentIndex); 
 };
 
-window.toggleGuide = toggleGuide;
+// CLOSE ခလုတ်အတွက်
+window.toggleGuide = (show) => {
+    toggleGuide(show);
+};
