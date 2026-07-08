@@ -6,10 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
 });
 
-// HTML ထဲက onclick အတွက် ဒီလိုင်းလေးထည့်ပါ
-window.handleLogin = async (phoneNumber) => {
+// window အောက်မှာ ထည့်ပေးလိုက်ခြင်းဖြင့် HTML ထဲက onclick က ခေါ်လို့ရသွားပါပြီ
+window.registerOrLogin = async (phoneNumber) => {
     let deviceId = localStorage.getItem('aura_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9));
     localStorage.setItem('aura_device_id', deviceId);
+
+    console.log("Button clicked, number:", phoneNumber);
+
+    if (!phoneNumber) {
+        alert("ကျေးဇူးပြု၍ ဖုန်းနံပါတ်ထည့်သွင်းပေးပါ။");
+        return;
+    }
 
     const result = await performLogin(phoneNumber, deviceId);
     
