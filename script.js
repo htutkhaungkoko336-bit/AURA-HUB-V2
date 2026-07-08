@@ -53,7 +53,7 @@ async function registerOrLogin(phoneNumber) {
 
         // response.ok သည် status code 200-299 ဖြစ်မှ true ဖြစ်ပါမည်
         if (response.ok) {
-            alert("Login အောင်မြင်ပါသည်။");
+            alert("Login Successful!");
             showDashboard();
         } else {
             // 403 error တက်ရင် ဒီအောက်က message ပေါ်လာပါမယ်
