@@ -120,7 +120,7 @@ window.leaveRoom = () => {
 
 
 
-// --- Logo Preview & Re-selection Functions ---
+// --- Logo Preview Functions ---
 window.previewLogo = function(event) {
     const file = event.target.files[0];
     const output = document.getElementById('logoPreview');
@@ -151,17 +151,33 @@ window.previewLogo1vs1 = function(event) {
     }
 };
 
-// --- Go to Payment Logic ---
-window.goToPayment = function() {
-    // 5vs5 လား 1vs1 လား စစ်ဆေးခြင်း
-    const mode = mapData[currentIndex].mode; // mapData က global ရှိရပါမယ်
-    let isValid = false;
+// --- Validation Logic ---
+window.validate5vs5 = function() {
+    const squadName = document.getElementById('squad-name').value.trim();
+    const kpayName = document.getElementById('kpay-name').value.trim();
+    const kpayNo = document.getElementById('kpay-no').value.trim();
+    const logoInput = document.getElementById('sqLogo');
+    const players = document.querySelectorAll('#page-5vs5 .player-grid-container input');
+    
+    let allPlayersFilled = true;
+    players.forEach(input => { if(input.value.trim() === "") allPlayersFilled = false; });
 
-    if (mode === '5vs5') {
-        isValid = validate5vs5();
-    } else {
-        isValid = validate1vs1();
-    }
+    return !(squadName === "" || kpayName === "" || kpayNo === "" || logoInput.files.length === 0 || !allPlayersFilled);
+};
+
+window.validate1vs1 = function() {
+    const inputs = document.querySelectorAll('#page-1vs1 input[type="text"], #page-1vs1 input[type="number"]');
+    const logoInput = document.getElementById('sqLogo1vs1');
+    let allFilled = true;
+    inputs.forEach(input => { if(input.value.trim() === "") allFilled = false; });
+
+    return !( !allFilled || logoInput.files.length === 0);
+};
+
+// --- Main Navigation Logic ---
+window.goToPayment = function() {
+    const is5vs5 = document.getElementById('page-5vs5').style.display !== 'none';
+    const isValid = is5vs5 ? window.validate5vs5() : window.validate1vs1();
 
     if (isValid) {
         document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
@@ -171,21 +187,23 @@ window.goToPayment = function() {
     }
 };
 
-// --- DOMContentLoaded အသုံးပြုပြီး Event Listener များ ထည့်ခြင်း ---
+// --- UI Events (Logo Removal & Re-selection) ---
 document.addEventListener('DOMContentLoaded', function() {
-    // 5vs5 Logo Click
-    const preview = document.getElementById('logoPreview');
-    if (preview) {
-        preview.addEventListener('click', function() {
-            document.getElementById('sqLogo').click();
-        });
-    }
+    // 5vs5 Logo Click (Select/Remove)
+    document.getElementById('logoPreview').addEventListener('click', function() {
+        if(confirm("ပုံကို ဖျက်ပြီး အသစ်ပြန်တင်မလား?")) {
+            this.style.display = 'none';
+            document.getElementById('sqLogo').value = ""; 
+            document.getElementById('logoLabel').style.display = 'block';
+        }
+    });
 
-    // 1vs1 Logo Click
-    const preview1vs1 = document.getElementById('logoPreview1vs1');
-    if (preview1vs1) {
-        preview1vs1.addEventListener('click', function() {
-            document.getElementById('sqLogo1vs1').click();
-        });
-    }
+    // 1vs1 Logo Click (Select/Remove)
+    document.getElementById('logoPreview1vs1').addEventListener('click', function() {
+        if(confirm("ပုံကို ဖျက်ပြီး အသစ်ပြန်တင်မလား?")) {
+            this.style.display = 'none';
+            document.getElementById('sqLogo1vs1').value = ""; 
+            document.getElementById('logoLabel1vs1').style.display = 'block';
+        }
+    });
 });
