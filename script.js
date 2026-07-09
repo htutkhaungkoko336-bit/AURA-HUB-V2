@@ -117,3 +117,73 @@ window.leaveRoom = () => {
     // Room Select ကို ပြန်ပြခြင်း
     document.getElementById('page-room-select').style.display = 'block';
 };
+// Logo Preview Function (5vs5 အတွက်)
+function previewLogo(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('logoPreview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            document.getElementById('logoLabel').style.display = 'none'; // Plus icon ဖျောက်
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// ပုံကို ပြန်ဖြုတ်ပြီး ပြန်တင်ချင်ရင် Label လေးကို ပြန်ပေါ်ပေးရမယ်
+// Logo ပေါ်မှာ click နှိပ်ရင် ပုံဖျောက်၊ input reset လုပ်
+document.getElementById('logoPreview').onclick = function() {
+    this.style.display = 'none';
+    document.getElementById('sqLogo').value = ""; // Input clear
+    document.getElementById('logoLabel').style.display = 'block'; // Plus ပြန်ပေါ်
+};
+window.goToPayment = () => {
+    // လက်ရှိ mode ကိုကြည့်ပြီး ဘယ် form ကို စစ်ရမလဲဆုံးဖြတ်
+    const mode = mapData[currentIndex].mode;
+    let isValid = false;
+
+    if (mode === '5vs5') {
+        isValid = validate5vs5();
+    } else {
+        isValid = validate1vs1();
+    }
+
+    if (isValid) {
+        // အားလုံးဖြည့်ပြီးပြီဆိုမှ နောက် page သွား
+        document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
+        document.getElementById('page-payment-proof').style.display = 'flex';
+    } else {
+        alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
+    }
+};
+
+function validate5vs5() {
+    const squadName = document.getElementById('squad-name').value;
+    const kpayName = document.getElementById('kpay-name').value;
+    const logo = document.getElementById('sqLogo').files.length;
+    // Player input တွေကို loop ပတ်ပြီး စစ်ပါ
+    if (!squadName || !kpayName || logo === 0) return false;
+    return true;
+}
+function previewScreenshot(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('ssPreview');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            document.getElementById('ss-placeholder').style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+// SS ပုံကို ပြန်နှိပ်ရင် ပြန်ဖြုတ်မယ်
+document.getElementById('ssPreview').onclick = function() {
+    this.style.display = 'none';
+    document.getElementById('ssFile').value = ""; // Clear file
+    document.getElementById('ss-placeholder').style.display = 'flex';
+};
