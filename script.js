@@ -117,57 +117,49 @@ window.leaveRoom = () => {
     // Room Select ကို ပြန်ပြခြင်း
     document.getElementById('page-room-select').style.display = 'block';
 };
-// --- 5vs5 Validation ---
-function validate5vs5() {
-    const squadName = document.getElementById('squad-name').value.trim();
-    const kpayName = document.getElementById('kpay-name').value.trim();
-    const kpayNo = document.getElementById('kpay-no').value.trim();
-    const logo = document.getElementById('sqLogo').files.length;
 
-    // Player inputs တွေအားလုံးကို စစ်မယ်
-    const playerInputs = document.querySelectorAll('#page-5vs5 .player-grid-container input');
-    const allPlayersFilled = Array.from(playerInputs).every(input => input.value.trim() !== "");
 
-    if (!squadName || !kpayName || !kpayNo || logo === 0 || !allPlayersFilled) {
-        return false;
-    }
-    return true;
-}
 
-// --- 1vs1 Validation ---
-function validate1vs1() {
-    const playerName = document.querySelector('#page-1vs1 input[placeholder="Solo Player Name"]').value.trim();
-    const mlbbId = document.querySelector('#page-1vs1 input[placeholder="MLBB ID"]').value.trim();
-    const heroName = document.getElementById('hero-name-input').value.trim();
-    const kpayName = document.getElementById('kpay-name-solo').value.trim();
-    const kpayNo = document.getElementById('kpay-no-solo').value.trim();
-    const logo = document.getElementById('sqLogo1vs1').files.length;
-
-    if (!playerName || !mlbbId || !heroName || !kpayName || !kpayNo || logo === 0) {
-        return false;
-    }
-    return true;
-}
-
-// --- Logo Preview Logic (ပြန်ပြင်ပေးထားပါတယ်) ---
+// 5vs5 Logo Preview & Re-selection
 function previewLogo(event) {
     const file = event.target.files[0];
+    const output = document.getElementById('logoPreview');
+    const label = document.getElementById('logoLabel');
+    
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const preview = document.getElementById('logoPreview');
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-            document.getElementById('logoLabel').style.display = 'none';
-        }
+            output.src = e.target.result;
+            output.style.display = 'block'; // ပုံကို ပြမယ်
+            if (label) label.style.display = 'none'; // label ဖျောက်မယ်
+        };
         reader.readAsDataURL(file);
     }
 }
 
-// Logo ကို click နှိပ်ရင် ဖျက်မယ်
-document.getElementById('logoPreview').onclick = function() {
-    this.style.display = 'none';
-    this.src = "#"; // src ကို reset
-    document.getElementById('sqLogo').value = ""; // Input clear
-    document.getElementById('logoLabel').style.display = 'block'; 
-};
+// 5vs5 ပုံကိုနှိပ်ရင် Input ပြန်ဖွင့်မယ်
+document.getElementById('logoPreview').addEventListener('click', function() {
+    document.getElementById('sqLogo').click();
+});
+
+// 1vs1 Logo Preview & Re-selection
+function previewLogo1vs1(event) {
+    const file = event.target.files[0];
+    const output = document.getElementById('logoPreview1vs1');
+    const label = document.getElementById('logoLabel1vs1');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            output.src = e.target.result;
+            output.style.display = 'block';
+            if (label) label.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// 1vs1 ပုံကိုနှိပ်ရင် Input ပြန်ဖွင့်မယ်
+document.getElementById('logoPreview1vs1').addEventListener('click', function() {
+    document.getElementById('sqLogo1vs1').click();
+});
