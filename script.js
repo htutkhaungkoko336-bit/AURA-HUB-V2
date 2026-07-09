@@ -12,7 +12,7 @@ import {
 let currentIndex = 0;
 const mapData = [
     { mode: '5vs5', img: '5vs5.png', title: '5vs5 Preview', teams: 5 },
-    { mode: '1v1', img: '1v1.png', title: '1v1 Preview', teams: 1 } // 1v1 အတွက်
+    { mode: '1v1', img: '1v1.png', title: '1vs1 Preview', teams: 1 } // 1v1 အတွက်
 ];
 
 // ၂။ UI စတင်ခြင်း
@@ -87,4 +87,33 @@ window.goToRooms = () => {
 // Back ခလုတ်အတွက်
 window.goBack = () => {
     showDashboard();
+};
+
+// Join ခလုတ်ကို နှိပ်လိုက်ရင်
+window.joinRoom = (price) => {
+    // လက်ရှိ mode ကို ယူခြင်း
+    const currentMode = mapData[currentIndex].mode; // '5vs5' သို့မဟုတ် '1vs 1'
+    
+    // Room Select Page ကို ပိတ်ခြင်း
+    document.getElementById('page-room-select').style.display = 'none';
+
+    if (currentMode === '5vs5') {
+        const page5v5 = document.getElementById('page-5vs5');
+        page5v5.style.display = 'block';
+        document.getElementById('fee-5vs5').innerText = `Entry Fee: ${price} Ks`;
+    } else {
+        const page1v1 = document.getElementById('page-1vs1');
+        page1v1.style.display = 'block';
+        document.getElementById('fee-1vs1').innerText = `Entry Fee: ${price} Ks`;
+    }
+};
+
+// Back to Selection ခလုတ်အတွက်
+window.leaveRoom = () => {
+    // Page အားလုံးကို ပိတ်လိုက်ခြင်း
+    document.getElementById('page-5vs5').style.display = 'none';
+    document.getElementById('page-1vs1').style.display = 'none';
+    
+    // Room Select ကို ပြန်ပြခြင်း
+    document.getElementById('page-room-select').style.display = 'block';
 };
