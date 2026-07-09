@@ -5,7 +5,8 @@ import {
     initGuideSwiper, 
     openGuide, 
     toggleGuide, 
-    showRoomSelect // ဒီတစ်ခုကို ထပ်ထည့်ပေးပါ
+    showRoomSelect,
+    performLogin // ဒီတစ်ခုကို ထပ်ထည့်ပေးပါ
 } from './ui.js';
 
 // ၁။ ဒီမှာ Data တွေကို အရင် သတ်မှတ်ပေးပါ (သင့် Project က Data တွေနဲ့ အစားထိုးပါ)
