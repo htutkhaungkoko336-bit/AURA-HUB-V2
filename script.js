@@ -117,7 +117,39 @@ window.leaveRoom = () => {
     // Room Select ကို ပြန်ပြခြင်း
     document.getElementById('page-room-select').style.display = 'block';
 };
-// Logo Preview Function (5vs5 အတွက်)
+// --- 5vs5 Validation ---
+function validate5vs5() {
+    const squadName = document.getElementById('squad-name').value.trim();
+    const kpayName = document.getElementById('kpay-name').value.trim();
+    const kpayNo = document.getElementById('kpay-no').value.trim();
+    const logo = document.getElementById('sqLogo').files.length;
+
+    // Player inputs တွေအားလုံးကို စစ်မယ်
+    const playerInputs = document.querySelectorAll('#page-5vs5 .player-grid-container input');
+    const allPlayersFilled = Array.from(playerInputs).every(input => input.value.trim() !== "");
+
+    if (!squadName || !kpayName || !kpayNo || logo === 0 || !allPlayersFilled) {
+        return false;
+    }
+    return true;
+}
+
+// --- 1vs1 Validation ---
+function validate1vs1() {
+    const playerName = document.querySelector('#page-1vs1 input[placeholder="Solo Player Name"]').value.trim();
+    const mlbbId = document.querySelector('#page-1vs1 input[placeholder="MLBB ID"]').value.trim();
+    const heroName = document.getElementById('hero-name-input').value.trim();
+    const kpayName = document.getElementById('kpay-name-solo').value.trim();
+    const kpayNo = document.getElementById('kpay-no-solo').value.trim();
+    const logo = document.getElementById('sqLogo1vs1').files.length;
+
+    if (!playerName || !mlbbId || !heroName || !kpayName || !kpayNo || logo === 0) {
+        return false;
+    }
+    return true;
+}
+
+// --- Logo Preview Logic (ပြန်ပြင်ပေးထားပါတယ်) ---
 function previewLogo(event) {
     const file = event.target.files[0];
     if (file) {
@@ -126,64 +158,16 @@ function previewLogo(event) {
             const preview = document.getElementById('logoPreview');
             preview.src = e.target.result;
             preview.style.display = 'block';
-            document.getElementById('logoLabel').style.display = 'none'; // Plus icon ဖျောက်
+            document.getElementById('logoLabel').style.display = 'none';
         }
         reader.readAsDataURL(file);
     }
 }
 
-// ပုံကို ပြန်ဖြုတ်ပြီး ပြန်တင်ချင်ရင် Label လေးကို ပြန်ပေါ်ပေးရမယ်
-// Logo ပေါ်မှာ click နှိပ်ရင် ပုံဖျောက်၊ input reset လုပ်
+// Logo ကို click နှိပ်ရင် ဖျက်မယ်
 document.getElementById('logoPreview').onclick = function() {
     this.style.display = 'none';
+    this.src = "#"; // src ကို reset
     document.getElementById('sqLogo').value = ""; // Input clear
-    document.getElementById('logoLabel').style.display = 'block'; // Plus ပြန်ပေါ်
-};
-window.goToPayment = () => {
-    // လက်ရှိ mode ကိုကြည့်ပြီး ဘယ် form ကို စစ်ရမလဲဆုံးဖြတ်
-    const mode = mapData[currentIndex].mode;
-    let isValid = false;
-
-    if (mode === '5vs5') {
-        isValid = validate5vs5();
-    } else {
-        isValid = validate1vs1();
-    }
-
-    if (isValid) {
-        // အားလုံးဖြည့်ပြီးပြီဆိုမှ နောက် page သွား
-        document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
-        document.getElementById('page-payment-proof').style.display = 'flex';
-    } else {
-        alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
-    }
-};
-
-function validate5vs5() {
-    const squadName = document.getElementById('squad-name').value;
-    const kpayName = document.getElementById('kpay-name').value;
-    const logo = document.getElementById('sqLogo').files.length;
-    // Player input တွေကို loop ပတ်ပြီး စစ်ပါ
-    if (!squadName || !kpayName || logo === 0) return false;
-    return true;
-}
-function previewScreenshot(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.getElementById('ssPreview');
-            img.src = e.target.result;
-            img.style.display = 'block';
-            document.getElementById('ss-placeholder').style.display = 'none';
-        }
-        reader.readAsDataURL(file);
-    }
-}
-
-// SS ပုံကို ပြန်နှိပ်ရင် ပြန်ဖြုတ်မယ်
-document.getElementById('ssPreview').onclick = function() {
-    this.style.display = 'none';
-    document.getElementById('ssFile').value = ""; // Clear file
-    document.getElementById('ss-placeholder').style.display = 'flex';
+    document.getElementById('logoLabel').style.display = 'block'; 
 };
