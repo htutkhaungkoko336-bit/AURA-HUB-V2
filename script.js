@@ -120,34 +120,11 @@ window.leaveRoom = () => {
 
 
 
-// 5vs5 Logo Preview & Re-selection
-function previewLogo(event) {
+// --- Logo Preview & Re-selection Functions ---
+window.previewLogo = function(event) {
     const file = event.target.files[0];
     const output = document.getElementById('logoPreview');
     const label = document.getElementById('logoLabel');
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            output.src = e.target.result;
-            output.style.display = 'block'; // ပုံကို ပြမယ်
-            if (label) label.style.display = 'none'; // label ဖျောက်မယ်
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-// 5vs5 ပုံကိုနှိပ်ရင် Input ပြန်ဖွင့်မယ်
-document.getElementById('logoPreview').addEventListener('click', function() {
-    document.getElementById('sqLogo').click();
-});
-
-// 1vs1 Logo Preview & Re-selection
-function previewLogo1vs1(event) {
-    const file = event.target.files[0];
-    const output = document.getElementById('logoPreview1vs1');
-    const label = document.getElementById('logoLabel1vs1');
-    
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -157,9 +134,58 @@ function previewLogo1vs1(event) {
         };
         reader.readAsDataURL(file);
     }
-}
+};
 
-// 1vs1 ပုံကိုနှိပ်ရင် Input ပြန်ဖွင့်မယ်
-document.getElementById('logoPreview1vs1').addEventListener('click', function() {
-    document.getElementById('sqLogo1vs1').click();
+window.previewLogo1vs1 = function(event) {
+    const file = event.target.files[0];
+    const output = document.getElementById('logoPreview1vs1');
+    const label = document.getElementById('logoLabel1vs1');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            output.src = e.target.result;
+            output.style.display = 'block';
+            if (label) label.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// --- Go to Payment Logic ---
+window.goToPayment = function() {
+    // 5vs5 လား 1vs1 လား စစ်ဆေးခြင်း
+    const mode = mapData[currentIndex].mode; // mapData က global ရှိရပါမယ်
+    let isValid = false;
+
+    if (mode === '5vs5') {
+        isValid = validate5vs5();
+    } else {
+        isValid = validate1vs1();
+    }
+
+    if (isValid) {
+        document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
+        document.getElementById('page-payment-proof').style.display = 'flex';
+    } else {
+        alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
+    }
+};
+
+// --- DOMContentLoaded အသုံးပြုပြီး Event Listener များ ထည့်ခြင်း ---
+document.addEventListener('DOMContentLoaded', function() {
+    // 5vs5 Logo Click
+    const preview = document.getElementById('logoPreview');
+    if (preview) {
+        preview.addEventListener('click', function() {
+            document.getElementById('sqLogo').click();
+        });
+    }
+
+    // 1vs1 Logo Click
+    const preview1vs1 = document.getElementById('logoPreview1vs1');
+    if (preview1vs1) {
+        preview1vs1.addEventListener('click', function() {
+            document.getElementById('sqLogo1vs1').click();
+        });
+    }
 });
