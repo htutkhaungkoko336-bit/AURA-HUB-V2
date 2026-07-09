@@ -71,3 +71,17 @@ function updateUI() {
         sideB.innerHTML = players;
     }
 }
+// script.js
+import { showDashboard, showRoomSelect } from './ui.js';
+
+// HTML က onclick="goToRooms()" ကို ဖမ်းယူရန်
+window.goToRooms = () => {
+    // လက်ရှိ mode (5vs5 or 1v1) ကို mapData ထဲကနေ ယူပါတယ်
+    const currentMode = mapData[currentIndex].mode;
+    showRoomSelect(currentMode);
+};
+
+// Back ခလုတ်အတွက်
+window.goBack = () => {
+    showDashboard();
+};

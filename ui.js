@@ -85,3 +85,17 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
+
+// ui.js
+export function showDashboard() {
+    document.getElementById("main-dashboard").style.display = "block";
+    document.getElementById("page-room-select").style.display = "none";
+}
+
+export function showRoomSelect(mode) {
+    document.getElementById("main-dashboard").style.display = "none";
+    document.getElementById("page-room-select").style.display = "block";
+    
+    // Mode title ပြောင်းပေးခြင်း
+    document.getElementById("selected-mode-title").innerText = `${mode} MODE`;
+}
