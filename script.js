@@ -187,23 +187,20 @@ window.goToPayment = function() {
     }
 };
 
-// --- UI Events (Logo Removal & Re-selection) ---
+// --- UI Events (Logo Removal - Confirm မေးခွန်းမပါတော့ပါ) ---
 document.addEventListener('DOMContentLoaded', function() {
-    // 5vs5 Logo Click (Select/Remove)
+    
+    // 5vs5 Logo Click (နှိပ်လိုက်တာနဲ့ တန်းဖျက်ပြီး ပြန်တင်လို့ရအောင် လုပ်ပေးမယ်)
     document.getElementById('logoPreview').addEventListener('click', function() {
-        if(confirm("ပုံကို ဖျက်ပြီး အသစ်ပြန်တင်မလား?")) {
-            this.style.display = 'none';
-            document.getElementById('sqLogo').value = ""; 
-            document.getElementById('logoLabel').style.display = 'block';
-        }
+        this.style.display = 'none'; // ပုံဖျောက်
+        document.getElementById('sqLogo').value = ""; // Input ရှင်း
+        document.getElementById('logoLabel').style.display = 'block'; // Label ပြန်ပေါ်
     });
 
-    // 1vs1 Logo Click (Select/Remove)
+    // 1vs1 Logo Click
     document.getElementById('logoPreview1vs1').addEventListener('click', function() {
-        if(confirm("ပုံကို ဖျက်ပြီး အသစ်ပြန်တင်မလား?")) {
-            this.style.display = 'none';
-            document.getElementById('sqLogo1vs1').value = ""; 
-            document.getElementById('logoLabel1vs1').style.display = 'block';
-        }
+        this.style.display = 'none'; 
+        document.getElementById('sqLogo1vs1').value = ""; 
+        document.getElementById('logoLabel1vs1').style.display = 'block';
     });
 });
