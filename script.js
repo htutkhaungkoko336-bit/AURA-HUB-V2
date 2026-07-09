@@ -1,4 +1,4 @@
-// script.js ၏ အပေါ်ဆုံးပိုင်းတွင်
+import { performLogin } from './auth.js'
 import { 
     showDashboard, 
     setupWelcomeModal, 
@@ -6,7 +6,6 @@ import {
     openGuide, 
     toggleGuide, 
     showRoomSelect,
-    performLogin // ဒီတစ်ခုကို ထပ်ထည့်ပေးပါ
 } from './ui.js';
 
 // ၁။ ဒီမှာ Data တွေကို အရင် သတ်မှတ်ပေးပါ (သင့် Project က Data တွေနဲ့ အစားထိုးပါ)
