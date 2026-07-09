@@ -213,3 +213,30 @@ window.backToRegistration = function() {
         document.getElementById('page-1vs1').style.display = 'block';
     }
 };
+// Screenshot Preview Function
+window.previewScreenshot = function(event) {
+    const file = event.target.files[0];
+    const img = document.getElementById('ssPreview');
+    const placeholder = document.getElementById('ss-placeholder');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+document.addEventListener('DOMContentLoaded', function() {
+    const ssPreview = document.getElementById('ssPreview');
+    if (ssPreview) {
+        ssPreview.addEventListener('click', function() {
+            this.style.display = 'none';
+            this.src = "#";
+            document.getElementById('ssFile').value = ""; 
+            document.getElementById('ss-placeholder').style.display = 'flex';
+            document.getElementById('ssFile').click();
+        });
+    }
+});
