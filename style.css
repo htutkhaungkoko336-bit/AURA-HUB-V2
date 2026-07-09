@@ -32,8 +32,14 @@ body {
 .bracket-header { display: flex; align-items: center; margin-bottom: 8px; }
 .bracket-header .line { flex: 1; height: 2.5px; background: #c9a66b; }
 .bracket-header span { margin: 0 12px; color: #c9a66b; font-size: 1.3rem; font-weight: 900; }
-.bracket-body { display: flex; justify-content: space-around; align-items: center; height: calc(100% - 25px);padding: 20px 10px; }
-.side { display: flex; flex-direction: column; gap: 4px; padding: 0 5px; }
+.bracket-body {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch; /* အမြင့်ကို အပြည့်ဆွဲဆန့်ပေးပါ */
+    min-height: 200px;    /* အနည်းဆုံးအမြင့်ကို သတ်မှတ်ပေးပါ */
+    padding: 20px 0;      /* အပေါ်အောက် နေရာလွတ်ပိုပေးပါ */
+    gap: 10px;
+}.side { display: flex; flex-direction: column; gap: 4px; padding: 0 5px; }
 .team { background: #000; border: 1px solid #c9a66b; font-size: 0.65rem; font-weight: bold; padding: 5px 4px; width: 80px; text-align: center; border-radius: 4px; color: #f1e4b9; }
 .final-box { width: 40px; height: 30px; border: 1px solid #f1e4b9; border-radius: 6px; background: #111; display: flex; justify-content: center; align-items: center; font-size: 0.8rem; font-weight: 900; color: #FFD700; }
 
