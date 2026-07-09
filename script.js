@@ -204,3 +204,12 @@ document.getElementById('logoPreview1vs1').addEventListener('click', function() 
     document.getElementById('logoLabel1vs1').style.display = 'flex'; 
     document.getElementById('sqLogo1vs1').click();
 });
+window.backToRegistration = function() {
+    document.getElementById('page-payment-proof').style.display = 'none';
+    const mode = mapData[currentIndex].mode; 
+    if (mode === '5vs5') {
+        document.getElementById('page-5vs5').style.display = 'block';
+    } else {
+        document.getElementById('page-1vs1').style.display = 'block';
+    }
+};
