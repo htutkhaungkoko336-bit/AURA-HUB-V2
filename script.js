@@ -1,6 +1,12 @@
-// script.js
-import { performLogin } from './auth.js';
-import { showDashboard, setupWelcomeModal, initGuideSwiper, openGuide, toggleGuide } from './ui.js';
+// script.js ၏ အပေါ်ဆုံးပိုင်းတွင်
+import { 
+    showDashboard, 
+    setupWelcomeModal, 
+    initGuideSwiper, 
+    openGuide, 
+    toggleGuide, 
+    showRoomSelect // ဒီတစ်ခုကို ထပ်ထည့်ပေးပါ
+} from './ui.js';
 
 // ၁။ ဒီမှာ Data တွေကို အရင် သတ်မှတ်ပေးပါ (သင့် Project က Data တွေနဲ့ အစားထိုးပါ)
 let currentIndex = 0;
@@ -71,9 +77,6 @@ function updateUI() {
         sideB.innerHTML = players;
     }
 }
-// script.js
-import { showDashboard, showRoomSelect } from './ui.js';
-
 // HTML က onclick="goToRooms()" ကို ဖမ်းယူရန်
 window.goToRooms = () => {
     // လက်ရှိ mode (5vs5 or 1v1) ကို mapData ထဲကနေ ယူပါတယ်

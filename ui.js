@@ -1,16 +1,27 @@
-// ui.js
+// ui.js (ဒီပုံစံအတိုင်း စုစည်းထားပါ)
 export function showDashboard() {
     const loginPage = document.getElementById("page-login");
     const dashboard = document.getElementById("main-dashboard");
-    
-    if (loginPage) loginPage.style.display = "none";
+    const roomSelect = document.getElementById("page-room-select");
+
+    // Dashboard ပြန်ပေါ်စေရန်
     if (dashboard) {
+        dashboard.style.display = "block";
         dashboard.style.opacity = "1";
         dashboard.style.pointerEvents = "auto";
-        dashboard.style.display = "flex";
-        dashboard.style.flexDirection = "column";
-        console.log("Dashboard is now active!");
     }
+    // Room Select ပိတ်ရန်
+    if (roomSelect) roomSelect.style.display = "none";
+    // Login page ပိတ်ရန်
+    if (loginPage) loginPage.style.display = "none";
+
+    console.log("Dashboard is now active!");
+}
+
+export function showRoomSelect(mode) {
+    document.getElementById("main-dashboard").style.display = "none";
+    document.getElementById("page-room-select").style.display = "block";
+    document.getElementById("selected-mode-title").innerText = `${mode} MODE`;
 }
 
 export function setupWelcomeModal() {
@@ -84,18 +95,4 @@ export function openGuide(mapData, currentIndex) {
 
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
-}
-
-// ui.js
-export function showDashboard() {
-    document.getElementById("main-dashboard").style.display = "block";
-    document.getElementById("page-room-select").style.display = "none";
-}
-
-export function showRoomSelect(mode) {
-    document.getElementById("main-dashboard").style.display = "none";
-    document.getElementById("page-room-select").style.display = "block";
-    
-    // Mode title ပြောင်းပေးခြင်း
-    document.getElementById("selected-mode-title").innerText = `${mode} MODE`;
 }
