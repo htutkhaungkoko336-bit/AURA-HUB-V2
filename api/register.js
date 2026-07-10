@@ -36,15 +36,16 @@ if (data.mode === '5vs5') {
             dbData.player4 = data.player4 || null;
             dbData.player5 = data.player5 || null;
         }
-            else if (data.mode === '1vs1') {
-            dbData.playerName = data.squadName; // Solo Player Name
-            dbData.heroName = data.heroName;
-            dbData.logo1vs1 = data.logo; // 1vs1 Logo (Field name ပြောင်းလိုက်တယ်)
-            dbData.paymentScreenshot1vs1 = data.paymentScreenshot; // 1vs1 Slip (Field name ပြောင်းလိုက်တယ်)
-            dbData.kpayName = data.kpayName;
-            dbData.kpayNo = data.kpayNo;
+        else if (data.mode === '1vs1') {
+            dbData.playerName = data.squadName || null;
+            dbData.mlbbId = data.mlbbId || null; // ID အသစ်
+            dbData.heroName = data.heroName || null;
+            dbData.entryFee = data.entryFee || null; // Fee အသစ်
+            dbData.logo = data.logo || null; // 1vs1 Logo
+            dbData.paymentScreenshot = data.paymentScreenshot || null; // 1vs1 Slip
+            dbData.kpayName = data.kpayName || null;
+            dbData.kpayNo = data.kpayNo || null;
         }
-
         // Database ထဲသို့ သိမ်းဆည်းခြင်း
         await db.collection('registrations').add(dbData);
 
