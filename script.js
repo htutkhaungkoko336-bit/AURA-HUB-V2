@@ -259,32 +259,37 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // ၁။ Mode ပေါ်မူတည်ပြီး ID အမှန်ကို ရွေးမယ်
+    // ၁။ Mode ခွဲခြားခြင်း
     const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
     
-    // 1vs1 ဆိုရင် 'sqLogo1vs1' ကိုယူမယ်၊ 5vs5 ဆိုရင် 'sqLogo' ကိုယူမယ်
+    // ၂။ Input ID တွေကို dynamic ယူမယ်
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
     
-    const logoFile = document.getElementById(logoInputId).files[0];
-    const ssFile = document.getElementById('ssFile').files[0]; // ဒါက Payment page မှာပဲရှိတာမို့ သုံးလို့ရတယ်
+    const logoFile = document.getElementById(logoInputId)?.files[0];
+    const ssFile = document.getElementById('ssFile')?.files[0];
 
-    // 2. Data တွေယူမယ် (Mode အလိုက် ID ပြင်ပေးပါ)
-    const squadName = is1v1Visible ? document.getElementById('solo-player-name')?.value : document.getElementById('squad-name')?.value;
-    const kpayName = is1v1Visible ? document.getElementById('kpay-name-solo').value : document.getElementById('kpay-name').value;
-    const kpayNo = is1v1Visible ? document.getElementById('kpay-no-solo').value : document.getElementById('kpay-no').value;
+    // ၃။ Data တွေကို null မဖြစ်အောင် ယူမယ်
+    const squadName = is1v1Visible 
+        ? (document.getElementById('solo-player-name')?.value || 'N/A') 
+        : (document.getElementById('squad-name')?.value || 'N/A');
+    
+    const kpayName = is1v1Visible 
+        ? (document.getElementById('kpay-name-solo')?.value || 'N/A') 
+        : (document.getElementById('kpay-name')?.value || 'N/A');
+    
+    const kpayNo = is1v1Visible 
+        ? (document.getElementById('kpay-no-solo')?.value || 'N/A') 
+        : (document.getElementById('kpay-no')?.value || 'N/A');
 
-    // ပုံမတင်ရသေးရင် တားပေးပါ
+    // ၄။ Validation
     if (!logoFile || !ssFile) {
         alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
         return;
     }
 
-    // ... ကျန်တဲ့ logic တွေက အတူတူပါပဲ ...
     try {
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
-
-        const mode = is1v1Visible ? '1vs1' : '5vs5';
 
         const response = await fetch('/api/register', {
             method: 'POST',
@@ -293,7 +298,7 @@ window.submitProof = async function() {
                 squadName, kpayName, kpayNo, 
                 logo: logoUrl, 
                 paymentScreenshot: screenshotUrl,
-                mode: mode,
+                mode: is1v1Visible ? '1vs1' : '5vs5',
                 createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
             })
         });
@@ -301,10 +306,15 @@ window.submitProof = async function() {
         const result = await response.json();
         if (result.success) {
             alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
+            // ဘယ် page ကလာလာ အကုန်ပိတ်ပြီး waiting msg ပြမယ်
+            document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
             document.getElementById('page-payment-proof').style.display = 'none';
             document.getElementById('waiting-msg').style.display = 'block';
+        } else {
+            alert("Error: " + (result.error || "Unknown error"));
         }
     } catch (error) {
+        console.error(error);
         alert("တစ်ခုခုမှားယွင်းနေပါသည်။");
     }
 };
