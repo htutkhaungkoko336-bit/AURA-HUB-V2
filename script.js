@@ -258,30 +258,34 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    console.log("--- Starting submitProof ---");
+console.log("--- Starting submitProof ---");
     
-    const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
+    // ပိုမိုသေချာအောင် စစ်ဆေးခြင်း
+    const page1vs1 = document.getElementById('page-1vs1');
+    const is1v1Visible = (page1vs1 && (page1vs1.style.display === 'block' || page1vs1.style.display === 'flex'));
+    
+    console.log("Is 1vs1 Visible detected:", is1v1Visible);
+
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
-    
     const logoInput = document.getElementById(logoInputId);
-    const ssInput = document.getElementById('ssFile-proof'); // သင်ပြောင်းထားတဲ့ ID အသစ်
+    const ssInput = document.getElementById('ssFile-proof'); // သင်ပြင်ထားတဲ့ ID အသစ်
 
-    // Debugging: input တကယ်ရှိမရှိ စစ်ဆေးခြင်း
-    console.log("Logo Input Element:", logoInput);
-    console.log("SS Input Element:", ssInput);
+    // Debug
+    console.log("Searching for Logo Input ID:", logoInputId);
+    console.log("Found Element:", logoInput);
     
-    if (logoInput) console.log("Logo files:", logoInput.files);
-    if (ssInput) console.log("SS files:", ssInput.files);
-
-    // Alert အစား console.error ကို သုံးပါ
-    if (!logoInput?.files[0] || !ssInput?.files[0]) {
-        console.error("VALIDATION FAILED: Logo သို့မဟုတ် Screenshot တစ်ခုခု ပျောက်နေသည်။");
-        return; 
+    // logoInput ကို .files မဟုတ်ဘဲ တခြားနည်းနဲ့ စစ်ကြည့်မယ်
+    if (!logoInput || logoInput.files.length === 0) {
+        console.error("Logo ဖိုင်ကို မတွေ့ပါ (သို့) ID မှားနေသည် -", logoInputId);
+        alert("Logo ဖိုင်ကို မတွေ့ပါ။ ပုံတင်ထားတာ သေချာပါစေ။");
+        return;
     }
-
-    const logoFile = logoInput.files[0];
-    const ssFile = ssInput.files[0];
-
+    
+    if (!ssInput || ssInput.files.length === 0) {
+        console.error("Screenshot ဖိုင်ကို မတွေ့ပါ");
+        alert("Payment Screenshot တင်ထားတာ သေချာပါစေ။");
+        return;
+    }
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
