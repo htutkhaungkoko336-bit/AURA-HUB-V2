@@ -2,11 +2,12 @@ import { sendMessage } from './bot';
 
 export async function notify(type, data) {
     let message = `<b>🔔 New ${type} Received</b>\n\n`;
+    // အရင်က code နေရာမှာ ဒါလေး အစားထိုးပါ
+    const entryFeeString = data.entryFee || "0"; 
+    // "Entry Fee: 25000 Ks" ထဲက ဂဏန်းတွေကိုပဲ ဆွဲထုတ်မယ်
+    const fee = parseInt(entryFeeString.replace(/[^0-9]/g, '')) || 0;
 
-    // Fee ကို ကြည့်ပြီး BO1/BO3 သတ်မှတ်ခြင်း
-    const fee = parseInt(data.entryFee) || 0;
     const matchFormat = (fee >= 25000) ? "BO3 (Best of 3)" : "BO1 (Best of 1)";
-
     // Mode ခွဲပြီး Message Format ရေးခြင်း
     if (data.mode === '5vs5') {
         message += `<b>Mode:</b> 5vs5\n` +

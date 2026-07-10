@@ -299,11 +299,11 @@ window.submitProof = async function() {
             payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
             payload.kpayName = document.getElementById('kpay-name-solo')?.value || 'N/A';
             payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
-            payload.entryFee = document.getElementById('fee-1vs1')?.innerText || '0 '; // ထည့်ပေးလိုက်ပါ
+            payload.entryFee = document.getElementById('fee-1vs1')?.innerText || '0 Ks'; // ထည့်ပေးလိုက်ပါ
             payload.mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
         } else {
             payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
-            payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0';
+            payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
             payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
             payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
             
