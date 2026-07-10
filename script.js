@@ -258,70 +258,44 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // ၁။ ဘယ် Mode က လာတာလဲ စစ်မယ်
-    const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block' || 
-                         document.getElementById('page-1vs1').style.display === 'flex';
+    console.log("--- Starting submitProof ---");
     
-    // ၂။ Logo Input ID ကို ရွေးမယ်
+    const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
     
-    // ၃။ ပုံဖိုင်တွေကို ဖမ်းယူမယ် (Screenshot အတွက် ssFile-proof ကို သုံးမယ်)
     const logoInput = document.getElementById(logoInputId);
-    const ssInput = document.getElementById('ssFile-proof');
+    const ssInput = document.getElementById('ssFile-proof'); // သင်ပြောင်းထားတဲ့ ID အသစ်
 
-    // ၄။ Validation
+    // Debugging: input တကယ်ရှိမရှိ စစ်ဆေးခြင်း
+    console.log("Logo Input Element:", logoInput);
+    console.log("SS Input Element:", ssInput);
+    
+    if (logoInput) console.log("Logo files:", logoInput.files);
+    if (ssInput) console.log("SS files:", ssInput.files);
+
+    // Alert အစား console.error ကို သုံးပါ
     if (!logoInput?.files[0] || !ssInput?.files[0]) {
-        alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
-        return;
+        console.error("VALIDATION FAILED: Logo သို့မဟုတ် Screenshot တစ်ခုခု ပျောက်နေသည်။");
+        return; 
     }
 
     const logoFile = logoInput.files[0];
     const ssFile = ssInput.files[0];
 
-    // Status ပြောင်းခြင်း
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
+        console.log("Uploading files...");
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
-
-        let payload = {
-            logo: logoUrl,
-            paymentScreenshot: screenshotUrl,
-            mode: is1v1Visible ? '1vs1' : '5vs5',
-            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
-        };
-
-        // Data ဖြည့်ခြင်း
-        if (is1v1Visible) {
-            payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
-            payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
-            payload.kpayName = document.getElementById('kpay-name-solo')?.value || 'N/A';
-            payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
-        } else {
-            payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
-            payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
-            payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
-        }
-
-        const response = await fetch('/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
         
-        if (result.success) {
-            alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
-            window.location.reload(); // အဆင်ပြေရင် Page ပြန် Refresh လုပ်တာ အကောင်းဆုံးပါ
-        } else {
-            throw new Error(result.error || "Unknown Error");
-        }
+        console.log("Upload Success! Logo:", logoUrl, "SS:", screenshotUrl);
+
+        // ... ကျန်တဲ့ logic တွေ ...
+
     } catch (error) {
-        console.error(error);
-        alert("Error: " + error.message);
+        console.error("CATCH BLOCK ERROR:", error); // Error အသေးစိတ်ကို ဒီမှာ ကြည့်ပါ
         document.getElementById('submit-btn').style.display = 'block';
         document.getElementById('waiting-msg').style.display = 'none';
     }
