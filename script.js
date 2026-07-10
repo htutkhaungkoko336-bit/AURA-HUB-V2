@@ -259,23 +259,35 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
+    // ၁။ ဘယ် Page မှာရှိနေလဲဆိုတာ စစ်မယ်
     const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
     
-    // ပုံဖိုင်များ အမှန်ကန်ဆုံး ဖမ်းယူခြင်း
+    // ၂။ Logo Input ID ကို Dynamic ယူမယ်
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
-    const logoFile = document.getElementById(logoInputId)?.files[0];
-    const ssFile = document.getElementById('ssFile')?.files[0];
+    
+    // ၃။ ပုံဖိုင်တွေကို DOM ကနေ တိုက်ရိုက်ဖမ်းမယ်
+    const logoInput = document.getElementById(logoInputId);
+    const ssInput = document.getElementById('ssFile');
 
-    if (!logoFile || !ssFile) {
-        alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
+    // Debug လုပ်ရန် (Console မှာ File ရှိမရှိ ကြည့်မယ်)
+    console.log("Logo Input:", logoInput?.files[0]);
+    console.log("SS Input:", ssInput?.files[0]);
+
+    // ၄။ Validation (File မတင်ထားရင် Alert တက်မယ်)
+    if (!logoInput?.files[0] || !ssInput?.files[0]) {
+        alert("ကျေးဇူးပြု၍ Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါ။");
         return;
     }
+
+    const logoFile = logoInput.files[0];
+    const ssFile = ssInput.files[0];
 
     // Processing status ပြခြင်း
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
+        // Backend ကို ပုံတင်ပြီး URL ပြန်ယူမယ်
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
 
@@ -298,6 +310,7 @@ window.submitProof = async function() {
             payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
         }
 
+        // Backend API ကို ပို့မယ်
         const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -305,11 +318,13 @@ window.submitProof = async function() {
         });
 
         const result = await response.json();
+        
         if (result.success) {
             alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
             // အားလုံးပိတ်ပြီး Loading message ပြမယ်
             document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
             document.getElementById('page-payment-proof').style.display = 'none';
+            document.getElementById('waiting-msg').style.display = 'none';
         } else {
             throw new Error(result.error || "Unknown Error");
         }
