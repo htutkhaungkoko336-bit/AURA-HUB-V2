@@ -240,3 +240,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+//imgg
+async function uploadToBackend(file) {
+    // ပုံကို Base64 ပြောင်းခြင်း
+    const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(file);
+    });
+
+    const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64 })
+    });
+
+    const result = await response.json();
+    return result.data.display_url; // Imgbb URL ကို ရပြီ
+}
+async function submitProof() {
+    // ... ပုံတင်တဲ့ Logic တွေ အရင်လုပ် ...
+    const logoUrl = await uploadToBackend(logoFile);
+    const screenshotUrl = await uploadToBackend(ssFile);
+
+    // Backend (api/register.js) ကို Data လှမ်းပို့မယ်
+    const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            squadName, kpayName, kpayNo, 
+            logo: logoUrl, 
+            paymentScreenshot: screenshotUrl 
+        })
+    });
+
+    if ((await response.json()).success) {
+        alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
+    }
+}
