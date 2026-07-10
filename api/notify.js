@@ -8,33 +8,31 @@ export async function notify(type, data) {
     const matchFormat = (fee >= 25000) ? "BO3 (Best of 3)" : "BO1 (Best of 1)";
 
     if (data.mode === '5vs5') {
+        const getP = (p) => (p ? `${p.name} (ID: ${p.id})` : "N/A");
         message += `<b>Mode:</b> 5vs5\n` +
+                   `<b>Entry Fee:</b> ${fee} Ks\n` +
                    `<b>Format:</b> ${matchFormat}\n` +
                    `<b>Squad Name:</b> ${data.squadName}\n` +
-                   `<b>Entry Fee:</b> ${fee} Ks\n` +
-                   `<b>K-Pay Name:</b> ${data.kpayName}\n` +
-                   `<b>K-Pay No:</b> ${data.kpayNo}\n` +
                    `<b>Players:</b>\n` +
-                   `1. ${data.player1}\n2. ${data.player2}\n` +
-                   `3. ${data.player3}\n4. ${data.player4}\n5. ${data.player5}\n` +
-                   `<b>Logo:</b> ${data.logo || 'N/A'}\n` +
-                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`;
+                   `1. ${getP(data.player1)}\n2. ${getP(data.player2)}\n` +
+                   `3. ${getP(data.player3)}\n4. ${getP(data.player4)}\n5. ${getP(data.player5)}\n` +
+                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`+
+                   `<b>Logo:</b> ${data.logo || 'N/A'}\n`;
                    
     } else if (data.mode === '1vs1') {
         message += `<b>Mode:</b> 1vs1\n` +
+                   `<b>Entry Fee:</b> ${fee} Ks\n` +
                    `<b>Format:</b> ${matchFormat}\n` +
                    `<b>Player Name:</b> ${data.playerName || data.squadName}\n` +
-                   `<b>Entry Fee:</b> ${fee} Ks\n` +
                    `<b>MLBB ID:</b> ${data.mlbbId}\n` +
                    `<b>Hero Name:</b> ${data.heroName}\n` +
-                   `<b>K-Pay Name:</b> ${data.kpayName}\n` +
-                   `<b>K-Pay No:</b> ${data.kpayNo}\n` +
-                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`;
+                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`+
+                   `<b>Logo:</b> ${data.logo || 'N/A'}\n` ;// Logo ထည့်ပေးလိုက်ပြီ
     }
     
     message += `\n\n<b>Status:</b> Pending`;
-
-    // Group ID Logic
+    
+    // ... ကျန်တဲ့ Group ID နဲ့ sendMessage အပိုင်းများ
     const groupIds = {
         'REGISTRATION': process.env.TELEGRAM_REG_GROUP_ID,
         'REFUND': process.env.TELEGRAM_REFUND_GROUP_ID,
