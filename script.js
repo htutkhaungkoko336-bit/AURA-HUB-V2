@@ -267,36 +267,21 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    console.log("--- Starting submitProof ---");
-    console.log("Current Mode:", currentMode);
-    
     // 1. Mode ကိုအခြေခံပြီး Logo Input ID ကို ရွေးမယ်
     const is1v1Visible = (currentMode === '1vs1');
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
     
     // 2. Element တွေကို ဖမ်းမယ်
     const logoInput = document.getElementById(logoInputId);
-    const ssInput = document.getElementById('ssFile-proof'); // Payment Proof page က ID
-
-    console.log("Searching for Logo Input ID:", logoInputId);
-    console.log("Logo Element:", logoInput);
-    console.log("SS Element:", ssInput);
+    const ssInput = document.getElementById('ssFile-proof');
     
     // 3. Validation စစ်ဆေးခြင်း
-    if (!logoInput) {
-        console.error("Logo Input ကို ရှာမတွေ့ပါ! ID မှားနေနိုင်သည်!");
-        alert("Error: Logo Input ပျောက်ဆုံးနေသည်။");
-        return;
-    }
-
-    if (logoInput.files.length === 0) {
-        console.error("Logo ဖိုင်တင်မထားပါ");
+    if (!logoInput || logoInput.files.length === 0) {
         alert("ကျေးဇူးပြု၍ Logo တင်ပေးပါ။");
         return;
     }
 
     if (!ssInput || ssInput.files.length === 0) {
-        console.error("Screenshot ဖိုင်ကို မတွေ့ပါ");
         alert("ကျေးဇူးပြု၍ Payment Screenshot တင်ပေးပါ။");
         return;
     }
@@ -310,13 +295,9 @@ window.submitProof = async function() {
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
-        console.log("Uploading files...");
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
         
-        console.log("Upload Success! Logo URL:", logoUrl);
-        console.log("Upload Success! SS URL:", screenshotUrl);
-
         // 6. Data payload တည်ဆောက်ခြင်း
         let payload = {
             logo: logoUrl,
@@ -353,7 +334,6 @@ window.submitProof = async function() {
         }
 
     } catch (error) {
-        console.error("CATCH BLOCK ERROR:", error);
         alert("Error: " + error.message);
         document.getElementById('submit-btn').style.display = 'block';
         document.getElementById('waiting-msg').style.display = 'none';
