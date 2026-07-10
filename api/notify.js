@@ -16,7 +16,9 @@ export async function notify(type, data) {
                    `<b>Players:</b>\n` +
                    `1. ${getP(data.player1)}\n2. ${getP(data.player2)}\n` +
                    `3. ${getP(data.player3)}\n4. ${getP(data.player4)}\n5. ${getP(data.player5)}\n` +
-                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`+
+                    `<b>K-Pay Name:</b> ${data.kpayName}\n` +
+                   `<b>K-Pay No:</b> ${data.kpayNo}\n` +
+                    `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`+
                    `<b>Logo:</b> ${data.logo || 'N/A'}\n`;
                    
     } else if (data.mode === '1vs1') {
@@ -26,6 +28,8 @@ export async function notify(type, data) {
                    `<b>Player Name:</b> ${data.playerName || data.squadName}\n` +
                    `<b>MLBB ID:</b> ${data.mlbbId}\n` +
                    `<b>Hero Name:</b> ${data.heroName}\n` +
+                   `<b>K-Pay Name:</b> ${data.kpayName}\n` +
+                   `<b>K-Pay No:</b> ${data.kpayNo}\n` +
                    `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`+
                    `<b>Logo:</b> ${data.logo || 'N/A'}\n` ;// Logo ထည့်ပေးလိုက်ပြီ
     }
