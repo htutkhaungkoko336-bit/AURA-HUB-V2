@@ -267,43 +267,29 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // 1. Mode ကိုအခြေခံပြီး Logo Input ID ကို ရွေးမယ်
     const is1v1Visible = (currentMode === '1vs1');
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
     
-    // 2. Element တွေကို ဖမ်းမယ်
     const logoInput = document.getElementById(logoInputId);
     const ssInput = document.getElementById('ssFile-proof');
-    
-    // 3. Validation စစ်ဆေးခြင်း
-    if (!logoInput || logoInput.files.length === 0) {
-        alert("ကျေးဇူးပြု၍ Logo တင်ပေးပါ။");
+
+    if (!logoInput || logoInput.files.length === 0 || !ssInput || ssInput.files.length === 0) {
+        alert("Logo နှင့် Payment Screenshot တင်ပေးပါ။");
         return;
     }
 
-    if (!ssInput || ssInput.files.length === 0) {
-        alert("ကျေးဇူးပြု၍ Payment Screenshot တင်ပေးပါ။");
-        return;
-    }
-
-    // 4. File တွေကို သိမ်းမယ်
-    const logoFile = logoInput.files[0];
-    const ssFile = ssInput.files[0];
-
-    // 5. UI Loading စတင်ခြင်း
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
-        const logoUrl = await uploadToBackend(logoFile);
-        const screenshotUrl = await uploadToBackend(ssFile);
+        const logoUrl = await uploadToBackend(logoInput.files[0]);
+        const screenshotUrl = await uploadToBackend(ssInput.files[0]);
         
-        // 6. Data payload တည်ဆောက်ခြင်း
         let payload = {
             logo: logoUrl,
             paymentScreenshot: screenshotUrl,
             mode: currentMode,
-            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
+            createdAt: "10-7-2026 6:29PM" // သင်တောင်းထားသော format
         };
 
         if (is1v1Visible) {
@@ -313,11 +299,21 @@ window.submitProof = async function() {
             payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
         } else {
             payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
+            payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
             payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
             payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
+            
+            // Player 5 ယောက်စာ Loop ပတ်ဖမ်းခြင်း
+            const playerRows = document.querySelectorAll('#page-5vs5 .player-row');
+            playerRows.forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                payload[`player${index + 1}`] = {
+                    name: inputs[0].value || 'N/A',
+                    id: inputs[1].value || 'N/A'
+                };
+            });
         }
 
-        // 7. Backend ကို ပို့ခြင်း
         const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -325,14 +321,12 @@ window.submitProof = async function() {
         });
 
         const result = await response.json();
-        
         if (result.success) {
             alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
             window.location.reload();
         } else {
-            throw new Error(result.error || "Unknown Error");
+            throw new Error(result.error);
         }
-
     } catch (error) {
         alert("Error: " + error.message);
         document.getElementById('submit-btn').style.display = 'block';

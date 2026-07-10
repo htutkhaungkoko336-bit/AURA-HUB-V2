@@ -21,21 +21,22 @@ export default async function handler(req, res) {
         };
 
         // Mode အလိုက် Field တွေကို ခွဲခြားသတ်မှတ်ခြင်း
-        if (data.mode === '5vs5') {
-            dbData.squadName = data.squadName;
-            dbData.logo = data.logo; 
-            dbData.paymentScreenshot = data.paymentScreenshot;
-            dbData.kpayName = data.kpayName;
-            dbData.kpayNo = data.kpayNo;
-            dbData.entryFee = data.entryFee; // ပေါင်းထည့်ပေးလိုက်သည်
+if (data.mode === '5vs5') {
+            dbData.squadName = data.squadName || null;
+            dbData.logo = data.logo || null;
+            dbData.paymentScreenshot = data.paymentScreenshot || null;
+            dbData.kpayName = data.kpayName || null;
+            dbData.kpayNo = data.kpayNo || null;
+            dbData.entryFee = data.entryFee || null;
             
-            // Player 5 ယောက်စာ အချက်အလက်များ
-            dbData.player1 = data.player1;
-            dbData.player2 = data.player2;
-            dbData.player3 = data.player3;
-            dbData.player4 = data.player4;
-            dbData.player5 = data.player5;
-        } else if (data.mode === '1vs1') {
+            // Player 1 မှ 5 အထိ သေချာထည့်ပေးပါ
+            dbData.player1 = data.player1 || null;
+            dbData.player2 = data.player2 || null;
+            dbData.player3 = data.player3 || null;
+            dbData.player4 = data.player4 || null;
+            dbData.player5 = data.player5 || null;
+        }
+            else if (data.mode === '1vs1') {
             dbData.playerName = data.squadName; // Solo Player Name
             dbData.heroName = data.heroName;
             dbData.logo1vs1 = data.logo; // 1vs1 Logo (Field name ပြောင်းလိုက်တယ်)
