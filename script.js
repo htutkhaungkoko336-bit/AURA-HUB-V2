@@ -289,9 +289,11 @@ window.submitProof = async function() {
             logo: logoUrl,
             paymentScreenshot: screenshotUrl,
             mode: currentMode,
-            createdAt: "10-7-2026 6:29PM" // သင်တောင်းထားသော format
+            createdAt: new Date().toLocaleString('en-GB', { 
+                timeZone: 'Asia/Yangon',
+                hour12: true 
+            }) 
         };
-
         if (is1v1Visible) {
             payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
             payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';

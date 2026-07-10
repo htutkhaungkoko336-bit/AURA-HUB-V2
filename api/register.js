@@ -11,16 +11,16 @@ const db = getFirestore(app);
 // api/register.js
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).end();
-
-    try {
-        const data = req.body;
-        let dbData = {
-            mode: data.mode,
-            status: "pending",
-            createdAt: data.createdAt
-        };
-
-        // Mode အလိုက် Field တွေကို ခွဲခြားသတ်မှတ်ခြင်း
+try {
+    const data = req.body;
+    let dbData = {
+        mode: data.mode,
+        status: "pending",
+        createdAt: new Date().toLocaleString('en-GB', { 
+            timeZone: 'Asia/Yangon',
+            hour12: true 
+        })
+    };
 if (data.mode === '5vs5') {
             dbData.squadName = data.squadName || null;
             dbData.logo = data.logo || null;
