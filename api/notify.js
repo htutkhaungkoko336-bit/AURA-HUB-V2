@@ -2,32 +2,39 @@ import { sendMessage } from './bot';
 
 export async function notify(type, data) {
     let message = `<b>🔔 New ${type} Received</b>\n\n`;
-    // အရင်က code နေရာမှာ ဒါလေး အစားထိုးပါ
-    const entryFeeString = data.entryFee || "0"; 
-    // "Entry Fee: 25000 Ks" ထဲက ဂဏန်းတွေကိုပဲ ဆွဲထုတ်မယ်
-    const fee = parseInt(entryFeeString.replace(/[^0-9]/g, '')) || 0;
 
+    const entryFeeString = data.entryFee || "0"; 
+    const fee = parseInt(entryFeeString.replace(/[^0-9]/g, '')) || 0;
     const matchFormat = (fee >= 25000) ? "BO3 (Best of 3)" : "BO1 (Best of 1)";
-    // Mode ခွဲပြီး Message Format ရေးခြင်း
+
     if (data.mode === '5vs5') {
         message += `<b>Mode:</b> 5vs5\n` +
                    `<b>Format:</b> ${matchFormat}\n` +
                    `<b>Squad Name:</b> ${data.squadName}\n` +
                    `<b>Entry Fee:</b> ${fee} Ks\n` +
                    `<b>K-Pay Name:</b> ${data.kpayName}\n` +
-                   `<b>K-Pay No:</b> ${data.kpayNo}\n`;
+                   `<b>K-Pay No:</b> ${data.kpayNo}\n` +
+                   `<b>Players:</b>\n` +
+                   `1. ${data.player1}\n2. ${data.player2}\n` +
+                   `3. ${data.player3}\n4. ${data.player4}\n5. ${data.player5}\n` +
+                   `<b>Logo:</b> ${data.logo || 'N/A'}\n` +
+                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`;
+                   
     } else if (data.mode === '1vs1') {
         message += `<b>Mode:</b> 1vs1\n` +
                    `<b>Format:</b> ${matchFormat}\n` +
                    `<b>Player Name:</b> ${data.playerName || data.squadName}\n` +
                    `<b>Entry Fee:</b> ${fee} Ks\n` +
                    `<b>MLBB ID:</b> ${data.mlbbId}\n` +
-                   `<b>Hero Name:</b> ${data.heroName}\n`;
+                   `<b>Hero Name:</b> ${data.heroName}\n` +
+                   `<b>K-Pay Name:</b> ${data.kpayName}\n` +
+                   `<b>K-Pay No:</b> ${data.kpayNo}\n` +
+                   `<b>Payment Slip:</b> ${data.paymentScreenshot || 'N/A'}`;
     }
     
-    message += `\n<b>Status:</b> Pending`;
+    message += `\n\n<b>Status:</b> Pending`;
 
-    // Group ID တွေ
+    // Group ID Logic
     const groupIds = {
         'REGISTRATION': process.env.TELEGRAM_REG_GROUP_ID,
         'REFUND': process.env.TELEGRAM_REFUND_GROUP_ID,
@@ -37,10 +44,10 @@ export async function notify(type, data) {
     const targetChatId = groupIds[type];
     if (targetChatId) await sendMessage(targetChatId, message);
 
-    // Admin တွေဆီ ပို့မယ့် Message မှာလည်း Format ပါအောင်လုပ်မယ်
+    // Admin Alert
     const adminIds = process.env.ADMINS ? process.env.ADMINS.split(',') : [];
     for (const adminId of adminIds) {
-        const adminMsg = `🚨 <b>Admin Alert:</b> ${data.mode} | ${matchFormat} | <b>Fee:</b> ${fee}\n<b>Name:</b> ${data.squadName || data.playerName}`;
+        const adminMsg = `🚨 <b>Admin Alert:</b> ${data.mode} | ${matchFormat}\n<b>Name:</b> ${data.squadName || data.playerName}`;
         await sendMessage(adminId, adminMsg);
     }
 }
