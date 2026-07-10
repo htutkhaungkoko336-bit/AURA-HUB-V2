@@ -259,62 +259,64 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // ၁။ Mode ခွဲခြားခြင်း
     const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
     
-    // ၂။ Input ID တွေကို dynamic ယူမယ်
+    // ပုံဖိုင်များ အမှန်ကန်ဆုံး ဖမ်းယူခြင်း
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
-    
     const logoFile = document.getElementById(logoInputId)?.files[0];
     const ssFile = document.getElementById('ssFile')?.files[0];
 
-    // ၃။ Data တွေကို null မဖြစ်အောင် ယူမယ်
-    const squadName = is1v1Visible 
-        ? (document.getElementById('solo-player-name')?.value || 'N/A') 
-        : (document.getElementById('squad-name')?.value || 'N/A');
-    
-    const kpayName = is1v1Visible 
-        ? (document.getElementById('kpay-name-solo')?.value || 'N/A') 
-        : (document.getElementById('kpay-name')?.value || 'N/A');
-    
-    const kpayNo = is1v1Visible 
-        ? (document.getElementById('kpay-no-solo')?.value || 'N/A') 
-        : (document.getElementById('kpay-no')?.value || 'N/A');
-
-    // ၄။ Validation
     if (!logoFile || !ssFile) {
         alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
         return;
     }
 
+    // Processing status ပြခြင်း
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('waiting-msg').style.display = 'block';
+
     try {
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
 
+        // Data များကို Mode အလိုက် စုစည်းခြင်း
+        let payload = {
+            logo: logoUrl,
+            paymentScreenshot: screenshotUrl,
+            mode: is1v1Visible ? '1vs1' : '5vs5',
+            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
+        };
+
+        if (is1v1Visible) {
+            payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
+            payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
+            payload.kpayName = document.getElementById('kpay-name-solo')?.value || 'N/A';
+            payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
+        } else {
+            payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
+            payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
+            payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
+        }
+
         const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                squadName, kpayName, kpayNo, 
-                logo: logoUrl, 
-                paymentScreenshot: screenshotUrl,
-                mode: is1v1Visible ? '1vs1' : '5vs5',
-                createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
-            })
+            body: JSON.stringify(payload)
         });
 
         const result = await response.json();
         if (result.success) {
             alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
-            // ဘယ် page ကလာလာ အကုန်ပိတ်ပြီး waiting msg ပြမယ်
+            // အားလုံးပိတ်ပြီး Loading message ပြမယ်
             document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
             document.getElementById('page-payment-proof').style.display = 'none';
-            document.getElementById('waiting-msg').style.display = 'block';
         } else {
-            alert("Error: " + (result.error || "Unknown error"));
+            throw new Error(result.error || "Unknown Error");
         }
     } catch (error) {
         console.error(error);
-        alert("တစ်ခုခုမှားယွင်းနေပါသည်။");
+        alert("Error: " + error.message);
+        document.getElementById('submit-btn').style.display = 'block';
+        document.getElementById('waiting-msg').style.display = 'none';
     }
 };
