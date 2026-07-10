@@ -258,7 +258,7 @@ async function uploadToBackend(file) {
     const result = await response.json();
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
-async function submitProof() {
+window.submitProof = async function() {
     // ... ပုံတင်တဲ့ Logic တွေ အရင်လုပ် ...
     const logoUrl = await uploadToBackend(logoFile);
     const screenshotUrl = await uploadToBackend(ssFile);
