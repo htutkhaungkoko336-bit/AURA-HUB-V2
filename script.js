@@ -263,16 +263,28 @@ window.submitProof = async function() {
     const logoFile = document.getElementById('sqLogo').files[0];
     const ssFile = document.getElementById('ssFile').files[0];
 
-    // Form ထဲက Text data တွေကိုလည်း ဒီမှာ ယူပါ
-    const squadName = document.getElementById('squad-name').value;
-    const kpayName = document.getElementById('kpay-name').value;
-    const kpayNo = document.getElementById('kpay-no').value;
+    // Form ထဲက Text data တွေကို ယူပါ
+    const squadName = document.getElementById('squad-name').value.trim();
+    const kpayName = document.getElementById('kpay-name').value.trim();
+    const kpayNo = document.getElementById('kpay-no').value.trim();
+    
+    // Mode ခွဲခြင်း
+    const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
+    const mode = is1v1Visible ? '1vs1' : '5vs5';
 
     // ပုံမတင်ရသေးရင် တားပေးပါ
     if (!logoFile || !ssFile) {
         alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
         return;
     }
+
+    // မြန်မာစံတော်ချိန်နဲ့ အချိန်ယူခြင်း
+    const now = new Date();
+    const formattedDate = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Yangon',
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+    }).format(now).replace(',', '');
 
     try {
         // ၂။ Backend ကို ပုံနှစ်ခု လှမ်းပို့ပြီး URL ယူမယ်
@@ -286,7 +298,9 @@ window.submitProof = async function() {
             body: JSON.stringify({ 
                 squadName, kpayName, kpayNo, 
                 logo: logoUrl, 
-                paymentScreenshot: screenshotUrl 
+                paymentScreenshot: screenshotUrl,
+                mode: mode,
+                createdAt: formattedDate // နေ့စွဲနဲ့အချိန် ထည့်လိုက်ပြီ
             })
         });
 
@@ -303,7 +317,6 @@ window.submitProof = async function() {
         alert("တစ်ခုခုမှားယွင်းနေပါသည်။");
     }
 };
-
 
 
 
