@@ -278,3 +278,12 @@ window.submitProof = async function() {
         alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
     }
 }
+
+
+
+
+
+
+
+
+
