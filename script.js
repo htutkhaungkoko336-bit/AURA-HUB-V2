@@ -259,27 +259,50 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // ... ပုံတင်တဲ့ Logic တွေ အရင်လုပ် ...
-    const logoUrl = await uploadToBackend(logoFile);
-    const screenshotUrl = await uploadToBackend(ssFile);
+    // ၁။ HTML ထဲက Input တွေဆီကနေ ပုံဖိုင်တွေကို အရင်ယူပါ
+    const logoFile = document.getElementById('sqLogo').files[0];
+    const ssFile = document.getElementById('ssFile').files[0];
 
-    // Backend (api/register.js) ကို Data လှမ်းပို့မယ်
-    const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            squadName, kpayName, kpayNo, 
-            logo: logoUrl, 
-            paymentScreenshot: screenshotUrl 
-        })
-    });
+    // Form ထဲက Text data တွေကိုလည်း ဒီမှာ ယူပါ
+    const squadName = document.getElementById('squad-name').value;
+    const kpayName = document.getElementById('kpay-name').value;
+    const kpayNo = document.getElementById('kpay-no').value;
 
-    if ((await response.json()).success) {
-        alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
+    // ပုံမတင်ရသေးရင် တားပေးပါ
+    if (!logoFile || !ssFile) {
+        alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
+        return;
     }
-}
 
+    try {
+        // ၂။ Backend ကို ပုံနှစ်ခု လှမ်းပို့ပြီး URL ယူမယ်
+        const logoUrl = await uploadToBackend(logoFile);
+        const screenshotUrl = await uploadToBackend(ssFile);
 
+        // ၃။ Backend (api/register.js) ကို Data လှမ်းပို့မယ်
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                squadName, kpayName, kpayNo, 
+                logo: logoUrl, 
+                paymentScreenshot: screenshotUrl 
+            })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
+            document.getElementById('page-payment-proof').style.display = 'none';
+            document.getElementById('waiting-msg').style.display = 'block';
+        } else {
+            alert("Error: " + result.message);
+        }
+    } catch (error) {
+        console.error("Submission Error:", error);
+        alert("တစ်ခုခုမှားယွင်းနေပါသည်။");
+    }
+};
 
 
 
