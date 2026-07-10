@@ -259,18 +259,19 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // ၁။ HTML ထဲက Input တွေဆီကနေ ပုံဖိုင်တွေကို အရင်ယူပါ
-    const logoFile = document.getElementById('sqLogo').files[0];
-    const ssFile = document.getElementById('ssFile').files[0];
-
-    // Form ထဲက Text data တွေကို ယူပါ
-    const squadName = document.getElementById('squad-name').value.trim();
-    const kpayName = document.getElementById('kpay-name').value.trim();
-    const kpayNo = document.getElementById('kpay-no').value.trim();
-    
-    // Mode ခွဲခြင်း
+    // ၁။ Mode ပေါ်မူတည်ပြီး ID အမှန်ကို ရွေးမယ်
     const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
-    const mode = is1v1Visible ? '1vs1' : '5vs5';
+    
+    // 1vs1 ဆိုရင် 'sqLogo1vs1' ကိုယူမယ်၊ 5vs5 ဆိုရင် 'sqLogo' ကိုယူမယ်
+    const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
+    
+    const logoFile = document.getElementById(logoInputId).files[0];
+    const ssFile = document.getElementById('ssFile').files[0]; // ဒါက Payment page မှာပဲရှိတာမို့ သုံးလို့ရတယ်
+
+    // 2. Data တွေယူမယ် (Mode အလိုက် ID ပြင်ပေးပါ)
+    const squadName = is1v1Visible ? document.getElementById('solo-player-name')?.value : document.getElementById('squad-name')?.value;
+    const kpayName = is1v1Visible ? document.getElementById('kpay-name-solo').value : document.getElementById('kpay-name').value;
+    const kpayNo = is1v1Visible ? document.getElementById('kpay-no-solo').value : document.getElementById('kpay-no').value;
 
     // ပုံမတင်ရသေးရင် တားပေးပါ
     if (!logoFile || !ssFile) {
@@ -278,20 +279,13 @@ window.submitProof = async function() {
         return;
     }
 
-    // မြန်မာစံတော်ချိန်နဲ့ အချိန်ယူခြင်း
-    const now = new Date();
-    const formattedDate = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Yangon',
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', hour12: true
-    }).format(now).replace(',', '');
-
+    // ... ကျန်တဲ့ logic တွေက အတူတူပါပဲ ...
     try {
-        // ၂။ Backend ကို ပုံနှစ်ခု လှမ်းပို့ပြီး URL ယူမယ်
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
 
-        // ၃။ Backend (api/register.js) ကို Data လှမ်းပို့မယ်
+        const mode = is1v1Visible ? '1vs1' : '5vs5';
+
         const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -300,7 +294,7 @@ window.submitProof = async function() {
                 logo: logoUrl, 
                 paymentScreenshot: screenshotUrl,
                 mode: mode,
-                createdAt: formattedDate // နေ့စွဲနဲ့အချိန် ထည့်လိုက်ပြီ
+                createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
             })
         });
 
@@ -309,17 +303,8 @@ window.submitProof = async function() {
             alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
             document.getElementById('page-payment-proof').style.display = 'none';
             document.getElementById('waiting-msg').style.display = 'block';
-        } else {
-            alert("Error: " + result.message);
         }
     } catch (error) {
-        console.error("Submission Error:", error);
         alert("တစ်ခုခုမှားယွင်းနေပါသည်။");
     }
 };
-
-
-
-
-
-
