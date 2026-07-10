@@ -216,14 +216,13 @@ window.backToRegistration = function() {
 // Screenshot Preview Function
 window.previewScreenshot = function(event) {
     const file = event.target.files[0];
-    const img = document.getElementById('ssPreview');
-    const placeholder = document.getElementById('ss-placeholder');
+    const img = document.getElementById('ssPreview'); // Payment Proof Page ထဲက ID
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
             img.src = e.target.result;
             img.style.display = 'block';
-            placeholder.style.display = 'none';
+            document.getElementById('ss-placeholder').style.display = 'none';
         };
         reader.readAsDataURL(file);
     }
@@ -259,39 +258,34 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-    // ၁။ ဘယ် Page မှာရှိနေလဲဆိုတာ စစ်မယ်
-    const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block';
+    // ၁။ ဘယ် Mode က လာတာလဲ စစ်မယ်
+    const is1v1Visible = document.getElementById('page-1vs1').style.display === 'block' || 
+                         document.getElementById('page-1vs1').style.display === 'flex';
     
-    // ၂။ Logo Input ID ကို Dynamic ယူမယ်
+    // ၂။ Logo Input ID ကို ရွေးမယ်
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
     
-    // ၃။ ပုံဖိုင်တွေကို DOM ကနေ တိုက်ရိုက်ဖမ်းမယ်
+    // ၃။ ပုံဖိုင်တွေကို ဖမ်းယူမယ် (Screenshot အတွက် ssFile-proof ကို သုံးမယ်)
     const logoInput = document.getElementById(logoInputId);
-    const ssInput = document.getElementById('ssFile');
+    const ssInput = document.getElementById('ssFile-proof');
 
-    // Debug လုပ်ရန် (Console မှာ File ရှိမရှိ ကြည့်မယ်)
-    console.log("Logo Input:", logoInput?.files[0]);
-    console.log("SS Input:", ssInput?.files[0]);
-
-    // ၄။ Validation (File မတင်ထားရင် Alert တက်မယ်)
+    // ၄။ Validation
     if (!logoInput?.files[0] || !ssInput?.files[0]) {
-        alert("ကျေးဇူးပြု၍ Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါ။");
+        alert("Logo နှင့် Payment Screenshot နှစ်ခုစလုံး တင်ပေးပါဦး။");
         return;
     }
 
     const logoFile = logoInput.files[0];
     const ssFile = ssInput.files[0];
 
-    // Processing status ပြခြင်း
+    // Status ပြောင်းခြင်း
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
-        // Backend ကို ပုံတင်ပြီး URL ပြန်ယူမယ်
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
 
-        // Data များကို Mode အလိုက် စုစည်းခြင်း
         let payload = {
             logo: logoUrl,
             paymentScreenshot: screenshotUrl,
@@ -299,6 +293,7 @@ window.submitProof = async function() {
             createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
         };
 
+        // Data ဖြည့်ခြင်း
         if (is1v1Visible) {
             payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
             payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
@@ -310,7 +305,6 @@ window.submitProof = async function() {
             payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
         }
 
-        // Backend API ကို ပို့မယ်
         const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -321,10 +315,7 @@ window.submitProof = async function() {
         
         if (result.success) {
             alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
-            // အားလုံးပိတ်ပြီး Loading message ပြမယ်
-            document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
-            document.getElementById('page-payment-proof').style.display = 'none';
-            document.getElementById('waiting-msg').style.display = 'none';
+            window.location.reload(); // အဆင်ပြေရင် Page ပြန် Refresh လုပ်တာ အကောင်းဆုံးပါ
         } else {
             throw new Error(result.error || "Unknown Error");
         }
