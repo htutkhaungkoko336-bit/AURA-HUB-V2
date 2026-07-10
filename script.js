@@ -8,6 +8,8 @@ import {
     showRoomSelect,
 } from './ui.js';
 
+let currentMode = '5vs5'; // Default အနေနဲ့ 5vs5 ကို ပေးထားပါ
+
 // ၁။ ဒီမှာ Data တွေကို အရင် သတ်မှတ်ပေးပါ (သင့် Project က Data တွေနဲ့ အစားထိုးပါ)
 let currentIndex = 0;
 const mapData = [
@@ -176,9 +178,16 @@ window.validate1vs1 = function() {
 
 // --- Main Navigation Logic ---
 window.goToPayment = function() {
+    // ၁။ ဘယ် Mode ဖြစ်နေလဲဆိုတာ စစ်ပြီး currentMode ထဲမှာ သိမ်းမယ်
     const is5vs5 = document.getElementById('page-5vs5').style.display !== 'none';
+    currentMode = is5vs5 ? '5vs5' : '1vs1'; 
+    
+    console.log("Current Mode saved as:", currentMode); // Debug လုပ်ဖို့
+
+    // ၂။ Validation စစ်မယ်
     const isValid = is5vs5 ? window.validate5vs5() : window.validate1vs1();
 
+    // ၃။ အမှန်ဆိုရင် Page ကူးမယ်
     if (isValid) {
         document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
         document.getElementById('page-payment-proof').style.display = 'flex';
@@ -258,36 +267,46 @@ async function uploadToBackend(file) {
     return result.data.display_url; // Imgbb URL ကို ရပြီ
 }
 window.submitProof = async function() {
-console.log("--- Starting submitProof ---");
+    console.log("--- Starting submitProof ---");
+    console.log("Current Mode:", currentMode);
     
-    // အရင်ဆုံး 1vs1 Page ကို အတိအကျရှာမယ်
-    const page1vs1 = document.getElementById('page-1vs1');
-    
-    // style.display ထဲမှာ 'block' ဖြစ်မဖြစ်၊ သို့မဟုတ် 'none' မဟုတ်ရင် ဖြစ်နိုင်ခြေရှိတာကို စစ်မယ်
-    // အလွယ်ဆုံးနည်း - Element ရဲ့ offsetParent က null မဟုတ်ရင် ပွင့်နေတယ်လို့ ယူဆလို့ရတယ်
-    const is1v1Visible = (page1vs1 && page1vs1.offsetWidth > 0);
-    
-    console.log("Is 1vs1 Visible detected:", is1v1Visible);
-
+    // 1. Mode ကိုအခြေခံပြီး Logo Input ID ကို ရွေးမယ်
+    const is1v1Visible = (currentMode === '1vs1');
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
+    
+    // 2. Element တွေကို ဖမ်းမယ်
     const logoInput = document.getElementById(logoInputId);
-    
+    const ssInput = document.getElementById('ssFile-proof'); // Payment Proof page က ID
+
     console.log("Searching for Logo Input ID:", logoInputId);
-    console.log("Found Element:", logoInput);
+    console.log("Logo Element:", logoInput);
+    console.log("SS Element:", ssInput);
     
-    // အကယ်၍ logoInput က null ဖြစ်နေရင် ID နာမည် အမှားရှိနိုင်တယ်
+    // 3. Validation စစ်ဆေးခြင်း
     if (!logoInput) {
         console.error("Logo Input ကို ရှာမတွေ့ပါ! ID မှားနေနိုင်သည်!");
-        alert("Logo Input ပျောက်ဆုံးနေသည်။");
+        alert("Error: Logo Input ပျောက်ဆုံးနေသည်။");
         return;
     }
 
     if (logoInput.files.length === 0) {
         console.error("Logo ဖိုင်တင်မထားပါ");
-        alert("Logo တင်ပေးဖို့ မေ့နေတယ်ထင်တယ်ဗျ။");
+        alert("ကျေးဇူးပြု၍ Logo တင်ပေးပါ။");
         return;
     }
-        document.getElementById('submit-btn').style.display = 'none';
+
+    if (!ssInput || ssInput.files.length === 0) {
+        console.error("Screenshot ဖိုင်ကို မတွေ့ပါ");
+        alert("ကျေးဇူးပြု၍ Payment Screenshot တင်ပေးပါ။");
+        return;
+    }
+
+    // 4. File တွေကို သိမ်းမယ်
+    const logoFile = logoInput.files[0];
+    const ssFile = ssInput.files[0];
+
+    // 5. UI Loading စတင်ခြင်း
+    document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
@@ -295,12 +314,47 @@ console.log("--- Starting submitProof ---");
         const logoUrl = await uploadToBackend(logoFile);
         const screenshotUrl = await uploadToBackend(ssFile);
         
-        console.log("Upload Success! Logo:", logoUrl, "SS:", screenshotUrl);
+        console.log("Upload Success! Logo URL:", logoUrl);
+        console.log("Upload Success! SS URL:", screenshotUrl);
 
-        // ... ကျန်တဲ့ logic တွေ ...
+        // 6. Data payload တည်ဆောက်ခြင်း
+        let payload = {
+            logo: logoUrl,
+            paymentScreenshot: screenshotUrl,
+            mode: currentMode,
+            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon' })
+        };
+
+        if (is1v1Visible) {
+            payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
+            payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
+            payload.kpayName = document.getElementById('kpay-name-solo')?.value || 'N/A';
+            payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
+        } else {
+            payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
+            payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
+            payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
+        }
+
+        // 7. Backend ကို ပို့ခြင်း
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
+            window.location.reload();
+        } else {
+            throw new Error(result.error || "Unknown Error");
+        }
 
     } catch (error) {
-        console.error("CATCH BLOCK ERROR:", error); // Error အသေးစိတ်ကို ဒီမှာ ကြည့်ပါ
+        console.error("CATCH BLOCK ERROR:", error);
+        alert("Error: " + error.message);
         document.getElementById('submit-btn').style.display = 'block';
         document.getElementById('waiting-msg').style.display = 'none';
     }
