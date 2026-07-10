@@ -1,51 +1,27 @@
-import axios from 'axios';
+import { sendMessage } from './bot';
 
-export async function notify(type, data, regId) {
-    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+export async function notify(type, data) {
+    // ပို့ရမယ့် Message ပုံစံ
+    const message = `<b>🔔 New Registration Received</b>\n\n` +
+                    `<b>Squad Name:</b> ${data.squadName}\n` +
+                    `<b>K-Pay Name:</b> ${data.kpayName}\n` +
+                    `<b>K-Pay No:</b> ${data.kpayNo}\n` +
+                    `<b>Status:</b> Pending`;
 
-    // ၁။ Group ID များကို Environment Variable မှယူခြင်း
+    // Group ID တွေ
     const groupIds = {
         'REGISTRATION': process.env.TELEGRAM_REG_GROUP_ID,
         'REFUND': process.env.TELEGRAM_REFUND_GROUP_ID,
         'APPROVAL': process.env.TELEGRAM_APPROVER_GROUP_ID
     };
 
+    // သက်ဆိုင်ရာ Group ကို ပို့မယ်
     const targetChatId = groupIds[type];
-    if (!targetChatId) return; // မရှိရင် ဘာမှမလုပ်ဘူး
+    if (targetChatId) await sendMessage(targetChatId, message);
 
-    // ၂။ Message ပုံစံဖော်ခြင်း (Markdown)
-    const regMessage = `🔔 *New ${type} Request!*\n\n` +
-                       `🎮 *Mode:* ${data.mode || 'N/A'}\n` +
-                       `👤 *Squad/Player:* ${data.squadName || data.playerName || 'Unknown'}\n` +
-                       `🖼️ [View Payment Proof](${data.paymentURL || data.paymentScreenshot || '#'})\n\n` +
-                       `🆔 *Reg ID:* ${regId}`;
-
-    // ၃။ Admin Action (Inline Keyboard) - Registration အတွက်ပဲ ထည့်မယ်
-    let reply_markup = {};
-    if (type === 'REGISTRATION') {
-        reply_markup = {
-            inline_keyboard: [[
-                { text: '✅ Confirm', callback_data: `regConfirm_${regId}` },
-                { text: '❌ Reject', callback_data: `regReject_${regId}` }
-            ]]
-        };
-    }
-
-    // ၄။ Telegram API ကို ပို့ဆောင်ခြင်း
-    await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        chat_id: targetChatId,
-        text: regMessage,
-        parse_mode: 'Markdown',
-        reply_markup: reply_markup
-    });
-
-    // ၅။ Admin တွေကို Private အကြောင်းကြားခြင်း
-    const adminIds = process.env.ADMINS ? process.env.ADMINS.split(',') : [];
+    // Admin တွေကိုလည်း အကြောင်းကြားမယ်
+    const adminIds = process.env.ADMINS.split(',');
     for (const adminId of adminIds) {
-        await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            chat_id: adminId,
-            text: `🚨 *Admin Alert:* New ${type} request! (Reg ID: ${regId})`,
-            parse_mode: 'Markdown'
-        });
+        await sendMessage(adminId, `🚨 Admin Alert: ${type} request for ${data.squadName}`);
     }
 }
