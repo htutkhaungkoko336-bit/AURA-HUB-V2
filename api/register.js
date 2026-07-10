@@ -23,10 +23,18 @@ export default async function handler(req, res) {
         // Mode အလိုက် Field တွေကို ခွဲခြားသတ်မှတ်ခြင်း
         if (data.mode === '5vs5') {
             dbData.squadName = data.squadName;
-            dbData.logo = data.logo; // 5vs5 Logo
-            dbData.paymentScreenshot = data.paymentScreenshot; // 5vs5 Slip
+            dbData.logo = data.logo; 
+            dbData.paymentScreenshot = data.paymentScreenshot;
             dbData.kpayName = data.kpayName;
             dbData.kpayNo = data.kpayNo;
+            dbData.entryFee = data.entryFee; // ပေါင်းထည့်ပေးလိုက်သည်
+            
+            // Player 5 ယောက်စာ အချက်အလက်များ
+            dbData.player1 = data.player1;
+            dbData.player2 = data.player2;
+            dbData.player3 = data.player3;
+            dbData.player4 = data.player4;
+            dbData.player5 = data.player5;
         } else if (data.mode === '1vs1') {
             dbData.playerName = data.squadName; // Solo Player Name
             dbData.heroName = data.heroName;
