@@ -260,33 +260,34 @@ async function uploadToBackend(file) {
 window.submitProof = async function() {
 console.log("--- Starting submitProof ---");
     
-    // ပိုမိုသေချာအောင် စစ်ဆေးခြင်း
+    // အရင်ဆုံး 1vs1 Page ကို အတိအကျရှာမယ်
     const page1vs1 = document.getElementById('page-1vs1');
-    const is1v1Visible = (page1vs1 && (page1vs1.style.display === 'block' || page1vs1.style.display === 'flex'));
+    
+    // style.display ထဲမှာ 'block' ဖြစ်မဖြစ်၊ သို့မဟုတ် 'none' မဟုတ်ရင် ဖြစ်နိုင်ခြေရှိတာကို စစ်မယ်
+    // အလွယ်ဆုံးနည်း - Element ရဲ့ offsetParent က null မဟုတ်ရင် ပွင့်နေတယ်လို့ ယူဆလို့ရတယ်
+    const is1v1Visible = (page1vs1 && page1vs1.offsetWidth > 0);
     
     console.log("Is 1vs1 Visible detected:", is1v1Visible);
 
     const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
     const logoInput = document.getElementById(logoInputId);
-    const ssInput = document.getElementById('ssFile-proof'); // သင်ပြင်ထားတဲ့ ID အသစ်
-
-    // Debug
+    
     console.log("Searching for Logo Input ID:", logoInputId);
     console.log("Found Element:", logoInput);
     
-    // logoInput ကို .files မဟုတ်ဘဲ တခြားနည်းနဲ့ စစ်ကြည့်မယ်
-    if (!logoInput || logoInput.files.length === 0) {
-        console.error("Logo ဖိုင်ကို မတွေ့ပါ (သို့) ID မှားနေသည် -", logoInputId);
-        alert("Logo ဖိုင်ကို မတွေ့ပါ။ ပုံတင်ထားတာ သေချာပါစေ။");
+    // အကယ်၍ logoInput က null ဖြစ်နေရင် ID နာမည် အမှားရှိနိုင်တယ်
+    if (!logoInput) {
+        console.error("Logo Input ကို ရှာမတွေ့ပါ! ID မှားနေနိုင်သည်!");
+        alert("Logo Input ပျောက်ဆုံးနေသည်။");
         return;
     }
-    
-    if (!ssInput || ssInput.files.length === 0) {
-        console.error("Screenshot ဖိုင်ကို မတွေ့ပါ");
-        alert("Payment Screenshot တင်ထားတာ သေချာပါစေ။");
+
+    if (logoInput.files.length === 0) {
+        console.error("Logo ဖိုင်တင်မထားပါ");
+        alert("Logo တင်ပေးဖို့ မေ့နေတယ်ထင်တယ်ဗျ။");
         return;
     }
-    document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('waiting-msg').style.display = 'block';
 
     try {
