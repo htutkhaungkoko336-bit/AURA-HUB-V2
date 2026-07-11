@@ -1,4 +1,6 @@
-import { sendMessage } from './bot';
+// notify.js
+// အရေးကြီး: ./bot လို့မရေးဘဲ ./bot.js လို့ ရေးပေးရပါမယ်
+import { sendMessage } from './bot.js';
 
 export async function notify(type, data, registrationId) {
     let message = `<b>🔔 New ${type} Received</b>\n\n`;
@@ -45,20 +47,22 @@ export async function notify(type, data, registrationId) {
         ]
     };
 
-    // Group ID များ
+    // Group ID များ (Environment Variable များ အလုပ်လုပ်ကြောင်း သေချာစေပါ)
     const groupIds = {
         'REGISTRATION': process.env.TELEGRAM_REG_GROUP_ID,
         'REFUND': process.env.TELEGRAM_REFUND_GROUP_ID,
         'APPROVAL': process.env.TELEGRAM_APPROVER_GROUP_ID
     };
 
-    // Main Registration Group သို့ Message ပို့ခြင်း (Keyboard ပါဝင်သည်)
+    // Main Registration Group သို့ Message ပို့ခြင်း
     const targetChatId = groupIds[type];
     if (targetChatId) {
         await sendMessage(targetChatId, message, keyboard);
+    } else {
+        console.error(`Group ID not found for type: ${type}`);
     }
 
-    // Admin Alert (အရေးပေါ် Alert များအတွက် Keyboard မလိုပါ)
+    // Admin Alert
     const adminIds = process.env.ADMINS ? process.env.ADMINS.split(',') : [];
     for (const adminId of adminIds) {
         const adminMsg = `🚨 <b>Admin Alert:</b> ${data.mode} | ${matchFormat}\n<b>Name:</b> ${data.squadName || data.playerName}`;
