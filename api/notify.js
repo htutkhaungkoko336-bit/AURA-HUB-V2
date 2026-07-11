@@ -52,7 +52,7 @@ export async function notify(type, data) {
     };
 
     const targetChatId = groupIds[type];
-    if (targetChatId) await sendMessage(targetChatId, message);
+    if (targetChatId) await sendMessage(targetChatId, message, inlineKeyboard);
 
     // Admin Alert
     const adminIds = process.env.ADMINS ? process.env.ADMINS.split(',') : [];
