@@ -52,18 +52,3 @@ export async function notify(type, data) {
         await sendMessage(adminId, adminMsg);
     }
 }
-import { sendMessage } from './bot.js';
-
-export async function notify(type, data, registrationId) {
-    const message = `<b>🔔 New Registration</b>\n\nName: ${data.squadName || data.playerName}\n<b>Status:</b> Pending`;
-
-    const keyboard = {
-        inline_keyboard: [[
-            { text: "✅ Confirm", callback_data: `confirm_${registrationId}` },
-            { text: "❌ Reject", callback_data: `reject_${registrationId}` }
-        ]]
-    };
-
-    const targetChatId = process.env.TELEGRAM_REG_GROUP_ID;
-    await sendMessage(targetChatId, message, keyboard);
-}
