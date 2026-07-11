@@ -1,6 +1,6 @@
 import { sendMessage } from './bot';
 
-export async function notify(type, data) {
+export async function notify(type, data,regId) {
     let message = `<b>🔔 New ${type} Received</b>\n\n`;
 
     const entryFeeString = data.entryFee || "0"; 
@@ -34,6 +34,12 @@ export async function notify(type, data) {
                     `<b>🎨 Logo:</b> ${data.logo || 'N/A'}\n`;
         }    
         message += `\n\n<b>Status:</b> Pending`;
+        const reply_markup = {
+        inline_keyboard: [[
+            { text: '✅ Confirm', callback_data: `regConfirm_${regId}` },
+            { text: '❌ Reject', callback_data: `regReject_${regId}` }
+        ]]
+    };
         
     // ... ကျန်တဲ့ Group ID နဲ့ sendMessage အပိုင်းများ
     const groupIds = {
