@@ -48,20 +48,18 @@ export default async function handler(req, res) {
             dbData.kpayNo = data.kpayNo || null;
         }
 
-        // ၁။ Database ထဲသို့ သိမ်းဆည်းခြင်း
-        await db.collection('registrations').add(dbData);
+    const docRef = await db.collection('registrations').add(dbData);
 
-        // ၂။ docId ကို သိမ်းဆည်းခြင်း (အရေးကြီးဆုံးအဆင့်)
-        const docId = docRef.id;
-        await docRef.update({ docId: docId });
+    // ၂။ docId ကို သိမ်းဆည်းခြင်း (ဒီနေရာမှာ docRef ကို သုံးပါ)
+    const docId = docRef.id;
+    await docRef.update({ docId: docId });
 
-        // notify function သို့ docId အပါအဝင် ပေးပို့ခြင်း
-        const notifyData = { ...dbData, id: docId }; 
-        await notify('REGISTRATION', notifyData);
+    // notify function သို့ docId အပါအဝင် ပေးပို့ခြင်း
+    const notifyData = { ...dbData, id: docId }; 
+    await notify('REGISTRATION', notifyData);
 
-        res.status(200).json({ success: true, id: docId }); 
-        res.status(200).json({ success: true });
-        
+    // response ပေးတဲ့အခါ တစ်ခါပဲပေးပါ (၂ ခါမပေးရပါ)
+    res.status(200).json({ success: true, id: docId });
     } catch (error) {
         console.error("Registration Error:", error);
         res.status(500).json({ success: false, error: error.message });
