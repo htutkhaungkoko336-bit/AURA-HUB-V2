@@ -1,7 +1,7 @@
 // auth.js
 export async function performLogin(phoneNumber, deviceId) {
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('app/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone: phoneNumber, deviceId: deviceId })
