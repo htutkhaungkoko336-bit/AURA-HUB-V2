@@ -34,6 +34,15 @@ export async function notify(type, data) {
                     `<b>🎨 Logo:</b> ${data.logo || 'N/A'}\n`;
         }    
         message += `\n\n<b>Status:</b> Pending`;
+        // Confirm / Reject ခလုတ်များ တည်ဆောက်ခြင်း
+    const inlineKeyboard = {
+        inline_keyboard: [
+            [
+                { text: '✅ Confirm', callback_data: `confirm_${data.id}` },
+                { text: '❌ Reject', callback_data: `reject_${data.id}` }
+            ]
+        ]
+    };
         
     // ... ကျန်တဲ့ Group ID နဲ့ sendMessage အပိုင်းများ
     const groupIds = {
