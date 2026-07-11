@@ -46,12 +46,22 @@ export async function editMessageText(chatId, messageId, text) {
         body: JSON.stringify({ chat_id: chatId, message_id: messageId, text: text, parse_mode: 'HTML' })
     });
 }
-// bot.js ထဲတွင်
+// bot.js ၏ အပြင်ဘက်
 import { getFirestore, doc, updateDoc } from 'firebase-admin/firestore';
 const db = getFirestore();
 
-// ... handleTelegramCallback ထဲမှာ
-if (action === 'confirm') {
-    await updateDoc(doc(db, 'registrations', regId), { status: 'Confirmed' }); // Firebase update
-    await editMessageText(chatId, messageId, "✅ Confirmed"); // Telegram msg update
+// ဒီမှာ မင်းရဲ့ function အစစ်တွေကို ထည့်ပါ
+export async function handleTelegramCallback(callbackQuery) {
+    const data = callbackQuery.data; 
+    const [action, regId] = data.split('_');
+    const chatId = callbackQuery.message.chat.id;
+    const messageId = callbackQuery.message.message_id;
+
+    // အရေးကြီး: await ကို async function ထဲမှာပဲ သုံးပါ
+    if (action === 'confirm') {
+        await updateDoc(doc(db, 'registrations', regId), { status: 'Confirmed' }); 
+        await editMessageText(chatId, messageId, "✅ Confirmed"); 
+    } else if (action === 'reject') {
+        await editMessageText(chatId, messageId, "❌ Rejected");
+    }
 }
