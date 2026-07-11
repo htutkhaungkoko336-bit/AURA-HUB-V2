@@ -62,3 +62,12 @@ export default async function handler(req, res) {
         res.status(500).json({ success: false, error: error.message });
     }
 }
+export default async function handler(req, res) {
+    // ... data စုစည်းပုံများ
+    const docRef = await db.collection('registrations').add(dbData);
+    
+    // အရေးကြီး: docRef.id ကို ပို့ပေးမှ နောက်မှပြန်ခေါ်လို့ရမယ်
+    await notify('REGISTRATION', dbData, docRef.id); 
+
+    res.status(200).json({ success: true, id: docRef.id });
+}
