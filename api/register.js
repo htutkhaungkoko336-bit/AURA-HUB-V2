@@ -49,13 +49,12 @@ export default async function handler(req, res) {
         }
 
         // ၁။ Database ထဲသို့ သိမ်းဆည်းခြင်း
-        await db.collection('registrations').add(dbData);
-
+        const docRef = await db.collection('registrations').add(dbData);
         // ၂။ Telegram ကို အကြောင်းကြားခြင်း
         // notify function ကို data အပြည့်အစုံနဲ့ လှမ်းခေါ်လိုက်ပါ
-        await notify('REGISTRATION', dbData);
+        await notify('REGISTRATION', dbData, docRef.id);
 
-        res.status(200).json({ success: true });
+       res.status(200).json({ success: true, registrationId: docRef.id });
         
     } catch (error) {
         console.error("Registration Error:", error);
