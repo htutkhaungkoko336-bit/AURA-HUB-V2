@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebaseAdmin'; // Firebase Admin ကို import လုပ်ပါ
+import { db } from '../lib/firebaseAdmin'; // Firebase Admin ကို import လုပ်ပါ
 
 export async function POST(req) {
   const update = await req.json();
