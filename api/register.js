@@ -51,10 +51,15 @@ export default async function handler(req, res) {
         // ၁။ Database ထဲသို့ သိမ်းဆည်းခြင်း
         await db.collection('registrations').add(dbData);
 
-        // ၂။ Telegram ကို အကြောင်းကြားခြင်း
-        // notify function ကို data အပြည့်အစုံနဲ့ လှမ်းခေါ်လိုက်ပါ
-        await notify('REGISTRATION', dbData);
+        // ၂။ docId ကို သိမ်းဆည်းခြင်း (အရေးကြီးဆုံးအဆင့်)
+        const docId = docRef.id;
+        await docRef.update({ docId: docId });
 
+        // notify function သို့ docId အပါအဝင် ပေးပို့ခြင်း
+        const notifyData = { ...dbData, id: docId }; 
+        await notify('REGISTRATION', notifyData);
+
+        res.status(200).json({ success: true, id: docId }); 
         res.status(200).json({ success: true });
         
     } catch (error) {
