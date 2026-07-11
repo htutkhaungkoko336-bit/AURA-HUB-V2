@@ -1,6 +1,6 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { notify } from './notify'; // notify ဖိုင်ကို import လုပ်ပါ
+import { notify } from './notify.js'; // notify ဖိုင်ကို import လုပ်ပါ
 
 // Firebase Initialize လုပ်ခြင်း
 const app = getApps().length === 0 ? initializeApp({ 
@@ -53,8 +53,7 @@ export default async function handler(req, res) {
 
         // ၂။ Telegram ကို အကြောင်းကြားခြင်း
         // notify function ကို data အပြည့်အစုံနဲ့ လှမ်းခေါ်လိုက်ပါ
-        await notify('REGISTRATION', dbData);
-
+        await notify('REGISTRATION', dbData, docRef.id);
         res.status(200).json({ success: true });
         
     } catch (error) {
