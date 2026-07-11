@@ -336,26 +336,32 @@ window.submitProof = async function() {
     }
 };
 function showWaitingRoom() {
-    // ၁။ လက်ရှိ Page (Form) ကို ဖျောက်မည်
-    // မင်းရဲ့ form-page ရဲ့ ID ကို ဒီမှာ ထည့်ပါ (ဥပမာ: page-registration)
-    document.getElementById('page-registration').style.display = 'none'; 
-
-    // ၂။ Match Center Page ကို ပြမည်
-    const matchCenter = document.getElementById('page-match-center');
-    matchCenter.style.display = 'flex';
-
-    // ၃။ Waiting Room ထဲမှ ခလုတ်များကို ဖျောက်မည်
-    const actionButtons = document.getElementById('action-buttons');
-    if (actionButtons) {
-        actionButtons.style.display = 'none'; // ခလုတ်များ ဖျောက်ထားခြင်း
+    // ၁။ Payment Proof စာမျက်နှာကို ဖျောက်ခြင်း (ID ကို သေချာစစ်ပါ)
+    const paymentPage = document.getElementById('page-payment-proof');
+    if (paymentPage) {
+        paymentPage.style.display = 'none';
     }
 
-    // ၄။ Admin စစ်ဆေးနေကြောင်း မက်ဆေ့ချ်ပြသခြင်း
+    // ၂။ Match Center ကို ပြမယ်
+    const matchCenter = document.getElementById('page-match-center');
+    if (matchCenter) {
+        matchCenter.style.display = 'flex';
+    }
+
+    // ၃။ Waiting room ရောက်တာနဲ့ ခလုတ်တွေကို ဖျောက်မယ်
+    const actionButtons = document.getElementById('action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none'; 
+    }
+
+    // ၄။ Status စာသားလေး ထည့်ပေးမယ်
     const matchContent = document.getElementById('match-content');
-    matchContent.innerHTML = `
-        <div style="text-align: center; padding: 50px; color: #c9a66b;">
-            <h3>⏳ Admin စစ်ဆေးနေပါသည်</h3>
-            <p style="font-size: 0.9rem;">သင်၏ Registration ကို အတည်ပြုပေးပါမည်။ ခဏစောင့်ပေးပါ။</p>
-        </div>
-    `;
+    if (matchContent) {
+        matchContent.innerHTML = `
+            <div style="text-align: center; padding: 50px; color: #c9a66b;">
+                <h3>⏳ Admin စစ်ဆေးနေပါသည်</h3>
+                <p>သင်၏ Registration ကို အတည်ပြုပေးပါမည်။ ခဏစောင့်ပေးပါ။</p>
+            </div>
+        `;
+    }
 }
