@@ -279,7 +279,6 @@ window.submitProof = async function() {
     }
 
     document.getElementById('submit-btn').style.display = 'none';
-    document.getElementById('waiting-msg').style.display = 'block';
 
     try {
         const logoUrl = await uploadToBackend(logoInput.files[0]);
@@ -326,14 +325,37 @@ window.submitProof = async function() {
 
         const result = await response.json();
         if (result.success) {
-            alert("အောင်မြင်စွာ တင်ပို့ပြီးပါပြီ။");
-            window.location.reload();
+            // အောင်မြင်သွားရင် Waiting Room ကို ပြောင်းမယ်
+            showWaitingRoom();
         } else {
             throw new Error(result.error);
         }
     } catch (error) {
         alert("Error: " + error.message);
         document.getElementById('submit-btn').style.display = 'block';
-        document.getElementById('waiting-msg').style.display = 'none';
     }
 };
+function showWaitingRoom() {
+    // ၁။ လက်ရှိ Page (Form) ကို ဖျောက်မည်
+    // မင်းရဲ့ form-page ရဲ့ ID ကို ဒီမှာ ထည့်ပါ (ဥပမာ: page-registration)
+    document.getElementById('page-registration').style.display = 'none'; 
+
+    // ၂။ Match Center Page ကို ပြမည်
+    const matchCenter = document.getElementById('page-match-center');
+    matchCenter.style.display = 'flex';
+
+    // ၃။ Waiting Room ထဲမှ ခလုတ်များကို ဖျောက်မည်
+    const actionButtons = document.getElementById('action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'none'; // ခလုတ်များ ဖျောက်ထားခြင်း
+    }
+
+    // ၄။ Admin စစ်ဆေးနေကြောင်း မက်ဆေ့ချ်ပြသခြင်း
+    const matchContent = document.getElementById('match-content');
+    matchContent.innerHTML = `
+        <div style="text-align: center; padding: 50px; color: #c9a66b;">
+            <h3>⏳ Admin စစ်ဆေးနေပါသည်</h3>
+            <p style="font-size: 0.9rem;">သင်၏ Registration ကို အတည်ပြုပေးပါမည်။ ခဏစောင့်ပေးပါ။</p>
+        </div>
+    `;
+}
