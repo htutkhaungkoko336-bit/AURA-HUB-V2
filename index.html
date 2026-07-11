@@ -285,9 +285,9 @@
 <!-- 5. WAITING ROOM PAGE (အသစ်ထည့်မယ့် UI) -->
 <div id="page-match-center" class="sub-page" style="display: none; flex-direction: column; background: #000;">
     <div class="match-tabs" style="display: flex; justify-content: space-around; background: #111; padding: 12px; border-bottom: 1px solid #333;">
-        <button class="tab-btn active" onclick="switchTab('waiting', this)">Waiting</button>
-        <button class="tab-btn" onclick="switchTab('playing', this)">Playing</button>
-        <button class="tab-btn" onclick="switchTab('result', this)">Result</button>
+            <button class="tab-btn active" id="tab-waiting">Waiting</button>
+            <button class="tab-btn" id="tab-playing">Playing</button>
+            <button class="tab-btn" id="tab-result">Result</button>
     </div>
 
     <div id="match-content" style="flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 135px;">        </div>
@@ -387,5 +387,11 @@
         <button onclick="document.getElementById('match-detail-popup').style.display='none'" style="width: 100%; padding: 10px; background: #c9a66b; border: none; border-radius: 5px; font-weight: bold;">Close</button>
     </div>
 </div>
-<script type="module" src="script.js"></script>
+<script type="module">
+    import { switchTab } from './script.js';
+    
+    document.getElementById('tab-waiting').addEventListener('click', (e) => switchTab('waiting', e.target));
+    document.getElementById('tab-playing').addEventListener('click', (e) => switchTab('playing', e.target));
+    document.getElementById('tab-result').addEventListener('click', (e) => switchTab('result', e.target));
+</script>
 </html>
