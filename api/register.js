@@ -1,14 +1,11 @@
-import { initializeApp, cert, getApps, getApp } from 'firebase-admin/app';
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-// အမှားပြင်ရန်: ./notify မှ ./notify.js သို့ ပြောင်းပါ
-import { notify } from './notify.js'; 
+import { notify } from './notify'; // notify ဖိုင်ကို import လုပ်ပါ
 
-// Firebase Initialize လုပ်ခြင်း (ပိုမိုသေချာစေရန်)
-const firebaseConfig = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-
-const app = !getApps().length 
-    ? initializeApp({ credential: cert(firebaseConfig) }) 
-    : getApp();
+// Firebase Initialize လုပ်ခြင်း
+const app = getApps().length === 0 ? initializeApp({ 
+    credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) 
+}) : getApps()[0];
 
 const db = getFirestore(app);
 
@@ -41,7 +38,7 @@ export default async function handler(req, res) {
             dbData.player4 = data.player4 || null;
             dbData.player5 = data.player5 || null;
         } else if (data.mode === '1vs1') {
-            dbData.playerName = data.squadName || null; 
+            dbData.playerName = data.squadName || null; // 1vs1 အတွက်နာမည်
             dbData.mlbbId = data.mlbbId || null;
             dbData.heroName = data.heroName || null;
             dbData.entryFee = data.entryFee || null;
@@ -52,12 +49,13 @@ export default async function handler(req, res) {
         }
 
         // ၁။ Database ထဲသို့ သိမ်းဆည်းခြင်း
-        const docRef = await db.collection('registrations').add(dbData);
-        
-        // ၂။ Telegram ကို အကြောင်းကြားခြင်း
-        await notify('REGISTRATION', dbData, docRef.id);
+        await db.collection('registrations').add(dbData);
 
-        res.status(200).json({ success: true, registrationId: docRef.id });
+        // ၂။ Telegram ကို အကြောင်းကြားခြင်း
+        // notify function ကို data အပြည့်အစုံနဲ့ လှမ်းခေါ်လိုက်ပါ
+        await notify('REGISTRATION', dbData);
+
+        res.status(200).json({ success: true });
         
     } catch (error) {
         console.error("Registration Error:", error);
