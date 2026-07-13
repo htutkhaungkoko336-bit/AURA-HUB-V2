@@ -1,17 +1,15 @@
+// ၁။ လိုအပ်တာတွေကို Import လုပ်ပါ (Telegraf နဲ့ Firebase DB)
+const { Telegraf } = require('telegraf');
+// သင့် project မှာ firebase ကို ဘယ်လို import လုပ်ထားလဲ အဲ့အတိုင်း ပြန်သုံးပါ
+const { db } = require('./firebaseConfig'); // ဥပမာဖိုင်နာမည်
+
+// ၂။ Bot ကို Initialize လုပ်ပါ
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+
+// ၃။ သင့် sendMessage function
 export async function sendMessage(chatId, message, replyMarkup = null) {
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-
-    const body = {
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'HTML'
-    };
-
-    // အကယ်၍ replyMarkup ပါလာပါက body ထဲသို့ ထည့်ပေးခြင်း
-    if (replyMarkup) {
-        body.reply_markup = replyMarkup;
-    }
+    const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const body = { chat_id: chatId, text: message, parse_mode: 'HTML', reply_markup: replyMarkup };
 
     try {
         const response = await fetch(url, {
@@ -23,27 +21,22 @@ export async function sendMessage(chatId, message, replyMarkup = null) {
     } catch (error) {
         console.error("Telegram Bot Error:", error);
     }
-}     
-// Confirm ခလုတ်ကို နှိပ်လိုက်သည့်အခါ အလုပ်လုပ်ပါမည်
+}
+
+// ၄။ Bot Action များ (ယခင်အတိုင်း)
 bot.action(/confirm_(.+)/, async (ctx) => {
-    // ခလုတ်ထဲက ID (data.id) ကို ရယူခြင်း
     const docId = ctx.match[1]; 
-    
     try {
-        // Firebase Firestore ထဲက Data ကို ရှာပြီး update လုပ်ခြင်း
-        // သင့်ရဲ့ Collection နာမည်ကို 'registrations' ဟု ယူဆပါတယ်
-        await db.collection("registrations").doc(docId).update({
-            status: "confirm"
-        });
-
-        // User ကို Feedback ပြန်ပေးခြင်း (Button ကို အောင်မြင်ကြောင်း ပြောင်းပြခြင်း)
-        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Status:</b> Confirmed", {
-            parse_mode: 'HTML'
-        });
-
+        await db.collection("registrations").doc(docId).update({ status: "confirm" });
+        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Status:</b> Confirmed", { parse_mode: 'HTML' });
         ctx.answerCbQuery("အောင်မြင်စွာ အတည်ပြုလိုက်ပါပြီ။");
     } catch (error) {
         console.error("Error updating status: ", error);
         ctx.answerCbQuery("❌ Error: အတည်ပြု၍ မရပါ။");
     }
 });
+
+// ၅။ အရေးကြီးဆုံးအချက် - Vercel မှာ Webhook ကို အလုပ်လုပ်စေရန်
+// Vercel က serverless ဖြစ်လို့ bot.launch() မသုံးပါနဲ့။ 
+// bot ကို export လုပ်ပေးလိုက်ပါ။
+module.exports = bot;
