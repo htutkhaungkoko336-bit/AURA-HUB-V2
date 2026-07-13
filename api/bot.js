@@ -1,26 +1,25 @@
 const { Telegraf } = require('telegraf');
 const admin = require('firebase-admin');
 
-// ၁။ Bot ကို Initialize လုပ်ခြင်း
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
-// ၂။ Firebase ကို Initialize လုပ်ခြင်း
-let serviceAccount;
+// Firebase Initialize လုပ်ခြင်း
+let db;
 try {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+    if (!admin.apps || admin.apps.length === 0) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+    }
+    db = admin.firestore();
 } catch (e) {
-    console.error("Firebase Service Account JSON မှားနေပါသည်");
+    console.error("Firebase Initialize Error:", e);
 }
 
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
-}
-const db = admin.firestore();
-
-// ... (sendMessage function နှင့် bot.action များ ထားခဲ့ပါ) ...// ၃။ သင့် sendMessage function
-export async function sendMessage(chatId, message, replyMarkup = null) {
+// သင့် sendMessage function
+async function sendMessage(chatId, message, replyMarkup = null) {
     const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
     const body = { chat_id: chatId, text: message, parse_mode: 'HTML', reply_markup: replyMarkup };
 
@@ -36,7 +35,7 @@ export async function sendMessage(chatId, message, replyMarkup = null) {
     }
 }
 
-// ၄။ Bot Action များ (ယခင်အတိုင်း)
+// Bot Action များ
 bot.action(/confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1]; 
     try {
@@ -49,6 +48,7 @@ bot.action(/confirm_(.+)/, async (ctx) => {
     }
 });
 
+// Vercel Webhook Handler
 module.exports = async (req, res) => {
     try {
         await bot.handleUpdate(req.body, res);
