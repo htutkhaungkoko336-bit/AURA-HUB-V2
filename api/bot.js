@@ -18,20 +18,30 @@ const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
 // --- အဓိက အလုပ်လုပ်မယ့် Action ---
 bot.action(/confirm_(.+)/, async (ctx) => {
-    const docId = ctx.match[1].trim(); 
+    console.log("✅ Confirm button clicked");
+    console.log("Doc ID:", ctx.match[1]);
+
+    const docId = ctx.match[1].trim();
+
     try {
-        // Firebase Status ပြောင်းခြင်း
-        await db.collection("registrations").doc(docId).update({ status: "confirm" });
-        
-        // Telegram Message ပြင်ခြင်း
-        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Status:</b> Confirmed", { parse_mode: 'HTML' });
-        ctx.answerCbQuery("အောင်မြင်စွာ အတည်ပြုလိုက်ပါပြီ။");
-    } catch (error) {
-        console.error("Error updating status: ", error);
-        ctx.answerCbQuery("❌ Error: အတည်ပြု၍ မရပါ။");
+        await db.collection("registrations").doc(docId).update({
+            status: "confirm"
+        });
+
+        console.log("Firestore updated");
+
+        await ctx.editMessageText(
+            ctx.callbackQuery.message.text +
+            "\n\n✅ <b>Status:</b> Confirmed",
+            { parse_mode: "HTML" }
+        );
+
+        await ctx.answerCbQuery("Success");
+
+    } catch (err) {
+        console.error(err);
     }
 });
-
 // Vercel Serverless Handler
 module.exports = async (req, res) => {
     try {
