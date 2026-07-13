@@ -1,13 +1,15 @@
 const { Telegraf } = require('telegraf');
-const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 const admin = require('firebase-admin');
 
-// process.env.FIREBASE_SERVICE_ACCOUNT က string ဖြစ်နေရင် parse လုပ်ပေးရပါမယ်
+// ၁။ Bot ကို Initialize လုပ်ခြင်း
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+
+// ၂။ Firebase ကို Initialize လုပ်ခြင်း
 let serviceAccount;
 try {
     serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 } catch (e) {
-    console.error("FIREBASE_SERVICE_ACCOUNT format မှားနေပါသည်");
+    console.error("Firebase Service Account JSON မှားနေပါသည်");
 }
 
 if (!admin.apps.length) {
@@ -15,8 +17,9 @@ if (!admin.apps.length) {
         credential: admin.credential.cert(serviceAccount)
     });
 }
-const db = admin.firestore();// ... ကျန်တဲ့ bot setup တွေ ...
-// ၃။ သင့် sendMessage function
+const db = admin.firestore();
+
+// ... (sendMessage function နှင့် bot.action များ ထားခဲ့ပါ) ...// ၃။ သင့် sendMessage function
 export async function sendMessage(chatId, message, replyMarkup = null) {
     const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
     const body = { chat_id: chatId, text: message, parse_mode: 'HTML', reply_markup: replyMarkup };
@@ -51,6 +54,7 @@ module.exports = async (req, res) => {
         await bot.handleUpdate(req.body, res);
         return res.status(200).send('OK');
     } catch (err) {
+        console.error("Webhook Error:", err);
         return res.status(500).send('Error');
     }
 };
