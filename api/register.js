@@ -65,3 +65,12 @@ export default async function handler(req, res) {
         res.status(500).json({ success: false, error: error.message });
     }
 }
+module.exports = async (req, res) => {
+    try {
+        // သင့်ရဲ့ logic များ
+        res.status(200).json({ status: "success" });
+    } catch (error) {
+        // ဒါကို သေချာထည့်ပါ - JSON ပြန်ပို့ပေးမှ frontend က ဖတ်လို့ရမှာပါ
+        res.status(500).json({ error: "Server Error", details: error.message });
+    }
+};
