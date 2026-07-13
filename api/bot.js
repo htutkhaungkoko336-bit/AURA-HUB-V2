@@ -1,11 +1,16 @@
-// ၁။ လိုအပ်တာတွေကို Import လုပ်ပါ (Telegraf နဲ့ Firebase DB)
 const { Telegraf } = require('telegraf');
-// သင့် project မှာ firebase ကို ဘယ်လို import လုပ်ထားလဲ အဲ့အတိုင်း ပြန်သုံးပါ
-const { db } = require('./firebaseConfig'); // ဥပမာဖိုင်နာမည်
+const admin = require('firebase-admin');
 
-// ၂။ Bot ကို Initialize လုပ်ပါ
-const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+// Firebase ကို Initialize လုပ်ခြင်း (Service Account သုံးပြီး)
+if (!admin.apps.length) {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+}
+const db = admin.firestore();
 
+// ... ကျန်တဲ့ bot setup တွေ ...
 // ၃။ သင့် sendMessage function
 export async function sendMessage(chatId, message, replyMarkup = null) {
     const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
