@@ -61,16 +61,11 @@ export default async function handler(req, res) {
     // response ပေးတဲ့အခါ တစ်ခါပဲပေးပါ (၂ ခါမပေးရပါ)
     res.status(200).json({ success: true, id: docId });
     } catch (error) {
-        console.error("Registration Error:", error);
-        res.status(500).json({ success: false, error: error.message });
-    }
+    console.error("Registration Error:", error);
+    // အရေးကြီး: 500 error တက်ရင်လည်း JSON format နဲ့ပဲ ပြန်ပို့ပါ
+    return res.status(500).json({ 
+        success: false, 
+        message: "Registration မအောင်မြင်ပါ။ Error: " + error.message 
+    });
 }
-module.exports = async (req, res) => {
-    try {
-        // သင့်ရဲ့ logic များ
-        res.status(200).json({ status: "success" });
-    } catch (error) {
-        // ဒါကို သေချာထည့်ပါ - JSON ပြန်ပို့ပေးမှ frontend က ဖတ်လို့ရမှာပါ
-        res.status(500).json({ error: "Server Error", details: error.message });
-    }
-};
+}
