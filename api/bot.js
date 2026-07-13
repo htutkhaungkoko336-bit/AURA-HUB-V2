@@ -23,4 +23,4 @@ export async function sendMessage(chatId, message, replyMarkup = null) {
     } catch (error) {
         console.error("Telegram Bot Error:", error);
     }
-}
+}     
