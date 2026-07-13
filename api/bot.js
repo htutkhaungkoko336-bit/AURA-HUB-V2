@@ -1,26 +1,21 @@
-const { Telegraf } = require('telegraf');
-const admin = require('firebase-admin');
+const { Telegraf } = require("telegraf");
 
-// Firebase Initialize (အရင်က အောင်မြင်ခဲ့တဲ့ ပုံစံအတိုင်း)
-if (!admin.apps.length) {
-    try {
-        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-    } catch (e) {
-        console.error("Firebase Init Error:", e);
-    }
+const { initializeApp, cert, getApps } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
+
+// Firebase Initialize
+if (!getApps().length) {
+    initializeApp({
+        credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
+    });
 }
-const db = admin.firestore();
+
+const db = getFirestore();
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
-// --- အဓိက အလုပ်လုပ်မယ့် Action ---
+// Confirm Button
 bot.action(/confirm_(.+)/, async (ctx) => {
-    console.log("✅ Confirm button clicked");
-    console.log("Doc ID:", ctx.match[1]);
-
     const docId = ctx.match[1].trim();
 
     try {
@@ -28,28 +23,26 @@ bot.action(/confirm_(.+)/, async (ctx) => {
             status: "confirm"
         });
 
-        console.log("Firestore updated");
-
         await ctx.editMessageText(
             ctx.callbackQuery.message.text +
             "\n\n✅ <b>Status:</b> Confirmed",
             { parse_mode: "HTML" }
         );
 
-        await ctx.answerCbQuery("Success");
-
+        await ctx.answerCbQuery("Confirmed");
     } catch (err) {
         console.error(err);
+        await ctx.answerCbQuery("Error");
     }
 });
-// Vercel Serverless Handler
+
+// Webhook
 module.exports = async (req, res) => {
     try {
-        // Telegram ကလာတဲ့ update ကို bot ကိုပို့ပေးခြင်း
         await bot.handleUpdate(req.body);
-        return res.status(200).send('OK');
+        res.status(200).send("OK");
     } catch (err) {
-        console.error("Webhook Error:", err);
-        return res.status(500).send('Error');
+        console.error(err);
+        res.status(500).send("Error");
     }
 };
