@@ -1,16 +1,21 @@
 const { Telegraf } = require('telegraf');
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 const admin = require('firebase-admin');
 
-// Firebase ကို Initialize လုပ်ခြင်း (Service Account သုံးပြီး)
+// process.env.FIREBASE_SERVICE_ACCOUNT က string ဖြစ်နေရင် parse လုပ်ပေးရပါမယ်
+let serviceAccount;
+try {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} catch (e) {
+    console.error("FIREBASE_SERVICE_ACCOUNT format မှားနေပါသည်");
+}
+
 if (!admin.apps.length) {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
     });
 }
-const db = admin.firestore();
-
-// ... ကျန်တဲ့ bot setup တွေ ...
+const db = admin.firestore();// ... ကျန်တဲ့ bot setup တွေ ...
 // ၃။ သင့် sendMessage function
 export async function sendMessage(chatId, message, replyMarkup = null) {
     const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -41,7 +46,11 @@ bot.action(/confirm_(.+)/, async (ctx) => {
     }
 });
 
-// ၅။ အရေးကြီးဆုံးအချက် - Vercel မှာ Webhook ကို အလုပ်လုပ်စေရန်
-// Vercel က serverless ဖြစ်လို့ bot.launch() မသုံးပါနဲ့။ 
-// bot ကို export လုပ်ပေးလိုက်ပါ။
-module.exports = bot;
+module.exports = async (req, res) => {
+    try {
+        await bot.handleUpdate(req.body, res);
+        return res.status(200).send('OK');
+    } catch (err) {
+        return res.status(500).send('Error');
+    }
+};
