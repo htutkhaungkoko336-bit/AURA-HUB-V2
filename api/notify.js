@@ -1,7 +1,7 @@
-import { sendMessage } from './bot';
-
-export async function notify(type, data) {
-    let message = `<b>🔔 New ${type} Received</b>\n\n`;
+const { Telegraf } = require("telegraf");
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
+async function notify(type, data) {
+        let message = `<b>🔔 New ${type} Received</b>\n\n`;
 
     const entryFeeString = data.entryFee || "0"; 
     const fee = parseInt(entryFeeString.replace(/[^0-9]/g, '')) || 0;
@@ -52,12 +52,17 @@ export async function notify(type, data) {
     };
 
     const targetChatId = groupIds[type];
-    if (targetChatId) await sendMessage(targetChatId, message, inlineKeyboard);
-
-    // Admin Alert
-    const adminIds = process.env.ADMINS ? process.env.ADMINS.split(',') : [];
-    for (const adminId of adminIds) {
-        const adminMsg = `🚨 <b>Admin Alert:</b> ${data.mode} | ${matchFormat}\n<b>Name:</b> ${data.squadName || data.playerName}`;
-        await sendMessage(adminId, adminMsg);
+try {
+        // ဒီမှာတိုက်ရိုက် sendMessage လုပ်ပါ
+        if (targetChatId) {
+            await bot.telegram.sendMessage(targetChatId, message, {
+                parse_mode: "HTML",
+                reply_markup: inlineKeyboard
+            });
+        }
+    } catch (err) {
+        console.error("Telegram Send Error:", err);
     }
 }
+
+module.exports = { notify };
