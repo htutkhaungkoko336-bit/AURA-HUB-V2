@@ -165,7 +165,7 @@ export function enableButtons() {
 }
 
 // ၄။ Tab ပြောင်းပေးမည့် Function
-window.switchTab = function(tabName, element) {
+export function switchTab(tabName, element) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     element.classList.add('active');
 
