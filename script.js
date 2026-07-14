@@ -423,3 +423,32 @@ export function initTabs() {
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
 });
+// Confirm ဖြစ်မှ ခလုတ်ကို ပြန်ဖော်ပေးမယ့် Function
+export function enableButtons() {
+    const actionButtons = document.getElementById('action-buttons');
+    if (actionButtons) {
+        actionButtons.style.display = 'flex'; // ခလုတ်တွေကို ပြန်ဖော်မယ်
+    }
+    
+    // Status စာသားကိုလည်း အတည်ပြုကြောင်း ပြပေးမယ်
+    const matchContent = document.getElementById('match-content');
+    if (matchContent) {
+        matchContent.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #4caf50;">
+                <h2>✅ Registration Confirmed!</h2>
+                <p>သင်၏ပွဲစဉ်ကို Admin မှ အတည်ပြုပေးလိုက်ပါပြီ။</p>
+            </div>`;
+    }
+}
+// ဥပမာ - Polling လုပ်တဲ့ Function ထဲမှာ
+async function checkStatusFromServer() {
+    const response = await fetch('/api/check-status?id=' + localStorage.getItem('myDocId'));
+    const data = await response.json();
+
+    if (data.status === 'confirm') {
+        // Admin က အတည်ပြုလိုက်ပြီဆိုရင်
+        enableButtons(); 
+        // ပြီးရင် Polling ကို ရပ်ချင်ရင် ရပ်လို့ရပါတယ်
+        clearInterval(pollingInterval); 
+    }
+}
