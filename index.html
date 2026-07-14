@@ -389,9 +389,18 @@
 </div>
 <script type="module">
     import { switchTab } from './script.js';
-    
-    document.getElementById('tab-waiting').addEventListener('click', (e) => switchTab('waiting', e.target));
-    document.getElementById('tab-playing').addEventListener('click', (e) => switchTab('playing', e.target));
-    document.getElementById('tab-result').addEventListener('click', (e) => switchTab('result', e.target));
+    import { initTabs } from './ui.js'; // တကယ်လို့ initTabs က ui.js မှာဆိုရင်
+
+    // အားလုံး Load ပြီးမှသာ event listener တွေကို ချိတ်ပါ
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabWaiting = document.getElementById('tab-waiting');
+        if (tabWaiting) tabWaiting.addEventListener('click', (e) => switchTab('waiting', e.target));
+        
+        const tabPlaying = document.getElementById('tab-playing');
+        if (tabPlaying) tabPlaying.addEventListener('click', (e) => switchTab('playing', e.target));
+        
+        const tabResult = document.getElementById('tab-result');
+        if (tabResult) tabResult.addEventListener('click', (e) => switchTab('result', e.target));
+    });
 </script>
 </html>
