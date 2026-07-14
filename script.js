@@ -423,3 +423,9 @@ export function initTabs() {
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
 });
+
+import { startStatusPolling } from './ui.js';
+
+// Registration တင်ပြီးလို့ docId ရလာပြီဆိုရင်...
+const myDocId = "ရလာတဲ့_doc_id"; 
+startStatusPolling(myDocId);
