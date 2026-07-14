@@ -335,72 +335,19 @@ window.submitProof = async function() {
         document.getElementById('submit-btn').style.display = 'block';
     }
 };
-// ၁။ Registration တင်ပြီးရင် Waiting Room ကို ပြပေးမည့် Function
 window.showWaitingRoom = function() {
+    // ၁။ Payment Proof စာမျက်နှာကို ဖျောက်မယ်
     document.getElementById('page-payment-proof').style.display = 'none';
+    
+    // ၂။ Match Center ကို ပြမယ်
     const matchCenter = document.getElementById('page-match-center');
-    if (matchCenter) matchCenter.style.display = 'flex';
-
-    // ခလုတ်ဖျောက်မယ်
-    const actionButtons = document.getElementById('action-buttons');
-    if (actionButtons) actionButtons.style.display = 'none'; 
-
-    // စာသားပြမယ်
-    document.getElementById('match-content').innerHTML = `
-        <div style="text-align: center; padding: 50px; color: #c9a66b;">
-            <h2>⏳ Registration ကို Admin မှ စစ်ဆေးနေပါသည်။</h2>
-            <p>အတည်ပြုပြီးသည်နှင့် ခလုတ်များ အလိုအလျောက် ပေါ်လာပါမည်။</p>
-        </div>`;
-};
-
-// ၂။ Confirm ဖြစ်မှ ခလုတ်ကို ပြန်ဖော်ပေးမယ့် Function
-window.enableButtons = function() {
-    const actionButtons = document.getElementById('action-buttons');
-    if (actionButtons) actionButtons.style.display = 'flex';
-    
-    document.getElementById('match-content').innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #4caf50;">
-            <h2>✅ Registration Confirmed!</h2>
-            <p>သင်၏ပွဲစဉ်ကို Admin မှ အတည်ပြုပေးလိုက်ပါပြီ။</p>
-        </div>`;
-};
-
-// ၃။ Tab ပြောင်းပေးမည့် Function
-window.switchTab = function(tabName, element) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    element.classList.add('active');
-
-    const content = document.getElementById('match-content');
-    
-    switch(tabName) {
-        case 'waiting':
-            const savedStatus = localStorage.getItem('reg_status');
-            if (savedStatus === 'confirm') {
-                enableButtons();
-            } else {
-                content.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #c9a66b;">
-                        <h3>⏳ Admin စစ်ဆေးနေပါသည်</h3>
-                        <p>သင်၏ Registration ကို အတည်ပြုပေးပါမည်။ ခဏစောင့်ပေးပါ။</p>
-                    </div>`;
-            }
-            break;
-        case 'playing':
-            content.innerHTML = '<div style="color:#fff; padding:20px;"><h3>⚔️ Playing Room</h3><p>လက်ရှိ ပွဲစဉ်များ မရှိသေးပါ။</p></div>';
-            break;
-        case 'result':
-            content.innerHTML = '<div style="color:#fff; padding:20px;"><h3>🏆 Match Results</h3><p>ပြီးခဲ့သော ပွဲစဉ် ရလဒ်များ မရှိသေးပါ။</p></div>';
-            break;
+    if (matchCenter) {
+        matchCenter.style.display = 'flex';
     }
-};
 
-// ၄။ အစပိုင်း Initialize လုပ်ခြင်း
-document.addEventListener('DOMContentLoaded', () => {
-    // Tab ခလုတ်များအတွက် Event listener
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const name = btn.id.replace('tab-', '');
-            switchTab(name, btn);
-        });
-    });
-});
+    // ၃။ ခလုတ်တွေ (Action Buttons) ကို ဘာမှ မလုပ်ဘဲ အမြဲပေါ်နေစေမယ်
+    // ဒီမှာ display: none လုပ်တဲ့ code မပါတော့တဲ့အတွက် ပုံမှန်အတိုင်း ပေါ်နေပါမယ်
+    
+    // ၄။ Content ထဲမှာလည်း ဘာစာသားမှ မထည့်တော့ပါ
+    document.getElementById('match-content').innerHTML = ''; 
+};
