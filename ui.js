@@ -193,7 +193,6 @@ window.switchTab = function(tabName, element) {
     }
 }
 
-// ၅။ Initialization
 export function initTabs() {
     const tabs = [
         { id: 'tab-waiting', name: 'waiting' },
@@ -208,3 +207,8 @@ export function initTabs() {
         }
     });
 }
+
+// App စတင်သောအခါ
+document.addEventListener('DOMContentLoaded', () => {
+    initTabs();
+});
