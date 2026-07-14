@@ -372,18 +372,22 @@ export function switchTab(tabName, element) {
 
     const content = document.getElementById('match-content');
 
-    // Tab တစ်ခုချင်းစီအလိုက် Content ပြောင်းခြင်း
     switch(tabName) {
-        case 'waiting':
-            // Waiting Room အခြေအနေ (Admin စစ်ဆေးနေသည်)
-            content.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #c9a66b;">
-                    <h3>⏳ Admin စစ်ဆေးနေပါသည်</h3>
-                    <p>သင်၏ Registration ကို အတည်ပြုပေးပါမည်။ ခဏစောင့်ပေးပါ။</p>
-                </div>`;
-            // ခလုတ်ဖျောက်ထားရန် လိုအပ်လျှင် ဒီမှာ ထပ်ဖြည့်ပါ
-            break;
-            
+            case 'waiting':
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #c9a66b;">
+                        <h3>⏳ Admin စစ်ဆေးနေပါသည်</h3>
+                        <p>သင်၏ Registration ကို အတည်ပြုပေးပါမည်။ ခဏစောင့်ပေးပါ။</p>
+                    </div>`;
+                
+                // --- ဒီမှာ ခလုတ်ကို ပြန်စစ်ပါ ---
+                // បើ status က confirm ဖြစ်ရင် ခလုတ်ပြန်ပြမယ်
+                const savedStatus = localStorage.getItem('reg_status');
+                if (savedStatus === 'confirm') {
+                    enableButtons(); // Confirm ဖြစ်ရင် ခလုတ်ပြန်ပေါ်မယ်
+                }
+                break;
+                            
         case 'playing':
             content.innerHTML = `
                 <div style="color: #fff; padding: 20px;">
