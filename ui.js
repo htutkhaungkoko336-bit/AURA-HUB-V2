@@ -96,22 +96,3 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
-async function checkStatusFromServer(docId) {
-    try {
-        const response = await fetch(`/api/check-status?id=${docId}`);
-        
-        // Response က OK ဖြစ်မှသာ JSON အဖြစ် ဖတ်ပါ
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const result = await response.json();
-
-        if (result.status === "confirm") {
-            enableButtons();
-            return true;
-        }
-    } catch (err) {
-        // Console မှာ စာသားများစွာ မပြစေရန် တိတ်တိတ်လေးထားပါ
-        console.log("Checking...", err.message);
-    }
-    return false;
-}
