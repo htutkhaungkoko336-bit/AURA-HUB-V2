@@ -1,6 +1,5 @@
 const admin = require('firebase-admin');
 
-// Firebase Initialize (အသေချာဆုံးနည်း)
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
@@ -9,8 +8,13 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 module.exports = async (req, res) => {
+    // ပုံမှန်အားဖြင့် JSON သာ ပြန်ပို့ပါမည်
+    res.setHeader('Content-Type', 'application/json');
+
     const docId = req.query.id;
-    if (!docId) return res.status(400).json({ status: "error", message: "Missing ID" });
+    if (!docId) {
+        return res.status(400).json({ status: "error", message: "Missing ID" });
+    }
 
     try {
         const doc = await db.collection("registrations").doc(docId).get();
@@ -20,7 +24,7 @@ module.exports = async (req, res) => {
         }
         return res.status(200).json({ status: "pending" });
     } catch (err) {
-        console.error("Status Check Error:", err);
-        return res.status(500).json({ status: "error", message: err.message });
+        // Error တက်လျှင်လည်း status: "pending" သို့မဟုတ် error ဟု ပို့ပေးပါ (Crash မဖြစ်စေရ)
+        return res.status(200).json({ status: "pending", error: "Database unreachable" });
     }
 };

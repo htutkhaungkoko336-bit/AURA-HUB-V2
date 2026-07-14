@@ -96,31 +96,13 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
-
-
-// ခလုတ်တွေ ပြန်ပေါ်စေမည့် function (သင်ကိုယ်တိုင် ပြင်ဆင်ထားတာရှိရင် ဒီအတိုင်းထားပါ)
-export function enableButtons() {
-    const actionButtons = document.getElementById('action-buttons');
-    if (actionButtons) actionButtons.style.display = 'flex';
-    
-    const quitBtn = document.getElementById('btn-quit');
-    if (quitBtn) quitBtn.style.display = 'block';
-
-    const matchContent = document.getElementById('match-content');
-    if (matchContent) {
-        matchContent.innerHTML = `
-            <div style="text-align: center; padding: 20px; color: #4caf50;">
-                <h2>✅ Registration Confirmed!</h2>
-                <p>သင်၏ပွဲစဉ်ကို Admin မှ အတည်ပြုပေးလိုက်ပါပြီ။</p>
-            </div>
-        `;
-    }
-}
-
-// Status စစ်မည့် function
 async function checkStatusFromServer(docId) {
     try {
         const response = await fetch(`/api/check-status?id=${docId}`);
+        
+        // Response က OK ဖြစ်မှသာ JSON အဖြစ် ဖတ်ပါ
+        if (!response.ok) throw new Error('Network response was not ok');
+        
         const result = await response.json();
 
         if (result.status === "confirm") {
@@ -128,18 +110,8 @@ async function checkStatusFromServer(docId) {
             return true;
         }
     } catch (err) {
-        console.error("Checking status error:", err);
+        // Console မှာ စာသားများစွာ မပြစေရန် တိတ်တိတ်လေးထားပါ
+        console.log("Checking...", err.message);
     }
     return false;
-}
-
-// Polling စတင်မည့် function (အခြားဖိုင်ကနေ ခေါ်သုံးလို့ရအောင် export လုပ်ထားပါ)
-export function startStatusPolling(docId) {
-    const timer = setInterval(async () => {
-        const confirmed = await checkStatusFromServer(docId);
-        if (confirmed) {
-            clearInterval(timer);
-            console.log("Status confirmed, polling stopped.");
-        }
-    }, 5000); // ၅ စက္ကန့်တစ်ခါ စစ်မယ်
 }
