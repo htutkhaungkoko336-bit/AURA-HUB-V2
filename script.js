@@ -2,7 +2,9 @@ import { performLogin } from './auth.js'
 import { 
     showDashboard, 
     setupWelcomeModal, 
+    initGuideSwiper, 
     openGuide, 
+    toggleGuide, 
     showRoomSelect,
 } from './ui.js';
 
