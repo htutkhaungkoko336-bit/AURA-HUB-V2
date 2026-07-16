@@ -80,3 +80,7 @@ function updateUI() {
         sideB.innerHTML = players;
     }
 }
+
+document.getElementById('my-enter-btn').addEventListener('click', () => {
+    goToRooms();
+});
