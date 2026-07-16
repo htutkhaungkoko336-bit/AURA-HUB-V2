@@ -96,7 +96,7 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
-// main-dashboard ကနေ waiting room ကို သွားတဲ့ function gotoroom ကို ui မှာ export လုပ်ပြီး script.js မှာ import လုပ်ထားပါတယ် window.goToRooms = goToRooms;
+// main-dashboard ကနေ waiting room ကို သွားမယ် But Room btn ကို ပြထားမယ် create new room နဲ့ quit btn ပါတဲ့ div ကိုဖျောက်ထားတယ်
 export function goToRooms() {
     // ၁။ လက်ရှိ main-dashboard ကို ဖျောက်ရန်
     document.getElementById('main-dashboard').style.display = 'none';
@@ -118,3 +118,23 @@ export function goToRooms() {
     }
 }
 // main-dashboard ကနေ waiting room ကို သွားတဲ့ function
+export function buyNewRoom() {
+    const page5vs5 = document.getElementById('page-5vs5');
+    const page1vs1 = document.getElementById('page-1vs1');
+    const matchCenter = document.getElementById('page-match-center');
+
+    // ၁။ ဘယ် Mode ဖြစ်နေလဲဆိုတာကို အသုံးပြုသူရဲ့ interface အပေါ်မူတည်ပြီး ခန့်မှန်းမယ်
+    // (သို့မဟုတ် သင် carousel မှာ သိမ်းထားတဲ့ variable ကို သုံးနိုင်ပါတယ်)
+    const mode = window.currentMode || '5vs5'; // Fallback အနေနဲ့ 5vs5 ထားလိုက်ပါ
+
+    // ၂။ Match Center ကို ဖျောက်မယ်
+    matchCenter.style.display = 'none';
+
+    // ၃။ Mode ပေါ်မူတည်ပြီး Page ဖွင့်မယ်
+    if (mode === '5vs5') {
+        page5vs5.style.display = 'block';
+    } else {
+        page1vs1.style.display = 'block';
+    }
+}
+window.buyNewRoom = buyNewRoom;
