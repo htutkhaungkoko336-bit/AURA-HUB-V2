@@ -301,13 +301,46 @@
     right: 0; 
     z-index: 1000;     /* တခြား elements တွေအပေါ်မှာ ပေါ်စေရန် */
 ">
-    <div id="buy-room-container" style="display: flex; gap: 10px; margin-top: 10px;">
+<div id="buy-room-container" style="display: flex; justify-content: center; padding: 10px 0; margin-top: 10px;">
     <button id="buy-room-btn" onclick="buyNewRoom()" 
-            style="flex: 1; border: none; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; 
-                   background: linear-gradient(90deg, #c9a66b, #e6c896); color: #000; font-weight: bold; letter-spacing: 1px;">
-        BUY ROOM 💎
+            style="
+                /* ခလုတ် အရွယ်အစား */
+                width: 180px; /* အကျယ် */
+                height: 50px; /* အမြင့် */
+                
+                /* ခလုတ် ပုံစံ */
+                border: none; 
+                border-radius: 25px; /* လုံးဝန်းသော ဘေးသား */
+                cursor: pointer; 
+                
+                /* အနက်နှင့်ရွှေ ပေါင်းစပ်ထားသော Background နှင့် Border */
+                background: #000; /* အနက်ရောင်အခြေခံ */
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* အောက်ခြေအရိပ် */
+                
+                /* အနားသတ်အတွက် နှစ်ထပ် Border */
+                border: 2px solid transparent;
+                background-clip: padding-box, border-box;
+                background-origin: padding-box, border-box;
+                /* ရွှေရောင် အနားသတ်အတွက် Gradient */
+                background-image: linear-gradient(#000, #000), linear-gradient(45deg, #c9a66b, #fff3d4, #c9a66b);
+                
+                /* စာသား ပုံစံ */
+                color: #c9a66b; /* ရွှေရောင်စာသား */
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* ဖောင့် */
+                font-size: 1rem; 
+                font-weight: 700; 
+                letter-spacing: 1.5px; 
+                text-transform: uppercase;
+                
+                /* Transition */
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.7)'; this.style.background='linear-gradient(45deg, #c9a66b, #e6c896)'; this.style.color='#000';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.5)'; this.style.background='#000'; this.style.backgroundClip='padding-box, border-box'; this.style.backgroundImage='linear-gradient(#000, #000), linear-gradient(45deg, #c9a66b, #fff3d4, #c9a66b)'; this.style.color='#c9a66b';"
+    >
+        BUY ROOM 🗝️
     </button>
-    </div>
+</div>    </div>
     <div id="action-buttons" style="display: flex; gap: 10px;">
         <div class="create-room-card" onclick="createNewRoom()" 
             style="flex: 1; border: 1px solid #c9a66b; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; background: rgba(201,166,107,0.05);">
