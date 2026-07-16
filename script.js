@@ -213,3 +213,77 @@ function showWaitingRoom() {
     const matchCenter = document.getElementById('page-match-center');
     if (matchCenter) matchCenter.style.display = 'flex';
 }
+
+
+// --- Logo Preview Logic (5vs5) ---
+window.previewLogo = function(event) {
+    const file = event.target.files[0];
+    const output = document.getElementById('logoPreview');
+    const label = document.getElementById('logoLabel');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            output.src = e.target.result;
+            output.style.display = 'block';
+            if (label) label.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// --- Logo Preview Logic (1vs1) ---
+window.previewLogo1vs1 = function(event) {
+    const file = event.target.files[0];
+    const output = document.getElementById('logoPreview1vs1');
+    const label = document.getElementById('logoLabel1vs1');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            output.src = e.target.result;
+            output.style.display = 'block';
+            if (label) label.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// --- Screenshot Preview Logic (Common) ---
+window.previewScreenshot = function(event) {
+    const file = event.target.files[0];
+    const img = document.getElementById('ssPreview');
+    const placeholder = document.getElementById('ss-placeholder');
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            img.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+document.addEventListener('DOMContentLoaded', function() {
+    // 5vs5 Logo click (ပုံကိုနှိပ်ရင် ပြန်ရွေးလို့ရအောင်)
+    const logoPreview = document.getElementById('logoPreview');
+    if (logoPreview) {
+        logoPreview.addEventListener('click', function() {
+            document.getElementById('sqLogo').click();
+        });
+    }
+
+    // 1vs1 Logo click
+    const logoPreview1vs1 = document.getElementById('logoPreview1vs1');
+    if (logoPreview1vs1) {
+        logoPreview1vs1.addEventListener('click', function() {
+            document.getElementById('sqLogo1vs1').click();
+        });
+    }
+
+    // Screenshot click
+    const ssPreview = document.getElementById('ssPreview');
+    if (ssPreview) {
+        ssPreview.addEventListener('click', function() {
+            document.getElementById('ssFile-proof').click();
+        });
+    }
+});
