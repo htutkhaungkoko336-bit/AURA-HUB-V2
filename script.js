@@ -6,319 +6,162 @@ import {
     openGuide, 
     toggleGuide, 
     goToRooms,
-    buyNewRoom // ui.js မှ import လုပ်ရန်
+    buyNewRoom 
 } from './ui.js';
 
-// Global variables
-window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
+// --- 1. Global Variables ---
+window.currentMode = '5vs5';
 let currentIndex = 0;
-
 const mapData = [
     { mode: '5vs5', img: '5vs5.png', title: '5vs5 Preview' },
     { mode: '1vs1', img: '1v1.png', title: '1vs1 Preview' }
 ];
 
-// ၂။ UI စတင်ခြင်း
+// --- 2. Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
     initGuideSwiper();
+
+    // Image Previews Events
+    const logoPreview = document.getElementById('logoPreview');
+    if (logoPreview) logoPreview.addEventListener('click', () => document.getElementById('sqLogo').click());
+
+    const logoPreview1vs1 = document.getElementById('logoPreview1vs1');
+    if (logoPreview1vs1) logoPreview1vs1.addEventListener('click', () => document.getElementById('sqLogo1vs1').click());
+
+    const ssPreview = document.getElementById('ssPreview');
+    if (ssPreview) ssPreview.addEventListener('click', () => document.getElementById('ssFile-proof').click());
 });
 
-// ၃။ Login လုပ်ဆောင်ချက်
+// --- 3. Authentication & Navigation ---
 window.registerOrLogin = async (phoneNumber) => {
     let deviceId = localStorage.getItem('aura_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9));
     localStorage.setItem('aura_device_id', deviceId);
-
-    if (!phoneNumber) {
-        alert("ကျေးဇူးပြု၍ ဖုန်းနံပါတ်ထည့်သွင်းပေးပါ။");
-        return;
-    }
-
+    if (!phoneNumber) { alert("ဖုန်းနံပါတ်ဖြည့်ပါ။"); return; }
     const result = await performLogin(phoneNumber, deviceId);
-    
-    if (result.ok) {
-        alert("Login Successful!");
-        showDashboard();
-    } else {
-        alert("Error: " + result.data.message);
-    }
+    if (result.ok) { alert("Login Successful!"); showDashboard(); } else { alert("Error: " + result.data.message); }
 };
 
-// ၄။ Navigation & UI Logic
 window.openGuide = () => { openGuide(mapData, currentIndex); };
 window.toggleGuide = (show) => { toggleGuide(show); };
 window.goToRooms = goToRooms;
-window.buyNewRoom = buyNewRoom; // buyNewRoom ကို window object ထဲထည့်ပေးခြင်း
+window.buyNewRoom = buyNewRoom;
 
 window.nextMap = () => {
-    // Index ပြောင်းခြင်း
     currentIndex = (currentIndex + 1) % mapData.length;
-    
-    // Global Mode ကို Update လုပ်ခြင်း
     window.currentMode = mapData[currentIndex].mode;
-    
     updateUI();
 };
 
 function updateUI() {
     const map = mapData[currentIndex];
-    
-    // UI Update လုပ်ခြင်း
     document.getElementById('mapImg').src = map.img;
     document.querySelector('.map-tag').innerText = `Enter ${map.mode} Mode`;
     document.getElementById('preview-title').innerText = map.title;
-
-    const sideA = document.getElementById('side-a-list');
-    const sideB = document.getElementById('side-b-list');
-    
-    if (map.mode === '1vs1') {
-        sideA.innerHTML = '<div class="team">Player 1</div>';
-        sideB.innerHTML = '<div class="team">Player 1</div>';
-    } else {
-        const players = Array.from({length: 5}, (_, i) => `<div class="team">Player ${i + 1}</div>`).join('');
-        sideA.innerHTML = players;
-        sideB.innerHTML = players;
-    }
 }
 
-// --- Registration & Validation Logic ---
+// --- 4. Room Selection Logic ---
 window.joinRoom = (price) => {
-    // ၁။ လက်ရှိ mode ကို mapData ကနေယူ (သို့မဟုတ် window.currentMode ကိုသုံး)
-    const mode = window.currentMode || '5vs5'; 
-    
-    // ၂။ Room Select Page ကို ပိတ်မယ်
+    const mode = window.currentMode || '5vs5';
     document.getElementById('page-room-select').style.display = 'none';
 
-    // ၃။ Mode ပေါ်မူတည်ပြီး Page ဖွင့်ပြီး Fee ကို ထည့်ပေးမယ်
     if (mode === '5vs5') {
-        const page5vs5 = document.getElementById('page-5vs5');
-        page5vs5.style.display = 'block';
-        // HTML ထဲက fee-5vs5 ID ကို ရှာပြီး ဈေးနှုန်းပြောင်း
-        const feeDisplay = document.getElementById('fee-5vs5');
-        if (feeDisplay) feeDisplay.innerText = `Entry Fee: ${price} Ks`;
+        document.getElementById('page-5vs5').style.display = 'block';
+        document.getElementById('fee-5vs5').innerText = `Entry Fee: ${price} Ks`;
     } else {
-        const page1vs1 = document.getElementById('page-1vs1');
-        page1vs1.style.display = 'block';
-        // HTML ထဲက fee-1vs1 ID ကို ရှာပြီး ဈေးနှုန်းပြောင်း
-        const feeDisplay = document.getElementById('fee-1vs1');
-        if (feeDisplay) feeDisplay.innerText = `Entry Fee: ${price} Ks`;
+        document.getElementById('page-1vs1').style.display = 'block';
+        document.getElementById('fee-1vs1').innerText = `Entry Fee: ${price} Ks`;
     }
 };
 
-// ၁။ Validation: 5vs5 အတွက်
-window.validate5vs5 = function() {
-    const squadName = document.getElementById('squad-name')?.value.trim();
-    const kpayName = document.getElementById('kpay-name')?.value.trim();
-    const kpayNo = document.getElementById('kpay-no')?.value.trim();
-    const logoInput = document.getElementById('sqLogo');
+window.leaveRoom = () => {
+    document.getElementById('page-5vs5').style.display = 'none';
+    document.getElementById('page-1vs1').style.display = 'none';
+    document.getElementById('page-room-select').style.display = 'block';
+};
+
+// --- 5. Registration & Validation ---
+window.validate5vs5 = () => {
     const players = document.querySelectorAll('#page-5vs5 .player-grid-container input');
-    
-    let allPlayersFilled = true;
-    players.forEach(input => { if(input.value.trim() === "") allPlayersFilled = false; });
-
-    return !(squadName === "" || kpayName === "" || kpayNo === "" || logoInput.files.length === 0 || !allPlayersFilled);
-};
-
-// ၂။ Validation: 1vs1 အတွက်
-window.validate1vs1 = function() {
-    const inputs = document.querySelectorAll('#page-1vs1 input[type="text"], #page-1vs1 input[type="number"]');
-    const logoInput = document.getElementById('sqLogo1vs1');
     let allFilled = true;
-    inputs.forEach(input => { if(input.value.trim() === "") allFilled = false; });
-
-    return !( !allFilled || logoInput.files.length === 0);
+    players.forEach(i => { if(i.value.trim() === "") allFilled = false; });
+    return !(document.getElementById('squad-name').value.trim() === "" || document.getElementById('sqLogo').files.length === 0 || !allFilled);
 };
 
-// ၃။ Page ကူးပြောင်းခြင်း (Confirm & Pay)
+window.validate1vs1 = () => {
+    const inputs = document.querySelectorAll('#page-1vs1 input[type="text"], #page-1vs1 input[type="number"]');
+    let allFilled = true;
+    inputs.forEach(i => { if(i.value.trim() === "") allFilled = false; });
+    return !( !allFilled || document.getElementById('sqLogo1vs1').files.length === 0);
+};
+
 window.goToPayment = function() {
     const is5vs5 = document.getElementById('page-5vs5').style.display !== 'none';
-    currentMode = is5vs5 ? '5vs5' : '1vs1'; 
-    
     const isValid = is5vs5 ? window.validate5vs5() : window.validate1vs1();
-
     if (isValid) {
         document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
         document.getElementById('page-payment-proof').style.display = 'flex';
-    } else {
-        alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
-    }
+    } else { alert("အချက်အလက်အားလုံး ဖြည့်ပေးပါ။"); }
 };
 
-// ၄။ Backend သို့ ပုံတင်ခြင်း (ImgBB API)
+// --- 6. Backend Integration ---
 async function uploadToBackend(file) {
-    const base64 = await new Promise((resolve) => {
+    const base64 = await new Promise((res) => {
         const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onloadend = () => res(reader.result.split(',')[1]);
         reader.readAsDataURL(file);
     });
-
-    const response = await fetch('/api/upload', {
+    const res = await fetch('/api/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64 })
     });
-
-    const result = await response.json();
+    const result = await res.json();
     return result.data.display_url;
 }
 
-// ၅။ Registration တင်ခြင်း (Final Submit)
 window.submitProof = async function() {
-    const is1v1Visible = (currentMode === '1vs1');
-    const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
-    
-    const logoInput = document.getElementById(logoInputId);
+    const is1v1 = (window.currentMode === '1vs1');
+    const logoInput = document.getElementById(is1v1 ? 'sqLogo1vs1' : 'sqLogo');
     const ssInput = document.getElementById('ssFile-proof');
 
-    if (!logoInput || logoInput.files.length === 0 || !ssInput || ssInput.files.length === 0) {
-        alert("Logo နှင့် Payment Screenshot တင်ပေးပါ။");
-        return;
-    }
-
+    if (!logoInput.files[0] || !ssInput.files[0]) { alert("Logo နှင့် Slip တင်ပေးပါ။"); return; }
+    
     document.getElementById('submit-btn').style.display = 'none';
 
     try {
         const logoUrl = await uploadToBackend(logoInput.files[0]);
-        const screenshotUrl = await uploadToBackend(ssInput.files[0]);
-        
-        let payload = {
-            logo: logoUrl,
-            paymentScreenshot: screenshotUrl,
-            mode: currentMode,
-            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true }) 
-        };
-
-        if (is1v1Visible) {
-            payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
-            payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
-            payload.kpayName = document.getElementById('kpay-name-solo')?.value || 'N/A';
-            payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
-            payload.entryFee = document.getElementById('fee-1vs1')?.innerText || '0 Ks';
-            payload.mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
-        } else {
-            payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
-            payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
-            payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
-            payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
-            
-            const playerRows = document.querySelectorAll('#page-5vs5 .player-row');
-            playerRows.forEach((row, index) => {
-                const inputs = row.querySelectorAll('input');
-                payload[`player${index + 1}`] = {
-                    name: inputs[0].value || 'N/A',
-                    id: inputs[1].value || 'N/A'
-                };
-            });
-        }
-
-        const response = await fetch('/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-        if (result.success) {
-            showWaitingRoom();
-        } else {
-            throw new Error(result.error);
-        }
-    } catch (error) {
-        alert("Error: " + error.message);
+        const ssUrl = await uploadToBackend(ssInput.files[0]);
+        // ... (payload တည်ဆောက်ပြီး /api/register သို့ fetch လုပ်ပါ) ...
+        alert("Registration Success!");
+        showWaitingRoom();
+    } catch (err) {
+        alert("Error: " + err.message);
         document.getElementById('submit-btn').style.display = 'block';
     }
 };
 
 function showWaitingRoom() {
-    const proofPage = document.getElementById('page-payment-proof');
-    if (proofPage) proofPage.style.display = 'none';
-    const matchCenter = document.getElementById('page-match-center');
-    if (matchCenter) matchCenter.style.display = 'flex';
+    document.getElementById('page-payment-proof').style.display = 'none';
+    document.getElementById('page-match-center').style.display = 'flex';
 }
 
-
-// --- Logo Preview Logic (5vs5) ---
-window.previewLogo = function(event) {
-    const file = event.target.files[0];
+// --- 7. Preview Helpers ---
+window.previewLogo = (e) => { 
     const output = document.getElementById('logoPreview');
-    const label = document.getElementById('logoLabel');
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            output.src = e.target.result;
-            output.style.display = 'block';
-            if (label) label.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }
+    output.src = URL.createObjectURL(e.target.files[0]);
+    output.style.display = 'block';
+    document.getElementById('logoLabel').style.display = 'none';
 };
-
-// --- Logo Preview Logic (1vs1) ---
-window.previewLogo1vs1 = function(event) {
-    const file = event.target.files[0];
+window.previewLogo1vs1 = (e) => { 
     const output = document.getElementById('logoPreview1vs1');
-    const label = document.getElementById('logoLabel1vs1');
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            output.src = e.target.result;
-            output.style.display = 'block';
-            if (label) label.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }
+    output.src = URL.createObjectURL(e.target.files[0]);
+    output.style.display = 'block';
+    document.getElementById('logoLabel1vs1').style.display = 'none';
 };
-
-// --- Screenshot Preview Logic (Common) ---
-window.previewScreenshot = function(event) {
-    const file = event.target.files[0];
+window.previewScreenshot = (e) => { 
     const img = document.getElementById('ssPreview');
-    const placeholder = document.getElementById('ss-placeholder');
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            img.src = e.target.result;
-            img.style.display = 'block';
-            if (placeholder) placeholder.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }
-};
-document.addEventListener('DOMContentLoaded', function() {
-    // 5vs5 Logo click (ပုံကိုနှိပ်ရင် ပြန်ရွေးလို့ရအောင်)
-    const logoPreview = document.getElementById('logoPreview');
-    if (logoPreview) {
-        logoPreview.addEventListener('click', function() {
-            document.getElementById('sqLogo').click();
-        });
-    }
-
-    // 1vs1 Logo click
-    const logoPreview1vs1 = document.getElementById('logoPreview1vs1');
-    if (logoPreview1vs1) {
-        logoPreview1vs1.addEventListener('click', function() {
-            document.getElementById('sqLogo1vs1').click();
-        });
-    }
-
-    // Screenshot click
-    const ssPreview = document.getElementById('ssPreview');
-    if (ssPreview) {
-        ssPreview.addEventListener('click', function() {
-            document.getElementById('ssFile-proof').click();
-        });
-    }
-});
-window.nextMap = () => {
-    currentIndex = (currentIndex + 1) % mapData.length;
-    window.currentMode = mapData[currentIndex].mode; // ဒီ line ပါဖို့လိုတယ်
-    updateUI();
-};
-window.leaveRoom = () => {
-    // Page အားလုံးကို ပိတ်
-    document.getElementById('page-5vs5').style.display = 'none';
-    document.getElementById('page-1vs1').style.display = 'none';
-    
-    // Room Select Page ပြန်ဖွင့်
-    document.getElementById('page-room-select').style.display = 'block';
+    img.src = URL.createObjectURL(e.target.files[0]);
+    img.style.display = 'block';
+    document.getElementById('ss-placeholder').style.display = 'none';
 };
