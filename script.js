@@ -6,6 +6,7 @@ import {
     openGuide, 
     toggleGuide, 
     showRoomSelect,
+    goToRooms,
 } from './ui.js';
 
 let currentMode = '5vs5'; // Default အနေနဲ့ 5vs5 ကို ပေးထားပါ

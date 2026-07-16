@@ -96,7 +96,7 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
-function goToRooms() {
+export function goToRooms() {
     // ၁။ လက်ရှိ main-dashboard ကို ဖျောက်ရန်
     document.getElementById('main-dashboard').style.display = 'none';
 
