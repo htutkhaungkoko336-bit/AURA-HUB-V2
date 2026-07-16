@@ -96,12 +96,25 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
-// ui.js ဖိုင်
+// main-dashboard ကနေ waiting room ကို သွားတဲ့ function gotoroom ကို ui မှာ export လုပ်ပြီး script.js မှာ import လုပ်ထားပါတယ် window.goToRooms = goToRooms;
 export function goToRooms() {
     // ၁။ လက်ရှိ main-dashboard ကို ဖျောက်ရန်
     document.getElementById('main-dashboard').style.display = 'none';
 
     // ၂။ ခေါ်ချင်တဲ့ page-match-center ကို ပြသရန်
     const matchCenter = document.getElementById('page-match-center');
-    matchCenter.style.display = 'flex'; 
+    matchCenter.style.display = 'flex';
+
+    // ၃။ Action Buttons ကို ဖျောက်ပြီး Buy Room Container ကို ပြရန်
+    const actionBtns = document.getElementById('action-buttons');
+    const buyRoomContainer = document.getElementById('buy-room-container');
+
+    if (actionBtns) {
+        actionBtns.style.display = 'none'; // Action Buttons ဖျောက်မည်
+    }
+    
+    if (buyRoomContainer) {
+        buyRoomContainer.style.display = 'flex'; // Buy Room Container ပြမည်
+    }
 }
+// main-dashboard ကနေ waiting room ကို သွားတဲ့ function
