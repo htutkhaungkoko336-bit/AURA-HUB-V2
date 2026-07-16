@@ -80,4 +80,4 @@ function updateUI() {
         sideB.innerHTML = players;
     }
 }
-
+window.goToRooms = goToRooms;

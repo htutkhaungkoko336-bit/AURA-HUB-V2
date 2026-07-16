@@ -96,16 +96,12 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
+// ui.js ဖိုင်
 export function goToRooms() {
     // ၁။ လက်ရှိ main-dashboard ကို ဖျောက်ရန်
-    document.getElementById('my-enter-btn').addEventListener('click', () => {
-    goToRooms();
-});
-
     document.getElementById('main-dashboard').style.display = 'none';
-
 
     // ၂။ ခေါ်ချင်တဲ့ page-match-center ကို ပြသရန်
     const matchCenter = document.getElementById('page-match-center');
-    matchCenter.style.display = 'flex'; // သင့် HTML ထဲက flex-direction: column အတွက် flex သုံးပေးပါ
+    matchCenter.style.display = 'flex'; 
 }
