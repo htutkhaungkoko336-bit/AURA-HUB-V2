@@ -98,7 +98,12 @@ export function toggleGuide(show = false) {
 }
 export function goToRooms() {
     // ၁။ လက်ရှိ main-dashboard ကို ဖျောက်ရန်
+    document.getElementById('my-enter-btn').addEventListener('click', () => {
+    goToRooms();
+});
+
     document.getElementById('main-dashboard').style.display = 'none';
+
 
     // ၂။ ခေါ်ချင်တဲ့ page-match-center ကို ပြသရန်
     const matchCenter = document.getElementById('page-match-center');

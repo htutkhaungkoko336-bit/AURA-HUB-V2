@@ -81,6 +81,3 @@ function updateUI() {
     }
 }
 
-document.getElementById('my-enter-btn').addEventListener('click', () => {
-    goToRooms();
-});
