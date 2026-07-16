@@ -117,7 +117,7 @@ export function goToRooms() {
         buyRoomContainer.style.display = 'flex'; // Buy Room Container ပြမည်
     }
 }
-// main-dashboard ကနေ waiting room ကို သွားတဲ့ function
+//buy room btn ကိုနှိပ်လိုက်ရင် mode အလိုက် registration page ကို ဖွင့်တဲ့ function
 export function buyNewRoom() {
     const page5vs5 = document.getElementById('page-5vs5');
     const page1vs1 = document.getElementById('page-1vs1');

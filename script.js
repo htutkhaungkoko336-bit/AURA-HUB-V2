@@ -80,3 +80,136 @@ function updateUI() {
         sideB.innerHTML = players;
     }
 }
+
+// --- Registration & Validation Logic ---
+
+// ၁။ Validation: 5vs5 အတွက်
+window.validate5vs5 = function() {
+    const squadName = document.getElementById('squad-name')?.value.trim();
+    const kpayName = document.getElementById('kpay-name')?.value.trim();
+    const kpayNo = document.getElementById('kpay-no')?.value.trim();
+    const logoInput = document.getElementById('sqLogo');
+    const players = document.querySelectorAll('#page-5vs5 .player-grid-container input');
+    
+    let allPlayersFilled = true;
+    players.forEach(input => { if(input.value.trim() === "") allPlayersFilled = false; });
+
+    return !(squadName === "" || kpayName === "" || kpayNo === "" || logoInput.files.length === 0 || !allPlayersFilled);
+};
+
+// ၂။ Validation: 1vs1 အတွက်
+window.validate1vs1 = function() {
+    const inputs = document.querySelectorAll('#page-1vs1 input[type="text"], #page-1vs1 input[type="number"]');
+    const logoInput = document.getElementById('sqLogo1vs1');
+    let allFilled = true;
+    inputs.forEach(input => { if(input.value.trim() === "") allFilled = false; });
+
+    return !( !allFilled || logoInput.files.length === 0);
+};
+
+// ၃။ Page ကူးပြောင်းခြင်း (Confirm & Pay)
+window.goToPayment = function() {
+    const is5vs5 = document.getElementById('page-5vs5').style.display !== 'none';
+    currentMode = is5vs5 ? '5vs5' : '1vs1'; 
+    
+    const isValid = is5vs5 ? window.validate5vs5() : window.validate1vs1();
+
+    if (isValid) {
+        document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
+        document.getElementById('page-payment-proof').style.display = 'flex';
+    } else {
+        alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
+    }
+};
+
+// ၄။ Backend သို့ ပုံတင်ခြင်း (ImgBB API)
+async function uploadToBackend(file) {
+    const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(file);
+    });
+
+    const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64 })
+    });
+
+    const result = await response.json();
+    return result.data.display_url;
+}
+
+// ၅။ Registration တင်ခြင်း (Final Submit)
+window.submitProof = async function() {
+    const is1v1Visible = (currentMode === '1vs1');
+    const logoInputId = is1v1Visible ? 'sqLogo1vs1' : 'sqLogo';
+    
+    const logoInput = document.getElementById(logoInputId);
+    const ssInput = document.getElementById('ssFile-proof');
+
+    if (!logoInput || logoInput.files.length === 0 || !ssInput || ssInput.files.length === 0) {
+        alert("Logo နှင့် Payment Screenshot တင်ပေးပါ။");
+        return;
+    }
+
+    document.getElementById('submit-btn').style.display = 'none';
+
+    try {
+        const logoUrl = await uploadToBackend(logoInput.files[0]);
+        const screenshotUrl = await uploadToBackend(ssInput.files[0]);
+        
+        let payload = {
+            logo: logoUrl,
+            paymentScreenshot: screenshotUrl,
+            mode: currentMode,
+            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true }) 
+        };
+
+        if (is1v1Visible) {
+            payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
+            payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
+            payload.kpayName = document.getElementById('kpay-name-solo')?.value || 'N/A';
+            payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
+            payload.entryFee = document.getElementById('fee-1vs1')?.innerText || '0 Ks';
+            payload.mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
+        } else {
+            payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
+            payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
+            payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
+            payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
+            
+            const playerRows = document.querySelectorAll('#page-5vs5 .player-row');
+            playerRows.forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                payload[`player${index + 1}`] = {
+                    name: inputs[0].value || 'N/A',
+                    id: inputs[1].value || 'N/A'
+                };
+            });
+        }
+
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            showWaitingRoom();
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        alert("Error: " + error.message);
+        document.getElementById('submit-btn').style.display = 'block';
+    }
+};
+
+function showWaitingRoom() {
+    const proofPage = document.getElementById('page-payment-proof');
+    if (proofPage) proofPage.style.display = 'none';
+    const matchCenter = document.getElementById('page-match-center');
+    if (matchCenter) matchCenter.style.display = 'flex';
+}
