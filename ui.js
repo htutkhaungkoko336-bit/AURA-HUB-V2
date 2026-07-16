@@ -96,3 +96,11 @@ export function openGuide(mapData, currentIndex) {
 export function toggleGuide(show = false) {
     document.getElementById("user-guide-overlay").style.display = show ? "flex" : "none";
 }
+function goToRooms() {
+    // ၁။ လက်ရှိ main-dashboard ကို ဖျောက်ရန်
+    document.getElementById('main-dashboard').style.display = 'none';
+
+    // ၂။ ခေါ်ချင်တဲ့ page-match-center ကို ပြသရန်
+    const matchCenter = document.getElementById('page-match-center');
+    matchCenter.style.display = 'flex'; // သင့် HTML ထဲက flex-direction: column အတွက် flex သုံးပေးပါ
+}
