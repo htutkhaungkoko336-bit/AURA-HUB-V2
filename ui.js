@@ -119,22 +119,21 @@ export function goToRooms() {
 }
 //buy room btn ကိုနှိပ်လိုက်ရင် mode အလိုက် registration page ကို ဖွင့်တဲ့ function
 export function buyNewRoom() {
-    const page5vs5 = document.getElementById('page-5vs5');
-    const page1vs1 = document.getElementById('page-1vs1');
     const matchCenter = document.getElementById('page-match-center');
+    const roomSelectPage = document.getElementById('page-room-select');
 
-    // ၁။ ဘယ် Mode ဖြစ်နေလဲဆိုတာကို အသုံးပြုသူရဲ့ interface အပေါ်မူတည်ပြီး ခန့်မှန်းမယ်
-    // (သို့မဟုတ် သင် carousel မှာ သိမ်းထားတဲ့ variable ကို သုံးနိုင်ပါတယ်)
-    const mode = window.currentMode || '5vs5'; // Fallback အနေနဲ့ 5vs5 ထားလိုက်ပါ
+    // ၁။ Match Center ကို ဖျောက်မယ်
+    if (matchCenter) matchCenter.style.display = 'none';
 
-    // ၂။ Match Center ကို ဖျောက်မယ်
-    matchCenter.style.display = 'none';
-
-    // ၃။ Mode ပေါ်မူတည်ပြီး Page ဖွင့်မယ်
-    if (mode === '5vs5') {
-        page5vs5.style.display = 'block';
-    } else {
-        page1vs1.style.display = 'block';
+    // ၂။ Room Select Page ကို ပြမယ်
+    if (roomSelectPage) {
+        roomSelectPage.style.display = 'block';
+        
+        // Mode ခေါင်းစဉ်ကိုလည်း အလိုလိုပြောင်းပေးမယ်
+        const modeTitle = document.getElementById('selected-mode-title');
+        if (modeTitle) {
+            modeTitle.innerText = `${window.currentMode.toUpperCase()} ROOM SELECT`;
+        }
     }
 }
 window.buyNewRoom = buyNewRoom;
