@@ -80,7 +80,6 @@ function updateUI() {
         sideB.innerHTML = players;
     }
 }
-
 // --- Registration & Validation Logic ---
 window.joinRoom = (price) => {
     // ၁။ လက်ရှိ mode ကို mapData ကနေယူ (သို့မဟုတ် window.currentMode ကိုသုံး)
@@ -104,7 +103,6 @@ window.joinRoom = (price) => {
         if (feeDisplay) feeDisplay.innerText = `Entry Fee: ${price} Ks`;
     }
 };
-
 // ၁။ Validation: 5vs5 အတွက်
 window.validate5vs5 = function() {
     const squadName = document.getElementById('squad-name')?.value.trim();
@@ -118,7 +116,6 @@ window.validate5vs5 = function() {
 
     return !(squadName === "" || kpayName === "" || kpayNo === "" || logoInput.files.length === 0 || !allPlayersFilled);
 };
-
 // ၂။ Validation: 1vs1 အတွက်
 window.validate1vs1 = function() {
     const inputs = document.querySelectorAll('#page-1vs1 input[type="text"], #page-1vs1 input[type="number"]');
@@ -128,7 +125,6 @@ window.validate1vs1 = function() {
 
     return !( !allFilled || logoInput.files.length === 0);
 };
-
 // ၃။ Page ကူးပြောင်းခြင်း (Confirm & Pay)
 window.goToPayment = function() {
     const is5vs5 = document.getElementById('page-5vs5').style.display !== 'none';
@@ -143,7 +139,6 @@ window.goToPayment = function() {
         alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
     }
 };
-
 // ၄။ Backend သို့ ပုံတင်ခြင်း (ImgBB API)
 async function uploadToBackend(file) {
     const base64 = await new Promise((resolve) => {
@@ -161,7 +156,6 @@ async function uploadToBackend(file) {
     const result = await response.json();
     return result.data.display_url;
 }
-
 // ၅။ Registration တင်ခြင်း (Final Submit)
 window.submitProof = async function() {
     const is1v1Visible = (currentMode === '1vs1');
@@ -228,15 +222,12 @@ window.submitProof = async function() {
         document.getElementById('submit-btn').style.display = 'block';
     }
 };
-
 function showWaitingRoom() {
     const proofPage = document.getElementById('page-payment-proof');
     if (proofPage) proofPage.style.display = 'none';
     const matchCenter = document.getElementById('page-match-center');
     if (matchCenter) matchCenter.style.display = 'flex';
 }
-
-
 // --- Logo Preview Logic (5vs5) ---
 window.previewLogo = function(event) {
     const file = event.target.files[0];
@@ -252,7 +243,6 @@ window.previewLogo = function(event) {
         reader.readAsDataURL(file);
     }
 };
-
 // --- Logo Preview Logic (1vs1) ---
 window.previewLogo1vs1 = function(event) {
     const file = event.target.files[0];
