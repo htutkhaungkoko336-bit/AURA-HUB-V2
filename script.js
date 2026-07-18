@@ -374,7 +374,8 @@ async function updateBuyButtonStatus() {
     if (!docId || !buyBtn) return;
 
     try {
-        const response = await fetch(`/api/check-status?deviceId=${docId}`);
+// သင့် script.js ထဲမှာ ဒီလိုပြင်ကြည့်ပါ
+        const response = await fetch('/api/check-status?deviceId=' + docId);
         if (!response.ok) return;
         
         const data = await response.json();
