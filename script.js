@@ -372,35 +372,42 @@ async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
     
-    if (!deviceId || !buyBtn) return;
+    // Log ထုတ်ကြည့်ပါ (ဒါမှ function အလုပ်လုပ်/မလုပ် သိရမယ်)
+    console.log("Checking status for deviceId:", deviceId);
+
+    if (!deviceId || !buyBtn) {
+        console.log("deviceId သို့မဟုတ် buyBtn မတွေ့ရှိပါ");
+        return;
+    }
 
     try {
-        // ဒီနေရာမှာ ?deviceId= ဆိုပြီး ပြင်ရေးထားပါတယ်
         const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
-        
+        console.log("API Response Status:", response.status); // API ခေါ်မိသလား သိရအောင်
+
         if (response.status === 404) {
-            console.log("Database ထဲမှာ Data မရှိသေးပါ (Register စောင့်ဆိုင်းနေသည်)");
+            console.log("Database ထဲမှာ Data မရှိပါ");
             return; 
         }
 
         const data = await response.json();
-        
+        console.log("API Data:", data); // ရလာတဲ့ data ကို ကြည့်မယ်
+
         if (data.status === 'reject') {
             buyBtn.innerText = "REPAIR / ပြန်ပြင်ရန်"; 
             buyBtn.style.backgroundColor = "#ff4d4d";
-            buyBtn.onclick = () => {
-                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
-            };
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
             buyBtn.style.backgroundColor = "#28a745";
-            buyBtn.style.pointerEvents = "none";
         } else if (data.status === 'pending') {
             buyBtn.innerText = "PENDING...";
             buyBtn.style.backgroundColor = "#ffa500";
-            buyBtn.style.pointerEvents = "none";
         }
     } catch (e) {
         console.error("Status check failed:", e);
     }
 }
+
+// ဒီနေရာမှာ အရေးကြီးပါတယ် - Page စဖွင့်တာနဲ့ ဒီ function ကို ခေါ်ပေးရပါမယ်
+document.addEventListener('DOMContentLoaded', () => {
+    updateBuyButtonStatus();
+});
