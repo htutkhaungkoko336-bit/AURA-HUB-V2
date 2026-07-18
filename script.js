@@ -368,6 +368,9 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
+// အပေါ်မှာ Global variable တစ်ခု ထားပါ
+let lastStatus = ''; 
+
 async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
@@ -381,13 +384,18 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // Status အရ UI ပြောင်းခြင်း
+        // Status အသစ်မှသာ Update လုပ်ပါ
+        if (data.status === lastStatus) return;
+        lastStatus = data.status;
+        
         if (data.status === 'reject') {
             buyBtn.innerText = "RESUBMIT"; 
             buyBtn.style.backgroundColor = "#c92424";
+            buyBtn.style.pointerEvents = "auto"; // နှိပ်လို့ရအောင် ပြန်ဖွင့်ပေးပါ
+            
+            // Alert ကို ဒီနေရာမှာ တစ်ခါပဲ တက်အောင်လုပ်မယ်
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
-                // ဒီနေရာမှာ Resubmit ပြန်လုပ်ဖို့ Page ပြန်ပြပေးနိုင်ပါတယ်
             };
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
@@ -396,17 +404,9 @@ async function updateBuyButtonStatus() {
         } else if (data.status === 'pending') {
             buyBtn.innerText = "PENDING...";
             buyBtn.style.backgroundColor = "#ffa500";
+            buyBtn.style.pointerEvents = "none";
         }
     } catch (e) {
         console.error("Status check failed:", e);
     }
 }
-
-// Real-time ဖြစ်အောင် ဒီလိုထည့်ပါ
-document.addEventListener('DOMContentLoaded', () => {
-    // ပထမဆုံးအကြိမ် တစ်ခါခေါ်မယ်
-    updateBuyButtonStatus();
-
-    // ၅ စက္ကန့်တိုင်း တစ်ခါ ပြန်စစ်မယ်
-    setInterval(updateBuyButtonStatus, 2000); 
-});
