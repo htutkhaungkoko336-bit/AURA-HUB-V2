@@ -366,3 +366,20 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
+// ဥပမာ - User ဝင်လာရင် status စစ်တဲ့ function
+async function checkRegistrationStatus() {
+    // Firebase မှ သက်ဆိုင်ရာ user ရဲ့ status ကို ခေါ်ယူပါ (Backend API ကနေတစ်ဆင့်)
+    const response = await fetch(`/api/check-status?deviceId=${localStorage.getItem('aura_device_id')}`);
+    const data = await response.json();
+    
+    const buyBtn = document.getElementById('buy-room-btn');
+    
+    if (data.status === 'reject') {
+        buyBtn.innerText = `REJECTED: ${data.rejectReason}`; // အကြောင်းရင်းကို ခလုတ်မှာ ပြပေးမယ်
+        buyBtn.style.backgroundColor = "#ff4d4d"; // အနီရောင်ပြောင်းမယ်
+        buyBtn.style.pointerEvents = "auto"; // ပြန်ပြင်ဖို့ ခွင့်ပြုမယ်ဆိုရင်
+    } else if (data.status === 'confirm') {
+        buyBtn.innerText = "CONFIRMED ✅";
+        buyBtn.style.backgroundColor = "#28a745";
+    }
+}
