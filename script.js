@@ -340,3 +340,17 @@ window.goBack = () => {
     // (အခုမှ index ပြန်စစ်စရာမလိုဘဲ updateUI() က လက်ရှိ currentIndex အတိုင်း ပြပေးပါလိမ့်မယ်)
     updateUI(); 
 };
+window.backToRegistration = () => {
+    // ၁။ Payment Proof Page ကို ပိတ်မယ်
+    const paymentPage = document.getElementById('page-payment-proof');
+    if (paymentPage) paymentPage.style.display = 'none';
+
+    // ၂။ လက်ရှိ mode ပေါ်မူတည်ပြီး သက်ဆိုင်ရာ page ကို ပြန်ပြမယ်
+    if (window.currentMode === '5vs5') {
+        const page5vs5 = document.getElementById('page-5vs5');
+        if (page5vs5) page5vs5.style.display = 'block';
+    } else if (window.currentMode === '1vs1') {
+        const page1vs1 = document.getElementById('page-1vs1');
+        if (page1vs1) page1vs1.style.display = 'block';
+    }
+};
