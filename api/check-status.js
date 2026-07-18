@@ -10,35 +10,35 @@ if (!getApps().length) {
 }
 const db = getFirestore();
 
+// api/check-status.js ကို ဒီအတိုင်း ပြင်ရေးပါ
 module.exports = async (req, res) => {
-    const docId = req.query.deviceId;
+    const deviceId = req.query.deviceId; // URL ကလာတဲ့ parameter
     
-    // Log 1: docId ရ/မရ စစ်ပါ
-    console.log("Checking status for docId:", docId);
-
-    if (!docId) {
-        return res.status(400).json({ error: "Missing docId" });
+    if (!deviceId) {
+        return res.status(400).json({ error: "Missing deviceId" });
     }
 
     try {
-        const docRef = db.collection("registrations").doc(docId);
-        const doc = await docRef.get();
+        // ID နဲ့ တိုက်ရိုက်မရှာဘဲ Field ကို filter လုပ်ပြီး ရှာပါ
+        const snapshot = await db.collection("registrations")
+                                 .where("deviceId", "==", deviceId)
+                                 .get();
 
-        // Log 2: Firebase က data တွေ့/မတွေ့ စစ်ပါ
-        if (!doc.exists) {
-            console.log("Document does not exist for:", docId);
+        if (snapshot.empty) {
+            console.log("ဒီ deviceId နဲ့ ဘာမှမတွေ့ဘူး:", deviceId);
             return res.status(404).json({ status: "not_found" });
         }
 
+        // နောက်ဆုံး Register လုပ်ထားတဲ့ Data ကို ယူမယ်
+        const doc = snapshot.docs[0];
         const data = doc.data();
-        console.log("Data found:", data); // Log 3: အချက်အလက်များ
         
         return res.status(200).json({
             status: data.status,
             rejectReason: data.rejectReason || null
         });
     } catch (err) {
-        console.error("Firebase Error:", err); // Log 4: Error ဘာလဲဆိုတာကြည့်ပါ
-        return res.status(500).json({ error: "Server Error", details: err.message });
+        console.error("Firebase Error:", err);
+        return res.status(500).json({ error: "Server Error" });
     }
 };
