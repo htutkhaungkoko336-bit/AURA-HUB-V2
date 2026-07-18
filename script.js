@@ -366,20 +366,39 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
-// ဥပမာ - User ဝင်လာရင် status စစ်တဲ့ function
-async function checkRegistrationStatus() {
-    // Firebase မှ သက်ဆိုင်ရာ user ရဲ့ status ကို ခေါ်ယူပါ (Backend API ကနေတစ်ဆင့်)
-    const response = await fetch(`/api/check-status?deviceId=${localStorage.getItem('aura_device_id')}`);
-    const data = await response.json();
-    
-    const buyBtn = document.getElementById('buy-room-btn');
-    
-    if (data.status === 'reject') {
-        buyBtn.innerText = `REJECTED: ${data.rejectReason}`; // အကြောင်းရင်းကို ခလုတ်မှာ ပြပေးမယ်
-        buyBtn.style.backgroundColor = "#ff4d4d"; // အနီရောင်ပြောင်းမယ်
-        buyBtn.style.pointerEvents = "auto"; // ပြန်ပြင်ဖို့ ခွင့်ပြုမယ်ဆိုရင်
-    } else if (data.status === 'confirm') {
-        buyBtn.innerText = "CONFIRMED ✅";
-        buyBtn.style.backgroundColor = "#28a745";
+// Status စစ်ဆေးပြီး ခလုတ်စာသားပြောင်းခြင်း
+async function updateBuyButtonStatus() {
+    const deviceId = localStorage.getItem('aura_device_id');
+    if (!deviceId) return;
+
+    try {
+        const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
+        const data = await response.json();
+        
+        const buyBtn = document.getElementById('buy-room-btn');
+        if (!buyBtn) return;
+
+        if (data.status === 'reject') {
+            buyBtn.innerText = `REJECTED: ${data.rejectReason}`;
+            buyBtn.style.backgroundColor = "#ff4d4d"; // အနီရောင်
+            buyBtn.style.color = "#fff";
+            buyBtn.style.pointerEvents = "auto"; // ပြန်နှိပ်လို့ရအောင်
+        } else if (data.status === 'confirm') {
+            buyBtn.innerText = "CONFIRMED ✅";
+            buyBtn.style.backgroundColor = "#28a745"; // အစိမ်းရောင်
+            buyBtn.style.pointerEvents = "none";
+        } else if (data.status === 'pending') {
+            buyBtn.innerText = "PENDING...";
+            buyBtn.style.pointerEvents = "none";
+        }
+    } catch (e) {
+        console.error("Status check failed", e);
     }
 }
+
+// Page စဖွင့်တာနဲ့ Status စစ်မယ်
+document.addEventListener('DOMContentLoaded', () => {
+    setupWelcomeModal();
+    initGuideSwiper();
+    updateBuyButtonStatus(); // <--- ဒီနေရာမှာ ခေါ်ပါ
+});
