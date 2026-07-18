@@ -313,16 +313,30 @@ window.leaveRoom = () => {
     // Room Select Page ပြန်ဖွင့်
     document.getElementById('page-room-select').style.display = 'block';
 };
-window.backToRoomSelect = () => {
-    // ၁။ Match Center (Waiting Room) ကို ဖျောက်မယ်
-    const matchCenter = document.getElementById('page-match-center');
-    if (matchCenter) matchCenter.style.display = 'none';
+window.goBack = () => {
+    // ၁။ ဖွင့်ထားတဲ့ Sub-pages တွေကို အကုန်ဖျောက်မယ်
+    const pages = [
+        'page-5vs5', 
+        'page-1vs1', 
+        'page-payment-proof', 
+        'page-match-center',
+        'page-room-select'
+    ];
+    
+    pages.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
 
-    // ၂။ Room Select Page ကို ပြန်ပြမယ်
-    const roomSelect = document.getElementById('page-room-select');
-    if (roomSelect) roomSelect.style.display = 'block';
-
-    // ၃။ (Optional) Dashboard ကို ဖျောက်ထားကြောင်း သေချာစေရန်
+    // ၂။ Main Dashboard ကို ပြန်ပြမယ်
     const mainDashboard = document.getElementById('main-dashboard');
-    if (mainDashboard) mainDashboard.style.display = 'none';
+    if (mainDashboard) {
+        mainDashboard.style.display = 'block'; // block ပြန်လုပ်ပေးပါ
+        mainDashboard.style.opacity = '1';     // opacity ပြန်တက်မယ်
+        mainDashboard.style.pointerEvents = 'auto'; // နှိပ်လို့ရအောင် ပြန်လုပ်မယ်
+    }
+
+    // ၃။ အရေးကြီးချက် - လက်ရှိ Mode အလိုက် UI ကို Update လုပ်ပေးမယ်
+    // (အခုမှ index ပြန်စစ်စရာမလိုဘဲ updateUI() က လက်ရှိ currentIndex အတိုင်း ပြပေးပါလိမ့်မယ်)
+    updateUI(); 
 };
