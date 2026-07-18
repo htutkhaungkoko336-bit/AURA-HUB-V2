@@ -170,7 +170,9 @@ window.submitProof = async function() {
         return;
     }
 
-    document.getElementById('submit-btn').style.display = 'none';
+    // Submit ခလုတ်ကို ပိတ်ထားမယ်
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) submitBtn.style.display = 'none';
 
     try {
         const logoUrl = await uploadToBackend(logoInput.files[0]);
@@ -213,14 +215,24 @@ window.submitProof = async function() {
         });
 
         const result = await response.json();
+        
         if (result.success) {
+            // Register အောင်မြင်တဲ့အခါ Buy Room ခလုတ်ကို PENDING ပြောင်းမယ်
+            const buyBtn = document.getElementById('buy-room-btn');
+            if (buyBtn) {
+                buyBtn.innerText = "PENDING..."; 
+                buyBtn.style.pointerEvents = "none"; 
+                buyBtn.style.opacity = "0.6";
+                buyBtn.style.borderColor = "#c9a66b";
+            }
+            
             showWaitingRoom();
         } else {
             throw new Error(result.error);
         }
     } catch (error) {
         alert("Error: " + error.message);
-        document.getElementById('submit-btn').style.display = 'block';
+        if (submitBtn) submitBtn.style.display = 'block';
     }
 };
 function showWaitingRoom() {
