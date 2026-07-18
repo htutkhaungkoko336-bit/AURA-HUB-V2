@@ -372,6 +372,9 @@ window.backToRegistration = () => {
 // Global variable အနေနဲ့ အပေါ်မှာ ထားပါ
 let lastStatus = ''; 
 
+// Global variable
+let lastStatus = ''; 
+
 async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
@@ -392,10 +395,10 @@ async function updateBuyButtonStatus() {
             buyBtn.style.backgroundColor = "#c92424";
             buyBtn.style.pointerEvents = "auto";
             
+            // Page အသစ်သို့မသွားတော့ဘဲ internal function ကိုခေါ်ပါမည်
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
-                // ဒီနေရာမှာ သင့် Form Page ကို ပြန်သွားမယ်
-                window.location.href = '/register-form.html';
+                openRegistrationPage(); 
             };
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
@@ -410,6 +413,26 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
+
+// Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
+window.openRegistrationPage = () => {
+    // ၁။ UI ပေါ်ရှိ Page များအားလုံးကို ဖျောက်ပါ
+    document.querySelectorAll('.sub-page, #page-match-center, #main-dashboard').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // ၂။ လက်ရှိ mode ပေါ်မူတည်ပြီး သက်ဆိုင်ရာ registration page ကို ပြန်ပြပါ
+    if (window.currentMode === '5vs5') {
+        const page5vs5 = document.getElementById('page-5vs5');
+        if (page5vs5) page5vs5.style.display = 'block';
+    } else {
+        const page1vs1 = document.getElementById('page-1vs1');
+        if (page1vs1) page1vs1.style.display = 'block';
+    }
+    
+    // (Optional) အချက်အလက်ဟောင်းများ ပြန်တင်လိုလျှင် ဤနေရာတွင် ထည့်ပါ
+    // if (typeof loadSavedData === 'function') loadSavedData();
+};
 document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
