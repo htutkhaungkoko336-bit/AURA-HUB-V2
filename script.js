@@ -410,3 +410,7 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
+document.addEventListener('DOMContentLoaded', () => {
+    updateBuyButtonStatus();
+    setInterval(updateBuyButtonStatus, 5000); 
+});
