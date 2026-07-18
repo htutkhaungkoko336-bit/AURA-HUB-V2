@@ -170,7 +170,6 @@ window.submitProof = async function() {
         return;
     }
 
-    // Submit ခလုတ်ကို ပိတ်ထားမယ်
     const submitBtn = document.getElementById('submit-btn');
     if (submitBtn) submitBtn.style.display = 'none';
 
@@ -178,11 +177,10 @@ window.submitProof = async function() {
         const logoUrl = await uploadToBackend(logoInput.files[0]);
         const screenshotUrl = await uploadToBackend(ssInput.files[0]);
         
-        // deviceId ကို localStorage မှယူသည် (မရှိလျှင် 'unknown' ဟုသတ်မှတ်)
         const deviceId = localStorage.getItem('aura_device_id') || 'unknown';
         
         let payload = {
-            deviceId: deviceId, // ဒီနေရာမှာ deviceId ထည့်လိုက်ပါပြီ
+            deviceId: deviceId,
             logo: logoUrl,
             paymentScreenshot: screenshotUrl,
             mode: currentMode,
@@ -221,6 +219,9 @@ window.submitProof = async function() {
         const result = await response.json();
         
         if (result.success) {
+            // Data ပို့ပြီးမှ localStorage ထဲမှာ မှတ်ထားပါ (ဒီနေရာမှာ ထည့်ပေးလိုက်ပါတယ်)
+            localStorage.setItem('aura_last_registration', JSON.stringify(payload));
+
             const buyBtn = document.getElementById('buy-room-btn');
             if (buyBtn) {
                 buyBtn.innerText = "PENDING..."; 
@@ -379,23 +380,22 @@ async function updateBuyButtonStatus() {
 
     try {
         const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
-        
         if (response.status === 404) return;
 
         const data = await response.json();
         
-        // Status အသစ်မှသာ Update လုပ်ပါ
         if (data.status === lastStatus) return;
         lastStatus = data.status;
         
         if (data.status === 'reject') {
             buyBtn.innerText = "RESUBMIT"; 
             buyBtn.style.backgroundColor = "#c92424";
-            buyBtn.style.pointerEvents = "auto"; 
+            buyBtn.style.pointerEvents = "auto";
             
-            // Alert ကို ဒီနေရာမှာ တစ်ခါပဲ တက်အောင်လုပ်မယ်
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+                // ဒီနေရာမှာ သင့် Form Page ကို ပြန်သွားမယ်
+                window.location.href = '/register-form.html';
             };
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
@@ -403,19 +403,10 @@ async function updateBuyButtonStatus() {
             buyBtn.style.pointerEvents = "none";
         } else if (data.status === 'pending') {
             buyBtn.innerText = "PENDING...";
-            buyBtn.style.backgroundColor = "#ffa500";
+            buyBtn.style.backgroundColor = "#555555";
             buyBtn.style.pointerEvents = "none";
         }
     } catch (e) {
         console.error("Status check failed:", e);
     }
 }
-
-// Real-time ဖြစ်အောင် မှန်ကန်သော Bracket များဖြင့် ရေးပေးထားသည်
-document.addEventListener('DOMContentLoaded', () => {
-    // ပထမဆုံးအကြိမ် တစ်ခါခေါ်မယ်
-    updateBuyButtonStatus();
-
-    // ၂ စက္ကန့်တိုင်း တစ်ခါ ပြန်စစ်မယ်
-    setInterval(updateBuyButtonStatus, 2000); 
-});
