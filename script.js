@@ -425,6 +425,12 @@ window.openRegistrationPage = () => {
         const page1vs1 = document.getElementById('page-1vs1');
         if (page1vs1) page1vs1.style.display = 'block';
     }
+
+    // ၃။ Submit Button ကို ပြန်ပြပေးပါ (Reject ဖြစ်ပြီး ပြန်ပြင်တဲ့အခါ ပေါ်လာစေရန်)
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) {
+        submitBtn.style.display = 'block'; 
+    }
     
     // (Optional) အချက်အလက်ဟောင်းများ ပြန်တင်လိုလျှင် ဤနေရာတွင် ထည့်ပါ
     // if (typeof loadSavedData === 'function') loadSavedData();
