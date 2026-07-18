@@ -319,7 +319,7 @@ window.goBack = () => {
         'page-1vs1', 
         'page-payment-proof', 
         'page-match-center',
-        'page-room-select' // Dashboard ပြန်သွားရင် ဒါကိုပါ ပိတ်ရမယ်
+        'page-room-select'
     ];
     
     pages.forEach(id => {
@@ -327,14 +327,14 @@ window.goBack = () => {
         if (el) el.style.display = 'none';
     });
 
-    // ၂။ Main Dashboard ကို ပြန်ဖွင့်မယ်
+    // ၂။ Main Dashboard ကို ပြန်ပြမယ်
     const mainDashboard = document.getElementById('main-dashboard');
     if (mainDashboard) {
+        mainDashboard.style.display = 'block'; // ဒါလေးထည့်ဖို့ အရေးကြီးပါတယ်
         mainDashboard.style.opacity = '1';
         mainDashboard.style.pointerEvents = 'auto';
     }
 
-    // ၃။ လက်ရှိ window.currentMode ကို ကြည့်ပြီး UI ကို Refresh လုပ်ပေးမယ်
-    // ဒီလိုလုပ်ပေးခြင်းဖြင့် 5vs5 ဆို 5vs5၊ 1vs1 ဆို 1vs1 ပြန်ပေါ်နေပါမယ်
+    // ၃။ UI Update
     updateUI();
 };
