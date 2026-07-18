@@ -14,18 +14,17 @@ export default async function handler(req, res) {
 
     try {
         const data = req.body;
-        const deviceId = data.deviceId;
-
-        if (!deviceId) throw new Error("Device ID မပါဝင်ပါ");
-
+        // dbData ထဲမှာ deviceId ကို ထည့်သိမ်းပေးပါ
         let dbData = {
-            deviceId: deviceId,
-            mode: data.mode,
-            status: "pending", // Update လုပ်တိုင်း status ကို pending ပြန်ဖြစ်စေမယ်
-            updatedAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
-        };
+                    deviceId: data.deviceId, // ဒီနေရာမှာ deviceId ကို ထည့်ပါ
+                    mode: data.mode,
+                    status: "pending",
+                    createdAt: new Date().toLocaleString('en-GB', { 
+                        timeZone: 'Asia/Yangon',
+                        hour12: true 
+                    })
+                };
 
-        // ... (data ဖြည့်တဲ့အပိုင်းကို အပေါ်ကအတိုင်း ထားထားပါ) ...
         if (data.mode === '5vs5') {
             dbData.squadName = data.squadName || null;
             dbData.logo = data.logo || null;
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
             dbData.player4 = data.player4 || null;
             dbData.player5 = data.player5 || null;
         } else if (data.mode === '1vs1') {
-            dbData.playerName = data.squadName || null;
+            dbData.playerName = data.squadName || null; // 1vs1 အတွက်နာမည်
             dbData.mlbbId = data.mlbbId || null;
             dbData.heroName = data.heroName || null;
             dbData.entryFee = data.entryFee || null;
@@ -49,30 +48,18 @@ export default async function handler(req, res) {
             dbData.kpayNo = data.kpayNo || null;
         }
 
-        // --- ပြင်ဆင်ထားသောအပိုင်း ---
-        // ၁။ တူညီသော Device ID ရှိမရှိ စစ်ဆေးပါ
-        const querySnapshot = await db.collection('registrations')
-                                      .where('deviceId', '==', deviceId)
-                                      .get();
+    const docRef = await db.collection('registrations').add(dbData);
 
-        let docId;
-        if (!querySnapshot.empty) {
-            // အကယ်၍ ရှိနေရင် (Update လုပ်မယ်)
-            const doc = querySnapshot.docs[0];
-            docId = doc.id;
-            await doc.ref.update(dbData);
-        } else {
-            // အကယ်၍ မရှိသေးရင် (အသစ်ဆောက်မယ်)
-            const docRef = await db.collection('registrations').add(dbData);
-            docId = docRef.id;
-            await docRef.update({ docId: docId });
-        }
+    // ၂။ docId ကို သိမ်းဆည်းခြင်း (ဒီနေရာမှာ docRef ကို သုံးပါ)
+    const docId = docRef.id;
+    await docRef.update({ docId: docId });
 
-        // notify ပို့ခြင်း
-        const notifyData = { ...dbData, id: docId };
-        await notify('REGISTRATION', notifyData);
+    // notify function သို့ docId အပါအဝင် ပေးပို့ခြင်း
+    const notifyData = { ...dbData, id: docId }; 
+    await notify('REGISTRATION', notifyData);
 
-        res.status(200).json({ success: true, id: docId });
+    // response ပေးတဲ့အခါ တစ်ခါပဲပေးပါ (၂ ခါမပေးရပါ)
+    res.status(200).json({ success: true, id: docId });
     } catch (error) {
         console.error("Registration Error:", error);
         res.status(500).json({ success: false, error: error.message });
