@@ -137,3 +137,21 @@ export function buyNewRoom() {
     }
 }
 window.buyNewRoom = buyNewRoom;
+// Waiting Room (Match Center) ကနေ Dashboard ကို ပြန်သွားခြင်း
+export function backToDashboard() {
+    // ၁။ Match Center ကို ဖျောက်မယ်
+    const matchCenter = document.getElementById('page-match-center');
+    if (matchCenter) {
+        matchCenter.style.display = 'none';
+    }
+
+    // ၂။ Main Dashboard ကို ပြန်ပြမယ်
+    const mainDashboard = document.getElementById('main-dashboard');
+    if (mainDashboard) {
+        mainDashboard.style.display = 'block';
+        mainDashboard.style.opacity = '1';
+        mainDashboard.style.pointerEvents = 'auto';
+    }
+}
+// Window object ထဲကို register လုပ်ပေးပါ
+window.backToDashboard = backToDashboard;

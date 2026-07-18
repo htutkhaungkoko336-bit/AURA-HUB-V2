@@ -6,7 +6,8 @@ import {
     openGuide, 
     toggleGuide, 
     goToRooms,
-    buyNewRoom // ui.js မှ import လုပ်ရန်
+    buyNewRoom,
+    backToDashboard // ui.js မှ import လုပ်ရန်
 } from './ui.js';
 
 // Global variables
@@ -337,4 +338,4 @@ window.goBack = () => {
 
     // ၃။ UI Update
     updateUI();
-};
+};//wating room က back ကို နှိပ်ရင် mode ရွေးတဲ့ page ကို ပြန်သွားတဲ့ function 
