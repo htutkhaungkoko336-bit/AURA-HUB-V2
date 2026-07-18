@@ -1,7 +1,6 @@
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 
-// Firebase Initialization
 if (!getApps().length) {
     initializeApp({
         credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
@@ -9,26 +8,23 @@ if (!getApps().length) {
 }
 const db = getFirestore();
 
-// Vercel/Serverless API Handler
 module.exports = async (req, res) => {
-    const deviceId = req.query.deviceId;
+    // Database ထဲက docId နဲ့ ရှာမယ်
+    const docId = req.query.deviceId; 
 
-    if (!deviceId) {
-        return res.status(400).json({ error: "Missing deviceId" });
+    if (!docId) {
+        return res.status(400).json({ error: "Missing docId" });
     }
 
     try {
-        const snapshot = await db.collection("registrations")
-            .where("deviceId", "==", deviceId)
-            .get();
+        const docRef = db.collection("registrations").doc(docId);
+        const doc = await docRef.get();
 
-        if (snapshot.empty) {
+        if (!doc.exists) {
             return res.status(404).json({ status: "not_found" });
         }
 
-        const data = snapshot.docs[0].data();
-        
-        // Frontend ကို Response ပြန်ပေးခြင်း
+        const data = doc.data();
         return res.status(200).json({
             status: data.status,
             rejectReason: data.rejectReason || null
