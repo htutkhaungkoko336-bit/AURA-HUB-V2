@@ -137,21 +137,23 @@ export function buyNewRoom() {
     }
 }
 window.buyNewRoom = buyNewRoom;
-// Waiting Room (Match Center) ကနေ Dashboard ကို ပြန်သွားခြင်း
-export function backToDashboard() {
-    // ၁။ Match Center ကို ဖျောက်မယ်
+export function backToWaitingRoom() {
+    // ၁။ တခြား page တွေ (ရှိရင်) ပိတ်မယ်
     const matchCenter = document.getElementById('page-match-center');
+    const roomSelectPage = document.getElementById('page-room-select');
+    
+    if (roomSelectPage) roomSelectPage.style.display = 'none';
+
+    // ၂။ Match Center ကို ပြမယ်
     if (matchCenter) {
-        matchCenter.style.display = 'none';
+        matchCenter.style.display = 'flex';
     }
 
-    // ၂။ Main Dashboard ကို ပြန်ပြမယ်
-    const mainDashboard = document.getElementById('main-dashboard');
-    if (mainDashboard) {
-        mainDashboard.style.display = 'block';
-        mainDashboard.style.opacity = '1';
-        mainDashboard.style.pointerEvents = 'auto';
-    }
+    // ၃။ Buy Room Container နဲ့ Action Buttons တွေကို ပြန်ပြမယ်
+    const actionBtns = document.getElementById('action-buttons');
+    const buyRoomContainer = document.getElementById('buy-room-container');
+
+    if (actionBtns) actionBtns.style.display = 'flex';
+    if (buyRoomContainer) buyRoomContainer.style.display = 'flex';
 }
-// Window object ထဲကို register လုပ်ပေးပါ
-window.backToDashboard = backToDashboard;
+window.backToWaitingRoom = backToWaitingRoom;

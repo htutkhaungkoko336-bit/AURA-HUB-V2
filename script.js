@@ -7,7 +7,7 @@ import {
     toggleGuide, 
     goToRooms,
     buyNewRoom,
-    backToDashboard // ui.js မှ import လုပ်ရန်
+    backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
 
 // Global variables
