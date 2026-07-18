@@ -331,17 +331,11 @@ window.goBack = () => {
     // ၂။ Main Dashboard ကို ပြန်ပြမယ်
     const mainDashboard = document.getElementById('main-dashboard');
     if (mainDashboard) {
-        mainDashboard.style.display = 'block';
+        mainDashboard.style.display = 'block'; // ဒါလေးထည့်ဖို့ အရေးကြီးပါတယ်
         mainDashboard.style.opacity = '1';
         mainDashboard.style.pointerEvents = 'auto';
     }
 
-    // ၃။ အရေးကြီးဆုံးအချက်: New room နဲ့ Quit btn တွေကို အမြဲဖျောက်ထားမယ်
-    const actionBtns = document.getElementById('action-buttons');
-    if (actionBtns) {
-        actionBtns.style.display = 'none'; 
-    }
-
-    // ၄။ UI Update
+    // ၃။ UI Update
     updateUI();
-};
+};//wating room က back ကို နှိပ်ရင် mode ရွေးတဲ့ page ကို ပြန်သွားတဲ့ function 
