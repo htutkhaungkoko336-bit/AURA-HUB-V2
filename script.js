@@ -367,33 +367,35 @@ window.backToRegistration = () => {
     }
 };
 async function updateBuyButtonStatus() {
-    // သင့် localStorage ထဲက ID သည် Firestore ရဲ့ docId ဖြစ်ရပါမယ်
     const docId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
     
+    // ၁။ ID မရှိရင် ဘာမှမလုပ်ဘဲ ရပ်ထားမယ် (ဒါမှ Register မလုပ်ရသေးတဲ့သူတွေ Error တက်မှာမဟုတ်ဘူး)
     if (!docId || !buyBtn) return;
 
     try {
-// သင့် script.js ထဲမှာ ဒီလိုပြင်ကြည့်ပါ
         const response = await fetch('/api/check-status?deviceId=' + docId);
-        if (!response.ok) return;
         
+        // 404 ဖြစ်ရင် (Data မရှိသေးရင်)
+        if (response.status === 404) {
+            console.log("Database ထဲမှာ Data မရှိသေးပါ (Register စောင့်ဆိုင်းနေသည်)");
+            return; 
+        }
+
         const data = await response.json();
         
+        // Status အရ ခလုတ်ပုံစံ ပြောင်းခြင်း
         if (data.status === 'reject') {
             buyBtn.innerText = "REPAIR / ပြန်ပြင်ရန်"; 
             buyBtn.style.backgroundColor = "#ff4d4d";
-            
             buyBtn.onclick = () => {
-                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}\n\nOk နှိပ်ပြီး Data အသစ်ပြန်တင်ပေးပါ။`);
+                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
             };
-        } 
-        else if (data.status === 'confirm') {
+        } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
             buyBtn.style.backgroundColor = "#28a745";
             buyBtn.style.pointerEvents = "none";
-        } 
-        else if (data.status === 'pending') {
+        } else if (data.status === 'pending') {
             buyBtn.innerText = "PENDING...";
             buyBtn.style.backgroundColor = "#ffa500";
             buyBtn.style.pointerEvents = "none";
@@ -402,5 +404,4 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
-
 document.addEventListener('DOMContentLoaded', updateBuyButtonStatus);
