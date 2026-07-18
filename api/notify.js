@@ -64,19 +64,4 @@ try {
         console.error("Telegram Send Error:", err);
     }
 }
-// notify.js (Registration လုပ်တဲ့ handler ထဲမှာ)
-// အချက်အလက်အသစ် လက်ခံရရှိတဲ့အခါ
-await db.collection("registrations").doc(regId).update({
-    ...data,            // data အသစ်တွေ
-    status: "pending",   // status ကို ပြန်ပြောင်း
-    rejectReason: null   // အကြောင်းရင်းဟောင်း ဖျက်
-});
-
-// ပြီးရင် Admin Group ဆီ Notification ပြန်ပို့မယ် (သင့် code အတိုင်း)
-await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    chat_id: REG_GROUP_ID,
-    text: `⚠️ <b>User အချက်အလက် ပြန်ပြင်တင်ထားပါသည်။</b>\nID: ${regId}`,
-    parse_mode: 'HTML'
-});
-
 module.exports = { notify };
