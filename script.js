@@ -368,7 +368,7 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
-// အပေါ်မှာ Global variable တစ်ခု ထားပါ
+// Global variable အနေနဲ့ အပေါ်မှာ ထားပါ
 let lastStatus = ''; 
 
 async function updateBuyButtonStatus() {
@@ -391,7 +391,7 @@ async function updateBuyButtonStatus() {
         if (data.status === 'reject') {
             buyBtn.innerText = "RESUBMIT"; 
             buyBtn.style.backgroundColor = "#c92424";
-            buyBtn.style.pointerEvents = "auto"; // နှိပ်လို့ရအောင် ပြန်ဖွင့်ပေးပါ
+            buyBtn.style.pointerEvents = "auto"; 
             
             // Alert ကို ဒီနေရာမှာ တစ်ခါပဲ တက်အောင်လုပ်မယ်
             buyBtn.onclick = () => {
@@ -410,3 +410,12 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
+
+// Real-time ဖြစ်အောင် မှန်ကန်သော Bracket များဖြင့် ရေးပေးထားသည်
+document.addEventListener('DOMContentLoaded', () => {
+    // ပထမဆုံးအကြိမ် တစ်ခါခေါ်မယ်
+    updateBuyButtonStatus();
+
+    // ၂ စက္ကန့်တိုင်း တစ်ခါ ပြန်စစ်မယ်
+    setInterval(updateBuyButtonStatus, 2000); 
+});
