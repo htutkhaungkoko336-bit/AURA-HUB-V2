@@ -213,13 +213,12 @@ window.submitProof = async function() {
             });
         }
 
-        // Backend သို့ ပို့ခြင်း (Update ပြုလုပ်ရန် endpoint သို့)
-        const response = await fetch('/api/update-registration', {
-            method: 'POST', // သင့် Backend က PUT ကို လက်ခံရင် PUT နဲ့ပြောင်းလဲနိုင်ပါတယ်
+        // အရင်က /api/update-registration ကို ခေါ်နေတာကို ဒီလိုပြင်ပါ
+        const response = await fetch('/api/register', { 
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-
         const result = await response.json();
         
         if (result.success) {
