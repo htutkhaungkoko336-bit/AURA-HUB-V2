@@ -366,45 +366,41 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
-// Status စစ်ဆေးပြီး ခလုတ်စာသားပြောင်းခြင်း
-async function updateBuyButtonStatus() {
-    const deviceId = localStorage.getItem('aura_device_id');
-    if (!deviceId) return;
+// အမြဲတမ်း Status စစ်ပေးမယ့် Function
+async function startStatusPolling() {
+    setInterval(async () => {
+        const deviceId = localStorage.getItem('aura_device_id');
+        if (!deviceId) return;
 
-    try {
-        // API ကို ခေါ်မယ်
-        const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
-        const data = await response.json();
-        
-        console.log("Status Data:", data); // ဒါလေးထည့်ပြီး Console မှာ စစ်ကြည့်ပါ
+        try {
+            const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
+            const data = await response.json();
 
-        const buyBtn = document.getElementById('buy-room-btn');
-        if (!buyBtn) {
-            console.log("Buy button ID not found!");
-            return;
+            const buyBtn = document.getElementById('buy-room-btn');
+            if (!buyBtn) return;
+
+            // Status က reject ဖြစ်နေရင်
+            if (data.status === 'reject') {
+                buyBtn.innerText = `REJECTED: ${data.rejectReason}`;
+                buyBtn.style.backgroundColor = "#ff4d4d"; // အနီရောင်
+                buyBtn.style.opacity = "1"; 
+                buyBtn.style.pointerEvents = "auto"; // ပြန်နှိပ်လို့ရအောင်
+            } 
+            // Status က confirm ဖြစ်နေရင်
+            else if (data.status === 'confirm') {
+                buyBtn.innerText = "CONFIRMED ✅";
+                buyBtn.style.backgroundColor = "#28a745";
+                buyBtn.style.pointerEvents = "none";
+            }
+        } catch (e) {
+            console.log("Polling error:", e);
         }
-
-        if (data.status === 'reject') {
-            // ဒီနေရာမှာ အတိအကျ ပြောင်းပေးပါမယ်
-            buyBtn.innerText = `REJECTED: ${data.rejectReason}`;
-            buyBtn.style.backgroundColor = "#ff4d4d"; 
-            buyBtn.style.color = "#fff";
-            buyBtn.style.pointerEvents = "auto";
-        } else if (data.status === 'confirm') {
-            buyBtn.innerText = "CONFIRMED ✅";
-            buyBtn.style.backgroundColor = "#28a745";
-            buyBtn.style.pointerEvents = "none";
-        } else if (data.status === 'pending') {
-            buyBtn.innerText = "PENDING...";
-            buyBtn.style.pointerEvents = "none";
-        }
-    } catch (e) {
-        console.error("Status check failed", e);
-    }
+    }, 5000); // ၅ စက္ကန့်တိုင်း တစ်ခါစစ်မယ်
 }
-// Page စဖွင့်တာနဲ့ Status စစ်မယ်
+
+// App စဖွင့်တာနဲ့ စတင်မယ်
 document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
     initGuideSwiper();
-    updateBuyButtonStatus(); // <--- ဒီနေရာမှာ ခေါ်ပါ
+    startStatusPolling(); // <--- ဒီနေရာမှာ စတင်ပါ
 });
