@@ -10,36 +10,33 @@ if (!getApps().length) {
 }
 const db = getFirestore();
 
-// api/register.js အပိုင်း
 module.exports = async (req, res) => {
-    const { deviceId, ...payload } = req.body;
+    // req.body ကို သုံးလို့မရပါ (GET request မို့လို့)
+    // req.query ကို သုံးရပါမယ်
+    const deviceId = req.query.deviceId; 
+
+    console.log("Checking status for deviceId:", deviceId);
+
+    if (!deviceId) {
+        return res.status(400).json({ error: "Missing deviceId" });
+    }
 
     try {
-        // ၁။ deviceId နဲ့ တူတဲ့ Document ရှိမရှိ ရှာပါ
         const snapshot = await db.collection("registrations")
                                  .where("deviceId", "==", deviceId)
                                  .get();
 
-        if (!snapshot.empty) {
-            // ၂။ Document ရှိနေရင် အဲ့ဒီ Document ID ကိုပဲ သုံးပြီး update လုပ်ပါ
-            const docId = snapshot.docs[0].id;
-            await db.collection("registrations").doc(docId).update({
-                ...payload,
-                status: 'pending', // ပြင်ပြီးရင် status ကို ပြန်တင်ပေးမယ်
-                updatedAt: new Date().toLocaleString()
-            });
-            return res.status(200).json({ success: true, message: "Updated existing registration" });
-        } else {
-            // ၃။ Document မရှိမှ အသစ်တစ်ခု ဆောက်ပါ
-            await db.collection("registrations").add({
-                deviceId,
-                ...payload,
-                status: 'pending',
-                createdAt: new Date().toLocaleString()
-            });
-            return res.status(200).json({ success: true, message: "New registration created" });
+        if (snapshot.empty) {
+            return res.status(404).json({ status: "not_found" });
         }
+
+        const data = snapshot.docs[0].data();
+        return res.status(200).json({
+            status: data.status,
+            rejectReason: data.rejectReason || null
+        });
     } catch (err) {
-        return res.status(500).json({ success: false, error: err.message });
+        console.error("Firebase Error:", err);
+        return res.status(500).json({ error: "Server Error" });
     }
 };

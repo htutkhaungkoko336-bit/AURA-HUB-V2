@@ -381,6 +381,7 @@ async function updateBuyButtonStatus() {
     }
 
     try {
+// script.js ထဲက fetch နေရာကို ဒီအတိုင်း ပြင်ပါ
         const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
         console.log("API Response Status:", response.status); // API ခေါ်မိသလား သိရအောင်
 
