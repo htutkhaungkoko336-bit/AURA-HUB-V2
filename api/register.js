@@ -14,16 +14,16 @@ export default async function handler(req, res) {
 
     try {
         const data = req.body;
-        
-        // အချက်အလက်များကို dbData အဖြစ် စုစည်းခြင်း
+        // dbData ထဲမှာ deviceId ကို ထည့်သိမ်းပေးပါ
         let dbData = {
-            mode: data.mode,
-            status: "pending",
-            createdAt: new Date().toLocaleString('en-GB', { 
-                timeZone: 'Asia/Yangon',
-                hour12: true 
-            })
-        };
+                    deviceId: data.deviceId, // ဒီနေရာမှာ deviceId ကို ထည့်ပါ
+                    mode: data.mode,
+                    status: "pending",
+                    createdAt: new Date().toLocaleString('en-GB', { 
+                        timeZone: 'Asia/Yangon',
+                        hour12: true 
+                    })
+                };
 
         if (data.mode === '5vs5') {
             dbData.squadName = data.squadName || null;
