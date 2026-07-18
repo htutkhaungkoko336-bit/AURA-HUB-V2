@@ -372,20 +372,27 @@ async function updateBuyButtonStatus() {
     if (!deviceId) return;
 
     try {
+        // API ကို ခေါ်မယ်
         const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
         const data = await response.json();
         
+        console.log("Status Data:", data); // ဒါလေးထည့်ပြီး Console မှာ စစ်ကြည့်ပါ
+
         const buyBtn = document.getElementById('buy-room-btn');
-        if (!buyBtn) return;
+        if (!buyBtn) {
+            console.log("Buy button ID not found!");
+            return;
+        }
 
         if (data.status === 'reject') {
+            // ဒီနေရာမှာ အတိအကျ ပြောင်းပေးပါမယ်
             buyBtn.innerText = `REJECTED: ${data.rejectReason}`;
-            buyBtn.style.backgroundColor = "#ff4d4d"; // အနီရောင်
+            buyBtn.style.backgroundColor = "#ff4d4d"; 
             buyBtn.style.color = "#fff";
-            buyBtn.style.pointerEvents = "auto"; // ပြန်နှိပ်လို့ရအောင်
+            buyBtn.style.pointerEvents = "auto";
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
-            buyBtn.style.backgroundColor = "#28a745"; // အစိမ်းရောင်
+            buyBtn.style.backgroundColor = "#28a745";
             buyBtn.style.pointerEvents = "none";
         } else if (data.status === 'pending') {
             buyBtn.innerText = "PENDING...";
@@ -395,7 +402,6 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed", e);
     }
 }
-
 // Page စဖွင့်တာနဲ့ Status စစ်မယ်
 document.addEventListener('DOMContentLoaded', () => {
     setupWelcomeModal();
