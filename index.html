@@ -303,19 +303,15 @@
     z-index: 1000;     /* တခြား elements တွေအပေါ်မှာ ပေါ်စေရန် */
 ">
 <div id="buy-room-container" style="display: flex; justify-content: center; gap: 15px; padding: 10px 0; margin-top: 10px;">
--- BUY ROOM BUTTON -->
-    <button id="buy-room-btn" onclick="window.buyNewRoom()" 
-            style="width: 180px; height: 50px; border: none; border-radius: 8px; cursor: pointer; 
-                   background: linear-gradient(45deg, #c9a66b, #fff3d4, #c9a66b); 
-                   color: #000; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-                   transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(201,166,107,0.3);"
-            onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 20px rgba(201,166,107,0.5)';"
-            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(201,166,107,0.3)';"
+<button id="buy-room-btn" onclick="window.buyNewRoom()" 
+            style="width: 180px; height: 50px; border: 2px solid #c9a66b; border-radius: 8px; 
+                   background: rgba(0,0,0,0.6); color: #c9a66b; font-weight: 700; cursor: pointer; 
+                   letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.3s ease;"
+            onmouseover="this.style.background='#c9a66b'; this.style.color='#000';"
+            onmouseout="this.style.background='rgba(0,0,0,0.6)'; this.style.color='#c9a66b';"
     >
-        BUY ROOM KEY🗝?
+        BUY ROOM KEY 🗝
     </button>
-
-    <!-- BACK BUTTON -->
     <button id="back-btn" onclick="window.goBack()" 
             style="width: 120px; height: 50px; border: 2px solid #c9a66b; border-radius: 8px; 
                    background: rgba(0,0,0,0.6); color: #c9a66b; font-weight: 700; cursor: pointer; 
