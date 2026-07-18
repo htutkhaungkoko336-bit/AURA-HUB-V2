@@ -372,33 +372,27 @@ async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
     
-    // Log ထုတ်ကြည့်ပါ (ဒါမှ function အလုပ်လုပ်/မလုပ် သိရမယ်)
-    console.log("Checking status for deviceId:", deviceId);
-
-    if (!deviceId || !buyBtn) {
-        console.log("deviceId သို့မဟုတ် buyBtn မတွေ့ရှိပါ");
-        return;
-    }
+    if (!deviceId || !buyBtn) return;
 
     try {
-// script.js ထဲက fetch နေရာကို ဒီအတိုင်း ပြင်ပါ
         const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
-        console.log("API Response Status:", response.status); // API ခေါ်မိသလား သိရအောင်
-
-        if (response.status === 404) {
-            console.log("Database ထဲမှာ Data မရှိပါ");
-            return; 
-        }
+        
+        if (response.status === 404) return;
 
         const data = await response.json();
-        console.log("API Data:", data); // ရလာတဲ့ data ကို ကြည့်မယ်
-
+        
+        // Status အရ UI ပြောင်းခြင်း
         if (data.status === 'reject') {
-            buyBtn.innerText = "RESUBMIT "; 
+            buyBtn.innerText = "RESUBMIT"; 
             buyBtn.style.backgroundColor = "#c92424";
+            buyBtn.onclick = () => {
+                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+                // ဒီနေရာမှာ Resubmit ပြန်လုပ်ဖို့ Page ပြန်ပြပေးနိုင်ပါတယ်
+            };
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
             buyBtn.style.backgroundColor = "#28a745";
+            buyBtn.style.pointerEvents = "none";
         } else if (data.status === 'pending') {
             buyBtn.innerText = "PENDING...";
             buyBtn.style.backgroundColor = "#ffa500";
@@ -408,7 +402,11 @@ async function updateBuyButtonStatus() {
     }
 }
 
-// ဒီနေရာမှာ အရေးကြီးပါတယ် - Page စဖွင့်တာနဲ့ ဒီ function ကို ခေါ်ပေးရပါမယ်
+// Real-time ဖြစ်အောင် ဒီလိုထည့်ပါ
 document.addEventListener('DOMContentLoaded', () => {
+    // ပထမဆုံးအကြိမ် တစ်ခါခေါ်မယ်
     updateBuyButtonStatus();
+
+    // ၅ စက္ကန့်တိုင်း တစ်ခါ ပြန်စစ်မယ်
+    setInterval(updateBuyButtonStatus, 2000); 
 });
