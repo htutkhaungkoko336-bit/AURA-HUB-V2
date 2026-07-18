@@ -393,8 +393,8 @@ async function updateBuyButtonStatus() {
         console.log("API Data:", data); // ရလာတဲ့ data ကို ကြည့်မယ်
 
         if (data.status === 'reject') {
-            buyBtn.innerText = "REPAIR / ပြန်ပြင်ရန်"; 
-            buyBtn.style.backgroundColor = "#ff4d4d";
+            buyBtn.innerText = "RESUBMIT "; 
+            buyBtn.style.backgroundColor = "#c92424";
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
             buyBtn.style.backgroundColor = "#28a745";
