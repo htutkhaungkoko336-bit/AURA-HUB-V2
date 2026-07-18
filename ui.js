@@ -138,22 +138,16 @@ export function buyNewRoom() {
 }
 window.buyNewRoom = buyNewRoom;
 export function backToWaitingRoom() {
-    // ၁။ တခြား page တွေ (ရှိရင်) ပိတ်မယ်
     const matchCenter = document.getElementById('page-match-center');
     const roomSelectPage = document.getElementById('page-room-select');
-    
-    if (roomSelectPage) roomSelectPage.style.display = 'none';
-
-    // ၂။ Match Center ကို ပြမယ်
-    if (matchCenter) {
-        matchCenter.style.display = 'flex';
-    }
-
-    // ၃။ Buy Room Container နဲ့ Action Buttons တွေကို ပြန်ပြမယ်
     const actionBtns = document.getElementById('action-buttons');
     const buyRoomContainer = document.getElementById('buy-room-container');
 
-    if (actionBtns) actionBtns.style.display = 'flex';
-    if (buyRoomContainer) buyRoomContainer.style.display = 'flex';
+    if (roomSelectPage) roomSelectPage.style.display = 'none';
+    if (matchCenter) matchCenter.style.display = 'flex';
+
+    // ဒီနေရာမှာ ပြင်ပါ -
+    if (actionBtns) actionBtns.style.display = 'none'; // ခလုတ်တွေကို အမြဲဖျောက်ထားမယ်
+    if (buyRoomContainer) buyRoomContainer.style.display = 'flex'; // Buy Room ပဲ ပြမယ်
 }
 window.backToWaitingRoom = backToWaitingRoom;
