@@ -13,6 +13,8 @@ const db = getFirestore();
 
 module.exports = async (req, res) => {
     // ... ကျန်တဲ့ code အတိုင်းထားပါ
+    console.log("Request received for path:", req.url); 
+
     const docId = req.query.deviceId;
     if (!docId) return res.status(400).json({ error: "Missing docId" });
 
