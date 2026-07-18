@@ -313,29 +313,16 @@ window.leaveRoom = () => {
     // Room Select Page ပြန်ဖွင့်
     document.getElementById('page-room-select').style.display = 'block';
 };
-window.goBack = () => {
-    // ၁။ ဖွင့်ထားတဲ့ Sub-pages တွေကို ဖျောက်မယ်
-    const pages = [
-        'page-5vs5', 
-        'page-1vs1', 
-        'page-payment-proof', 
-        'page-match-center',
-        'page-room-select'
-    ];
-    
-    pages.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
+window.backToRoomSelect = () => {
+    // ၁။ Match Center (Waiting Room) ကို ဖျောက်မယ်
+    const matchCenter = document.getElementById('page-match-center');
+    if (matchCenter) matchCenter.style.display = 'none';
 
-    // ၂။ Main Dashboard ကို ပြန်ပြမယ်
+    // ၂။ Room Select Page ကို ပြန်ပြမယ်
+    const roomSelect = document.getElementById('page-room-select');
+    if (roomSelect) roomSelect.style.display = 'block';
+
+    // ၃။ (Optional) Dashboard ကို ဖျောက်ထားကြောင်း သေချာစေရန်
     const mainDashboard = document.getElementById('main-dashboard');
-    if (mainDashboard) {
-        mainDashboard.style.display = 'block'; // ဒါလေးထည့်ဖို့ အရေးကြီးပါတယ်
-        mainDashboard.style.opacity = '1';
-        mainDashboard.style.pointerEvents = 'auto';
-    }
-
-    // ၃။ UI Update
-    updateUI();
-};//wating room က back ကို နှိပ်ရင် mode ရွေးတဲ့ page ကို ပြန်သွားတဲ့ function 
+    if (mainDashboard) mainDashboard.style.display = 'none';
+};
