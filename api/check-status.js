@@ -1,28 +1,26 @@
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 
+// Service Account ကို အရင်ပြင်ဆင်ပါ
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
 if (!getApps().length) {
     initializeApp({
-        credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
+        credential: cert(serviceAccount)
     });
 }
 const db = getFirestore();
 
 module.exports = async (req, res) => {
-    // Database ထဲက docId နဲ့ ရှာမယ်
-    const docId = req.query.deviceId; 
-
-    if (!docId) {
-        return res.status(400).json({ error: "Missing docId" });
-    }
+    // ... ကျန်တဲ့ code အတိုင်းထားပါ
+    const docId = req.query.deviceId;
+    if (!docId) return res.status(400).json({ error: "Missing docId" });
 
     try {
         const docRef = db.collection("registrations").doc(docId);
         const doc = await docRef.get();
 
-        if (!doc.exists) {
-            return res.status(404).json({ status: "not_found" });
-        }
+        if (!doc.exists) return res.status(404).json({ status: "not_found" });
 
         const data = doc.data();
         return res.status(200).json({
