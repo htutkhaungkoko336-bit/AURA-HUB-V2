@@ -312,3 +312,29 @@ window.leaveRoom = () => {
     // Room Select Page ပြန်ဖွင့်
     document.getElementById('page-room-select').style.display = 'block';
 };
+window.goBack = () => {
+    // ၁။ ဖွင့်ထားတဲ့ Sub-pages တွေကို ဖျောက်မယ်
+    const pages = [
+        'page-5vs5', 
+        'page-1vs1', 
+        'page-payment-proof', 
+        'page-match-center',
+        'page-room-select' // Dashboard ပြန်သွားရင် ဒါကိုပါ ပိတ်ရမယ်
+    ];
+    
+    pages.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // ၂။ Main Dashboard ကို ပြန်ဖွင့်မယ်
+    const mainDashboard = document.getElementById('main-dashboard');
+    if (mainDashboard) {
+        mainDashboard.style.opacity = '1';
+        mainDashboard.style.pointerEvents = 'auto';
+    }
+
+    // ၃။ လက်ရှိ window.currentMode ကို ကြည့်ပြီး UI ကို Refresh လုပ်ပေးမယ်
+    // ဒီလိုလုပ်ပေးခြင်းဖြင့် 5vs5 ဆို 5vs5၊ 1vs1 ဆို 1vs1 ပြန်ပေါ်နေပါမယ်
+    updateUI();
+};
