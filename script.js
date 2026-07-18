@@ -369,10 +369,6 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
-// Global variable အနေနဲ့ အပေါ်မှာ ထားပါ
-let lastStatus = ''; 
-
-// Global variable
 let lastStatus = ''; 
 
 async function updateBuyButtonStatus() {
