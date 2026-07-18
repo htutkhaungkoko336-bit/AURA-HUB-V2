@@ -369,16 +369,15 @@ window.backToRegistration = () => {
     }
 };
 async function updateBuyButtonStatus() {
-    const docId = localStorage.getItem('aura_device_id');
+    const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
     
-    // ၁။ ID မရှိရင် ဘာမှမလုပ်ဘဲ ရပ်ထားမယ် (ဒါမှ Register မလုပ်ရသေးတဲ့သူတွေ Error တက်မှာမဟုတ်ဘူး)
-    if (!docId || !buyBtn) return;
+    if (!deviceId || !buyBtn) return;
 
     try {
-        const response = await fetch('/api/check-status?deviceId=' + docId);
+        // ဒီနေရာမှာ ?deviceId= ဆိုပြီး ပြင်ရေးထားပါတယ်
+        const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
         
-        // 404 ဖြစ်ရင် (Data မရှိသေးရင်)
         if (response.status === 404) {
             console.log("Database ထဲမှာ Data မရှိသေးပါ (Register စောင့်ဆိုင်းနေသည်)");
             return; 
@@ -386,7 +385,6 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // Status အရ ခလုတ်ပုံစံ ပြောင်းခြင်း
         if (data.status === 'reject') {
             buyBtn.innerText = "REPAIR / ပြန်ပြင်ရန်"; 
             buyBtn.style.backgroundColor = "#ff4d4d";
@@ -406,4 +404,3 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
-document.addEventListener('DOMContentLoaded', updateBuyButtonStatus);
