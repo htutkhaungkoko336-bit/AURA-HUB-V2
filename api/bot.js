@@ -25,7 +25,21 @@ bot.action(/confirm_(.+)/, async (ctx) => {
         await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
     }
 });
-
+// Reject လုပ်ရင် Status ပြောင်းခြင်း
+bot.action(/reject_(.+)/, async (ctx) => {
+    const docId = ctx.match[1];
+    try {
+        // Firebase Status ကို "reject" သို့ ပြောင်းမယ်
+        await db.collection("registrations").doc(docId).update({ status: "reject" });
+        
+        // Message ကို Reject ဖြစ်ကြောင်း ပြင်ပေးမယ်
+        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n❌ <b>Status:</b> Rejected", { parse_mode: "HTML" });
+        await ctx.answerCbQuery("အောင်မြင်စွာ Rejected လုပ်လိုက်ပါပြီ");
+    } catch (err) {
+        console.error(err);
+        await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
+    }
+});
 module.exports = async (req, res) => {
     try {
         await bot.handleUpdate(req.body);
