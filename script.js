@@ -366,3 +366,37 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
+async function updateBuyButtonStatus() {
+    const deviceId = localStorage.getItem('aura_device_id');
+    if (!deviceId) return;
+
+    try {
+        const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
+        const data = await response.json();
+        
+        const buyBtn = document.getElementById('buy-room-btn');
+        if (!buyBtn) return;
+
+        if (data.status === 'reject') {
+            // ဒီနေရာမှာ Backend ကပေးလိုက်တဲ့ rejectReason ကို အစားထိုးလိုက်တာပါ
+            buyBtn.innerText = `REJECTED: ${data.rejectReason}`;
+            
+            // ခလုတ်ပုံစံကို အနီရောင် ပြောင်းမယ်
+            buyBtn.style.backgroundColor = "#ff4d4d"; 
+            buyBtn.style.color = "#fff";
+            buyBtn.style.pointerEvents = "auto"; // ပြန်နှိပ်လို့ရအောင် လုပ်ပေးမယ် (အချက်အလက်ပြင်ဖို့)
+            buyBtn.style.opacity = "1";
+        } 
+        else if (data.status === 'confirm') {
+            buyBtn.innerText = "CONFIRMED ✅";
+            buyBtn.style.backgroundColor = "#28a745";
+            buyBtn.style.pointerEvents = "none"; // နှိပ်လို့မရအောင် ပိတ်မယ်
+        } 
+        else if (data.status === 'pending') {
+            buyBtn.innerText = "PENDING...";
+            buyBtn.style.pointerEvents = "none";
+        }
+    } catch (e) {
+        console.error("Status check failed", e);
+    }
+}
