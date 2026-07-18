@@ -165,6 +165,7 @@ window.submitProof = async function() {
     const logoInput = document.getElementById(logoInputId);
     const ssInput = document.getElementById('ssFile-proof');
 
+    // Validation
     if (!logoInput || logoInput.files.length === 0 || !ssInput || ssInput.files.length === 0) {
         alert("Logo နှင့် Payment Screenshot တင်ပေးပါ။");
         return;
@@ -179,14 +180,16 @@ window.submitProof = async function() {
         
         const deviceId = localStorage.getItem('aura_device_id') || 'unknown';
         
+        // Payload တည်ဆောက်ခြင်း
         let payload = {
             deviceId: deviceId,
             logo: logoUrl,
             paymentScreenshot: screenshotUrl,
             mode: currentMode,
-            createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true }) 
+            updatedAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true }) 
         };
 
+        // Data ထည့်ခြင်း (1vs1 vs 5vs5)
         if (is1v1Visible) {
             payload.squadName = document.getElementById('solo-player-name')?.value || 'N/A';
             payload.heroName = document.getElementById('hero-name-input')?.value || 'N/A';
@@ -210,8 +213,9 @@ window.submitProof = async function() {
             });
         }
 
-        const response = await fetch('/api/register', {
-            method: 'POST',
+        // Backend သို့ ပို့ခြင်း (Update ပြုလုပ်ရန် endpoint သို့)
+        const response = await fetch('/api/update-registration', {
+            method: 'POST', // သင့် Backend က PUT ကို လက်ခံရင် PUT နဲ့ပြောင်းလဲနိုင်ပါတယ်
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
@@ -219,15 +223,14 @@ window.submitProof = async function() {
         const result = await response.json();
         
         if (result.success) {
-            // Data ပို့ပြီးမှ localStorage ထဲမှာ မှတ်ထားပါ (ဒီနေရာမှာ ထည့်ပေးလိုက်ပါတယ်)
             localStorage.setItem('aura_last_registration', JSON.stringify(payload));
-
+            alert("Data အောင်မြင်စွာ အပ်ဒိတ်လုပ်ပြီးပါပြီ။");
+            
             const buyBtn = document.getElementById('buy-room-btn');
             if (buyBtn) {
                 buyBtn.innerText = "PENDING..."; 
                 buyBtn.style.pointerEvents = "none"; 
                 buyBtn.style.opacity = "0.6";
-                buyBtn.style.borderColor = "#c9a66b";
             }
             showWaitingRoom();
         } else {
