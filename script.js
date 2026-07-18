@@ -366,36 +366,3 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
-// script.js ထဲက updateBuyButtonStatus function ကို ဒီလိုပြင်ပါ
-async function updateBuyButtonStatus() {
-    const deviceId = localStorage.getItem('aura_device_id');
-    if (!deviceId) return;
-
-    try {
-        const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
-        const data = await response.json();
-        const buyBtn = document.getElementById('buy-room-btn');
-        if (!buyBtn) return;
-
-        if (data.status === 'reject') {
-            buyBtn.innerText = "REPAIR / ပြန်ပြင်ရန်"; 
-            buyBtn.style.backgroundColor = "#ff4d4d";
-            
-            // User က နှိပ်မှ အကြောင်းရင်းပေါ်မယ်
-            buyBtn.onclick = () => {
-                const userConfirmed = confirm(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason}\n\nပြင်ဆင်ပြီးရင် Ok နှိပ်ပြီး Data အသစ်ပြန်တင်ပေးပါ`);
-                if (userConfirmed) {
-                    // ဒီနေရာမှာ သင့်ရဲ့ Registration Form ကို ပြန်ဖွင့်ပေးတဲ့ code ထည့်ပါ
-                    // ဥပမာ: openRegistrationForm(); 
-                }
-            };
-        } else if (data.status === 'confirm') {
-            buyBtn.innerText = "CONFIRMED ✅";
-            buyBtn.style.backgroundColor = "#28a745";
-            buyBtn.style.pointerEvents = "none";
-        } else if (data.status === 'pending') {
-            buyBtn.innerText = "PENDING...";
-            buyBtn.style.pointerEvents = "none";
-        }
-    } catch (e) { console.error(e); }
-}
