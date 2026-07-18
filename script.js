@@ -366,3 +366,46 @@ window.backToRegistration = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 };
+async function updateBuyButtonStatus() {
+    const deviceId = localStorage.getItem('aura_device_id');
+    const buyBtn = document.getElementById('buy-room-btn');
+    
+    if (!deviceId || !buyBtn) return;
+
+    try {
+        // သင့်ရဲ့ API ကို လှမ်းခေါ်ခြင်း
+        const response = await fetch(`/api/check-status?deviceId=${deviceId}`);
+        
+        if (!response.ok) return; // API က အဆင်မပြေရင် ရပ်လိုက်မယ်
+        
+        const data = await response.json();
+        
+        // Backend ကလာတဲ့ status အပေါ်မူတည်ပြီး UI ပြောင်းမယ်
+        if (data.status === 'reject') {
+            buyBtn.innerText = "REPAIR / ပြန်ပြင်ရန်"; 
+            buyBtn.style.backgroundColor = "#ff4d4d"; // အနီရောင်
+            
+            // User က နှိပ်မှ အကြောင်းရင်းပေါ်မယ်
+            buyBtn.onclick = () => {
+                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}\n\nOk နှိပ်ပြီး Data အသစ်ပြန်တင်ပေးပါ။`);
+                // ဤနေရာတွင် သင့် Registration Form ကို ပြန်ဖွင့်ပေးတဲ့ function ကို ထည့်ပါ
+                // openRegistrationForm(); 
+            };
+        } 
+        else if (data.status === 'confirm') {
+            buyBtn.innerText = "CONFIRMED ✅";
+            buyBtn.style.backgroundColor = "#28a745"; // အစိမ်းရောင်
+            buyBtn.style.pointerEvents = "none"; // နှိပ်လို့မရအောင် ပိတ်ထားမယ်
+        } 
+        else if (data.status === 'pending') {
+            buyBtn.innerText = "PENDING...";
+            buyBtn.style.backgroundColor = "#ffa500"; // အဝါရောင်
+            buyBtn.style.pointerEvents = "none";
+        }
+    } catch (e) {
+        console.error("Status check failed:", e);
+    }
+}
+
+// Page ပွင့်လာတာနဲ့ Status စစ်ဖို့ ခေါ်ပေးပါ
+document.addEventListener('DOMContentLoaded', updateBuyButtonStatus);
