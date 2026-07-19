@@ -398,7 +398,7 @@ async function updateBuyButtonStatus() {
             if (actionBtns) actionBtns.style.display = 'flex';
         } 
         
-        // REJECT ဖြစ်တဲ့အပိုင်း
+                // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             if (actionBtns) actionBtns.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'flex'; 
@@ -406,11 +406,11 @@ async function updateBuyButtonStatus() {
             buyBtn.style.display = 'block';
             if (backBtn) backBtn.style.display = 'block';
             
-            // REJECTED ခလုတ်စတိုင်လ်
+            // REJECTED ခလုတ်စတိုင်လ် (အတိုင်းအတာတစ်ခုထိသာ လင်းစေရန်)
             buyBtn.innerText = "REJECTED";
             buyBtn.style.backgroundColor = "#eb3838";
-            buyBtn.style.opacity = "1"; // ပိုလင်းစေရန်
-            buyBtn.style.boxShadow = "0 0 15px rgba(235, 56, 56, 0.6)"; // အနီရောင် Glow ထည့်ခြင်း
+            buyBtn.style.opacity = "1"; 
+            buyBtn.style.boxShadow = "0 0 8px rgba(235, 56, 56, 0.4)"; // လျှော့ချထားသော အလင်းတန်း
             buyBtn.style.pointerEvents = "auto";
             
             buyBtn.onclick = () => {
@@ -420,14 +420,14 @@ async function updateBuyButtonStatus() {
                 buyBtn.innerText = "RESUBMIT NOW";
                 buyBtn.style.backgroundColor = "#dac02d";
                 buyBtn.style.color = "#000";
-                buyBtn.style.boxShadow = "0 0 20px rgba(218, 192, 45, 0.8)"; // ရွှေရောင် Glow ပိုလင်းစေရန်
+                buyBtn.style.boxShadow = "0 0 10px rgba(218, 192, 45, 0.5)"; // လျှော့ချထားသော အလင်းတန်း
                 buyBtn.style.fontWeight = "bold";
                 
                 buyBtn.onclick = () => {
                     openRegistrationPage();
                 };
             };
-        }        
+        }
         // ၃။ PENDING ဖြစ်နေရင်
         else {
             if (actionBtns) actionBtns.style.display = 'none';
