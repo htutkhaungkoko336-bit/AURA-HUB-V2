@@ -376,10 +376,7 @@ let lastStatus = '';
 async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
-    const actionBtns = document.getElementById('action-buttons');
-    const backBtn = document.getElementById('back-btn');
-    const buyRoomContainer = document.getElementById('buy-room-container');
-
+    
     if (!deviceId || !buyBtn) return;
 
     try {
@@ -388,55 +385,50 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // အခြေအနေအလိုက် UI ကို အမြဲ Update လုပ်ပါ
+        if (data.status === lastStatus) return;
+        lastStatus = data.status;
         
-        // ၁။ CONFIRM ဖြစ်နေရင်
-        if (data.status === 'confirm') {
+        // အရင်ရှိတဲ့ reject အပိုင်းကို ဒါနဲ့ အစားထိုးပါ
+        if (data.status === 'reject') {
+            buyBtn.innerText = "REJECTED"; // စာသားကို ခလုတ်နှိပ်ဖို့ လွယ်အောင် ပြင်ပေးပါ
+            buyBtn.style.backgroundColor = "#eb3838"; // အနီရောင်ဖြင့် စတင်ပြသ
+            buyBtn.style.opacity = "1";
+            buyBtn.style.pointerEvents = "auto";
+            
+            // ပထမဆုံးနှိပ်ခြင်း (Alert တက်ပြီး ရွှေရောင်ပြောင်းရန်)
+            buyBtn.onclick = () => {
+                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+                
+                // ရွှေရောင်သို့ ပြောင်းလဲခြင်း
+                buyBtn.innerText = "RESUBMIT NOW";
+                buyBtn.style.backgroundColor = "#dac02d"; // ရွှေရောင် (Gold)
+                buyBtn.style.color = "#000"; // စာသားကို ဖတ်ရလွယ်အောင် အမည်းရောင်ပြောင်း (လိုအပ်ရင်)
+                
+                // ဒုတိယအကြိမ် နှိပ်မှသာ Page ပွင့်အောင် ပြင်ပေးခြင်း
+                buyBtn.onclick = () => {
+                    openRegistrationPage();
+                };
+            };
+                
+            } else if (data.status === 'confirm') {
             buyBtn.style.display = 'none';
             if (backBtn) backBtn.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'none';
             
             // Create New Room နှင့် Quit ခလုတ်များ အမြဲပေါ်စေရန်
             if (actionBtns) actionBtns.style.display = 'flex';
-        } 
-        
-        // ၂။ REJECT ဖြစ်နေရင် (အရင် logic အတိုင်း)
-        else if (data.status === 'reject') {
-            if (actionBtns) actionBtns.style.display = 'none';
-            if (buyRoomContainer) buyRoomContainer.style.display = 'block';
 
-            buyBtn.style.display = 'block';
-            buyBtn.innerText = "REJECTED";
-            buyBtn.style.backgroundColor = "#eb3838";
-            buyBtn.style.pointerEvents = "auto";
-            
-            buyBtn.onclick = () => {
-                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+            } else if (data.status === 'pending') {
+                // အကယ်၍ Pending ပြန်ဖြစ်သွားလျှင် Back Button ပြန်ပေါ်ရန်
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) backBtn.style.display = 'block'; 
                 
-                buyBtn.innerText = "RESUBMIT NOW";
-                buyBtn.style.backgroundColor = "#dac02d";
-                buyBtn.style.color = "#000";
-                
-                buyBtn.onclick = () => {
-                    openRegistrationPage();
-                };
-            };
-        } 
-        
-        // ၃။ PENDING ဖြစ်နေရင်
-        else {
-            if (actionBtns) actionBtns.style.display = 'none';
-            if (buyRoomContainer) buyRoomContainer.style.display = 'block';
-            if (backBtn) backBtn.style.display = 'block';
-            
-            buyBtn.style.display = 'block';
-            buyBtn.innerText = "PENDING...";
-            buyBtn.style.backgroundColor = "#555555";
-            buyBtn.style.pointerEvents = "none";
-        }
-
-        lastStatus = data.status;
-    } catch (e) {
+                buyBtn.style.display = 'block';
+                buyBtn.innerText = "PENDING...";
+                buyBtn.style.backgroundColor = "#555555";
+                buyBtn.style.pointerEvents = "none";
+            }
+        } catch (e) {
         console.error("Status check failed:", e);
     }
 }
