@@ -32,25 +32,30 @@ bot.action(/reject_(.+)/, async (ctx) => {
         parse_mode: "HTML",
         reply_markup: {
             inline_keyboard: [
-                [{ text: "ပုံမရှင်းလင်းခြင်း", callback_data: `reason_blur_${docId}` }],
-                [{ text: "ငွေမရောက်ခြင်း", callback_data: `reason_no_money_${docId}` }],
-                [{ text: "အချက်အလက်မှားယွင်း", callback_data: `reason_wrong_info_${docId}` }]
+                [{ text: "Entry Fee ကြေးမလောက်ခြင်း", callback_data: `reason_low_fee_${docId}` }],
+                [{ text: "Player Name/ID မှားယွင်းခြင်း", callback_data: `reason_wrong_player_${docId}` }],
+                [{ text: "K-Pay အချက်အလက်မှားယွင်း", callback_data: `reason_wrong_kpay_${docId}` }],
+                [{ text: "ညစ်ညမ်းသောပုံတင်ခြင်း", callback_data: `reason_inappropriate_${docId}` }]
             ]
         }
     });
 });
-
 // ၂။ အကြောင်းရင်းကို ရွေးချယ်ပြီးမှ Database ကို Update လုပ်ခြင်း
 bot.action(/reason_(.+)_(.+)/, async (ctx) => {
-    const reason = ctx.match[1];
+    const reasonKey = ctx.match[1]; // ဥပမာ: low_fee, wrong_player
     const docId = ctx.match[2];
     
-    // Reason ကို မြန်မာလို ပြောင်းလဲခြင်း
-    const reasonText = reason === 'blur' ? "ပုံမရှင်းလင်းခြင်း" : 
-                       reason === 'no_money' ? "ငွေမရောက်ခြင်း" : "အချက်အလက်မှားယွင်းခြင်း";
+    // Reason ကို မြန်မာလို ပြောင်းလဲခြင်း (Mapping အသစ်)
+    const reasonMap = {
+        'low_fee': "Entry Fee ကြေးမလောက်ခြင်း",
+        'wrong_player': "Player Name/ID မှားယွင်းခြင်း",
+        'wrong_kpay': "K-Pay အချက်အလက်မှားယွင်းခြင်း",
+        'inappropriate': "ညစ်ညမ်းသောပုံတင်ခြင်း"
+    };
+
+    const reasonText = reasonMap[reasonKey] || "အကြောင်းရင်းမဖော်ပြထားပါ";
 
     try {
-        // Firebase တွင် status နှင့် reason ကိုပါ သိမ်းဆည်းခြင်း
         await db.collection("registrations").doc(docId).update({ 
             status: "reject",
             rejectReason: reasonText 
