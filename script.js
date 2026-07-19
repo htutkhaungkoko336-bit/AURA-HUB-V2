@@ -223,7 +223,7 @@ window.submitProof = async function() {
         
         if (result.success) {
             localStorage.setItem('aura_last_registration', JSON.stringify(payload));
-            alert("Data အောင်မြင်စွာ အပ်ဒိတ်လုပ်ပြီးပါပြီ။");
+            alert("Registration submitted successfully!");
             
             const buyBtn = document.getElementById('buy-room-btn');
             if (buyBtn) {
@@ -390,8 +390,8 @@ async function updateBuyButtonStatus() {
         
         // အရင်ရှိတဲ့ reject အပိုင်းကို ဒါနဲ့ အစားထိုးပါ
         if (data.status === 'reject') {
-            buyBtn.innerText = "REJECTED (Click to View)"; // စာသားကို ခလုတ်နှိပ်ဖို့ လွယ်အောင် ပြင်ပေးပါ
-            buyBtn.style.backgroundColor = "#c92424"; // အနီရောင်ဖြင့် စတင်ပြသ
+            buyBtn.innerText = "REJECTED"; // စာသားကို ခလုတ်နှိပ်ဖို့ လွယ်အောင် ပြင်ပေးပါ
+            buyBtn.style.backgroundColor = "#eb3838"; // အနီရောင်ဖြင့် စတင်ပြသ
             buyBtn.style.opacity = "1";
             buyBtn.style.pointerEvents = "auto";
             
@@ -401,7 +401,7 @@ async function updateBuyButtonStatus() {
                 
                 // ရွှေရောင်သို့ ပြောင်းလဲခြင်း
                 buyBtn.innerText = "RESUBMIT NOW";
-                buyBtn.style.backgroundColor = "#FFD700"; // ရွှေရောင် (Gold)
+                buyBtn.style.backgroundColor = "#dac02d"; // ရွှေရောင် (Gold)
                 buyBtn.style.color = "#000"; // စာသားကို ဖတ်ရလွယ်အောင် အမည်းရောင်ပြောင်း (လိုအပ်ရင်)
                 
                 // ဒုတိယအကြိမ် နှိပ်မှသာ Page ပွင့်အောင် ပြင်ပေးခြင်း
