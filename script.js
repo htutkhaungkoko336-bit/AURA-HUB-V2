@@ -388,17 +388,28 @@ async function updateBuyButtonStatus() {
         if (data.status === lastStatus) return;
         lastStatus = data.status;
         
+        // အရင်ရှိတဲ့ reject အပိုင်းကို ဒါနဲ့ အစားထိုးပါ
         if (data.status === 'reject') {
-                    buyBtn.innerText = "RESUBMIT"; 
-                    buyBtn.style.backgroundColor = "#c92424"; // အနီရောင် (သို့မဟုတ် သင်ကြိုက်တဲ့ အရောင်)
-                    buyBtn.style.opacity = "1";               // အရောင်မှိန်နေတာကို ပျောက်အောင် 1 ထားပေးပါ
-                    buyBtn.style.pointerEvents = "auto";      // နှိပ်လို့ရအောင် ပြန်ဖွင့်ပေးပါ
-                    
-                    buyBtn.onclick = () => {
-                        alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
-                        openRegistrationPage(); 
-                    };
-        
+            buyBtn.innerText = "REJECTED (Click to View)"; // စာသားကို ခလုတ်နှိပ်ဖို့ လွယ်အောင် ပြင်ပေးပါ
+            buyBtn.style.backgroundColor = "#c92424"; // အနီရောင်ဖြင့် စတင်ပြသ
+            buyBtn.style.opacity = "1";
+            buyBtn.style.pointerEvents = "auto";
+            
+            // ပထမဆုံးနှိပ်ခြင်း (Alert တက်ပြီး ရွှေရောင်ပြောင်းရန်)
+            buyBtn.onclick = () => {
+                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+                
+                // ရွှေရောင်သို့ ပြောင်းလဲခြင်း
+                buyBtn.innerText = "RESUBMIT NOW";
+                buyBtn.style.backgroundColor = "#FFD700"; // ရွှေရောင် (Gold)
+                buyBtn.style.color = "#000"; // စာသားကို ဖတ်ရလွယ်အောင် အမည်းရောင်ပြောင်း (လိုအပ်ရင်)
+                
+                // ဒုတိယအကြိမ် နှိပ်မှသာ Page ပွင့်အောင် ပြင်ပေးခြင်း
+                buyBtn.onclick = () => {
+                    openRegistrationPage();
+                };
+            };
+                
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
             buyBtn.style.backgroundColor = "#28a745";
