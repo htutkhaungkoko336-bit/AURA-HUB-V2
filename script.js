@@ -411,15 +411,29 @@ async function updateBuyButtonStatus() {
             };
                 
         } else if (data.status === 'confirm') {
-            buyBtn.innerText = "CONFIRMED ✅";
-            buyBtn.style.backgroundColor = "#28a745";
-            buyBtn.style.pointerEvents = "none";
-        } else if (data.status === 'pending') {
-            buyBtn.innerText = "PENDING...";
-            buyBtn.style.backgroundColor = "#555555";
-            buyBtn.style.pointerEvents = "none";
-        }
-    } catch (e) {
+                    // ၁။ Buy Button ကို လုံးဝဖျောက်လိုက်မည်
+                    buyBtn.style.display = 'none';
+                    
+                    // ၂။ ဖျောက်ထားသော Create New Room & Quit Button (Action Buttons) များကို ပြန်ဖော်မည်
+                    const actionBtns = document.getElementById('action-buttons');
+                    if (actionBtns) {
+                        actionBtns.style.display = 'flex'; // သို့မဟုတ် 'block' သင်သုံးတဲ့ design ပေါ်မူတည်၍
+                    }
+                    
+                    // (Optional) အကယ်၍ Buy Room Container ကိုပါ ဖျောက်ချင်ရင်
+                    const buyRoomContainer = document.getElementById('buy-room-container');
+                    if (buyRoomContainer) {
+                        buyRoomContainer.style.display = 'none'; 
+                    }
+                    
+                } else if (data.status === 'pending') {
+                    // Pending ဖြစ်နေရင် UI ပုံမှန်အတိုင်း ပြန်ပြင်ပေးပါ
+                    buyBtn.style.display = 'block';
+                    buyBtn.innerText = "PENDING...";
+                    buyBtn.style.backgroundColor = "#555555";
+                    buyBtn.style.pointerEvents = "none";
+                }
+        } catch (e) {
         console.error("Status check failed:", e);
     }
 }
