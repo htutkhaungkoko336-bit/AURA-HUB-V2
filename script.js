@@ -473,5 +473,5 @@ window.openRegistrationPage = () => {
 };
 document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
-    setInterval(updateBuyButtonStatus, 5000); 
+    setInterval(updateBuyButtonStatus, 1000); 
 });
