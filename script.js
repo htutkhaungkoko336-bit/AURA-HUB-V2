@@ -389,15 +389,16 @@ async function updateBuyButtonStatus() {
         lastStatus = data.status;
         
         if (data.status === 'reject') {
-            buyBtn.innerText = "RESUBMIT"; 
-            buyBtn.style.backgroundColor = "#c92424";
-            buyBtn.style.pointerEvents = "auto";
-            
-            // Page အသစ်သို့မသွားတော့ဘဲ internal function ကိုခေါ်ပါမည်
-            buyBtn.onclick = () => {
-                alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
-                openRegistrationPage(); 
-            };
+                    buyBtn.innerText = "RESUBMIT"; 
+                    buyBtn.style.backgroundColor = "#c92424"; // အနီရောင် (သို့မဟုတ် သင်ကြိုက်တဲ့ အရောင်)
+                    buyBtn.style.opacity = "1";               // အရောင်မှိန်နေတာကို ပျောက်အောင် 1 ထားပေးပါ
+                    buyBtn.style.pointerEvents = "auto";      // နှိပ်လို့ရအောင် ပြန်ဖွင့်ပေးပါ
+                    
+                    buyBtn.onclick = () => {
+                        alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+                        openRegistrationPage(); 
+                    };
+        
         } else if (data.status === 'confirm') {
             buyBtn.innerText = "CONFIRMED ✅";
             buyBtn.style.backgroundColor = "#28a745";
