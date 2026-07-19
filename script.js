@@ -411,13 +411,26 @@ async function updateBuyButtonStatus() {
             };
                 
             } else if (data.status === 'confirm') {
-            buyBtn.style.display = 'none';
-            if (backBtn) backBtn.style.display = 'none';
-            if (buyRoomContainer) buyRoomContainer.style.display = 'none';
-            
-            // Create New Room နှင့် Quit ခလုတ်များ အမြဲပေါ်စေရန်
-            if (actionBtns) actionBtns.style.display = 'flex';
+                // ၁။ ခလုတ်အားလုံးကို ရှာပြီး ဖျောက်မည်
+                buyBtn.style.display = 'none'; // Buy Button ဖျောက်
+                
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) backBtn.style.display = 'none'; // Back Button ဖျောက်
+                
+                // (လိုအပ်ပါက) အခြားခလုတ်များရှိလျှင်လည်း ဤနေရာတွင် ဖျောက်နိုင်သည်
+                // ဥပမာ: document.getElementById('other-btn').style.display = 'none';
 
+                // ၂။ Create New Room နှင့် Quit ပါဝင်သော Action Buttons ကို ပြန်ဖော်မည်
+                const actionBtns = document.getElementById('action-buttons');
+                if (actionBtns) {
+                    actionBtns.style.display = 'flex'; // ဒါက Create Room နဲ့ Quit ပါတဲ့ Container
+                }
+                
+                const buyRoomContainer = document.getElementById('buy-room-container');
+                if (buyRoomContainer) {
+                    buyRoomContainer.style.display = 'none'; // Buy Room Container ကို ဖျောက်
+                }
+                
             } else if (data.status === 'pending') {
                 // အကယ်၍ Pending ပြန်ဖြစ်သွားလျှင် Back Button ပြန်ပေါ်ရန်
                 const backBtn = document.getElementById('back-btn');
