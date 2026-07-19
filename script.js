@@ -410,29 +410,37 @@ async function updateBuyButtonStatus() {
                 };
             };
                 
-        } else if (data.status === 'confirm') {
-                    // ၁။ Buy Button ကို လုံးဝဖျောက်လိုက်မည်
-                    buyBtn.style.display = 'none';
-                    
-                    // ၂။ ဖျောက်ထားသော Create New Room & Quit Button (Action Buttons) များကို ပြန်ဖော်မည်
-                    const actionBtns = document.getElementById('action-buttons');
-                    if (actionBtns) {
-                        actionBtns.style.display = 'flex'; // သို့မဟုတ် 'block' သင်သုံးတဲ့ design ပေါ်မူတည်၍
-                    }
-                    
-                    // (Optional) အကယ်၍ Buy Room Container ကိုပါ ဖျောက်ချင်ရင်
-                    const buyRoomContainer = document.getElementById('buy-room-container');
-                    if (buyRoomContainer) {
-                        buyRoomContainer.style.display = 'none'; 
-                    }
-                    
-                } else if (data.status === 'pending') {
-                    // Pending ဖြစ်နေရင် UI ပုံမှန်အတိုင်း ပြန်ပြင်ပေးပါ
-                    buyBtn.style.display = 'block';
-                    buyBtn.innerText = "PENDING...";
-                    buyBtn.style.backgroundColor = "#555555";
-                    buyBtn.style.pointerEvents = "none";
+            } else if (data.status === 'confirm') {
+                // ၁။ ခလုတ်အားလုံးကို ရှာပြီး ဖျောက်မည်
+                buyBtn.style.display = 'none'; // Buy Button ဖျောက်
+                
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) backBtn.style.display = 'none'; // Back Button ဖျောက်
+                
+                // (လိုအပ်ပါက) အခြားခလုတ်များရှိလျှင်လည်း ဤနေရာတွင် ဖျောက်နိုင်သည်
+                // ဥပမာ: document.getElementById('other-btn').style.display = 'none';
+
+                // ၂။ Create New Room နှင့် Quit ပါဝင်သော Action Buttons ကို ပြန်ဖော်မည်
+                const actionBtns = document.getElementById('action-buttons');
+                if (actionBtns) {
+                    actionBtns.style.display = 'flex'; // ဒါက Create Room နဲ့ Quit ပါတဲ့ Container
                 }
+                
+                const buyRoomContainer = document.getElementById('buy-room-container');
+                if (buyRoomContainer) {
+                    buyRoomContainer.style.display = 'none'; // Buy Room Container ကို ဖျောက်
+                }
+                
+            } else if (data.status === 'pending') {
+                // အကယ်၍ Pending ပြန်ဖြစ်သွားလျှင် Back Button ပြန်ပေါ်ရန်
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) backBtn.style.display = 'block'; 
+                
+                buyBtn.style.display = 'block';
+                buyBtn.innerText = "PENDING...";
+                buyBtn.style.backgroundColor = "#555555";
+                buyBtn.style.pointerEvents = "none";
+            }
         } catch (e) {
         console.error("Status check failed:", e);
     }
