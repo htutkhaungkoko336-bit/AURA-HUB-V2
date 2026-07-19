@@ -321,26 +321,22 @@
     >
         BACK
     </button></div>
-    <div id="action-buttons" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
-        
-        <!-- အဓိက ခလုတ် -->
-        <div class="create-room-card" onclick="createNewRoom()" 
-            style="width: 100%; padding: 18px; border: 2px solid #c9a66b; border-radius: 12px; text-align: center; cursor: pointer; background: rgba(201,166,107,0.1);">
-            <span style="color: #c9a66b; font-size: 1.1rem; font-weight: bold;">New room ⊕</span>
-        </div>
+<!-- အဓိက ခလုတ် ၂ ခု (User အမြဲသုံးမယ့်ဟာ) -->
+<div id="main-actions" style="display: flex; gap: 15px; margin-bottom: 30px;">
+    <button onclick="createNewRoom()" style="flex: 2; padding: 15px; background: #c9a66b; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">
+        New Room ⊕
+    </button>
+    <button onclick="goBack()" style="flex: 1; padding: 15px; background: #333; color: #fff; border: 1px solid #555; border-radius: 12px; font-weight: bold; cursor: pointer;">
+        Back
+    </button>
+</div>
 
-        <!-- ဒုတိယတန်း (Back နဲ့ Quit ကို ဘေးချင်းယှဉ်) -->
-        <div style="display: flex; gap: 10px;">
-            <button id="back-btn" onclick="goBack()" 
-                    style="flex: 1; padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 10px; cursor: pointer;">
-                Back
-            </button>
-            <button id="quit-btn" onclick="quitMatch()" 
-                    style="flex: 0.5; padding: 12px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 10px; cursor: pointer;">
-                Quit
-            </button>
-        </div>
-    </div>
+<!-- Quit အတွက် သီးသန့်နေရာ (အောက်မှာ သပ်သပ်) -->
+<div id="footer-actions" style="text-align: center; margin-top: 20px;">
+    <span onclick="quitMatch()" style="color: #ff4d4d; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">
+        Quit current match
+    </span>
+</div>
 </div>
 </div>
 <div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
