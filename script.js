@@ -495,32 +495,36 @@ window.toggleActionWheel = function() {
     }
 }
 
-// User ရဲ့ Key Status ပေါ်မူတည်ပြီး 3D Orb နဲ့ Menu တွေကို ပြောင်းပေးမယ့် Function
+// Bottom Sheet Dock ၏ Status များကို ထိန်းချုပ်မည့် Function
 window.updateWheelUI = function(keyStatus) {
-    const activeState = document.getElementById('menu-active-state');
-    const inUseState = document.getElementById('menu-inuse-state');
-    const wheelIcon = document.getElementById('wheel-icon');
-    const orbBtn = document.getElementById('wheel-toggle-btn');
+    const dockContainer = document.getElementById('action-wheel-container');
+    const dockIcon = document.getElementById('dock-icon');
+    const dockStatusText = document.getElementById('dock-status-text');
+    const activeBtns = document.getElementById('dock-active-btns');
+    const inuseBtns = document.getElementById('dock-inuse-btns');
 
-    if (!activeState || !inUseState || !wheelIcon || !orbBtn) return;
+    if (!dockContainer) return;
+
+    // Admin ဆီက Confirm ဖြစ်ပြီးမှသာ Dock ကို ပြမယ် (အခြားနေရာတွေမှာလိုရင် display block လုပ်ပေးနိုင်ပါတယ်)
+    dockContainer.style.display = 'block';
 
     if (keyStatus === 'active') {
-        // သော့အလွတ်ရှိချိန် (ရွှေရောင်လင်းလက်နေမယ်)
-        activeState.style.display = 'flex';
-        inUseState.style.display = 'none';
-        wheelIcon.innerHTML = '🔑'; 
-        orbBtn.style.background = 'radial-gradient(circle at 30% 30%, #e6ca88, #9a7b45 70%, #4a3818 100%)';
+        dockIcon.innerHTML = '🔑';
+        dockStatusText.innerText = 'Active Key';
+        dockStatusText.style.color = '#c9a66b';
+        activeBtns.style.display = 'flex';
+        inuseBtns.style.display = 'none';
     } else if (keyStatus === 'in-use') {
-        // အခန်းထောင်ထားချိန် (သော့ခလတ်ပုံစံ၊ အရောင်အနည်းငယ်မှိုင်းမယ်)
-        activeState.style.display = 'none';
-        inUseState.style.display = 'flex';
-        wheelIcon.innerHTML = '🔒'; 
-        orbBtn.style.background = 'radial-gradient(circle at 30% 30%, #888, #444 70%, #222 100%)';
+        dockIcon.innerHTML = '🔒';
+        dockStatusText.innerText = 'Room In-Use';
+        dockStatusText.style.color = '#ffaa00';
+        activeBtns.style.display = 'none';
+        inuseBtns.style.display = 'flex';
     } else if (keyStatus === 'pending_refund') {
-        // Refund တောင်းထားဆဲ
-        activeState.style.display = 'none';
-        inUseState.style.display = 'none';
-        wheelIcon.innerHTML = '⏳'; 
-        orbBtn.style.background = 'radial-gradient(circle at 30% 30%, #d9822b, #8c4a11 70%, #402005 100%)';
+        dockIcon.innerHTML = '⏳';
+        dockStatusText.innerText = 'Refund Pending';
+        dockStatusText.style.color = '#3498db';
+        activeBtns.style.display = 'none';
+        inuseBtns.style.display = 'none'; // Pending ဖြစ်နေချိန် ခလုတ်ပိတ်ထားရန်
     }
 }
