@@ -484,3 +484,35 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
+let isWheelOpen = false;
+
+// Action Wheel ကို ဖွင့်/ပိတ် လုပ်ရန်
+function toggleActionWheel() {
+    isWheelOpen = !isWheelOpen;
+    const menu = document.getElementById('wheel-menu');
+    menu.style.display = isWheelOpen ? 'flex' : 'none';
+}
+
+// User ရဲ့ Key Status ပေါ်မူတည်ပြီး UI ကို ပြောင်းပေးမယ့် Function
+function updateWheelUI(keyStatus) {
+    const activeState = document.getElementById('menu-active-state');
+    const inUseState = document.getElementById('menu-inuse-state');
+    const wheelIcon = document.getElementById('wheel-icon');
+
+    if (keyStatus === 'active') {
+        // သော့အလွတ်ရှိတယ် (အခန်းထောင်လို့ရပြီ)
+        activeState.style.display = 'flex';
+        inUseState.style.display = 'none';
+        wheelIcon.innerHTML = '🔑'; // ပုံမှန်သော့
+    } else if (keyStatus === 'in-use') {
+        // အခန်းထောင်ထားပြီးသား (သို့) သော့သုံးထားတယ်
+        activeState.style.display = 'none';
+        inUseState.style.display = 'flex';
+        wheelIcon.innerHTML = '🔒'; // သော့ခတ်ထားပုံစံ
+    } else if (keyStatus === 'pending_refund') {
+        // Refund တောင်းထားပြီး စောင့်ဆိုင်းဆဲ
+        activeState.style.display = 'none';
+        inUseState.style.display = 'none';
+        wheelIcon.innerHTML = '⏳'; // Pending ပုံစံ
+    }
+}
