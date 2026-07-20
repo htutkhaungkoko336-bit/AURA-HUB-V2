@@ -508,19 +508,21 @@ window.updateWheelUI = function(keyStatus) {
     // Admin ဆီက Confirm ဖြစ်ပြီးမှသာ Dock ကို ပြမယ် (အခြားနေရာတွေမှာလိုရင် display block လုပ်ပေးနိုင်ပါတယ်)
     dockContainer.style.display = 'block';
 
-    if (keyStatus === 'active') {
-        dockIcon.innerHTML = '🔑';
+if (keyStatus === 'active') {
+        // Active ဖြစ်နေချိန် ရှေးဟောင်းရွှေရောင်သော့
+        document.getElementById('dock-icon-svg').style.stroke = '#c9a66b';
         dockStatusText.innerText = 'Active Key';
         dockStatusText.style.color = '#c9a66b';
         activeBtns.style.display = 'flex';
         inuseBtns.style.display = 'none';
     } else if (keyStatus === 'in-use') {
-        dockIcon.innerHTML = '🔒';
+        // သော့သုံးထားချိန် (အဝါရောင် သို့မဟုတ် ငွေရောင်မှိုင်းမှိုင်း)
+        document.getElementById('dock-icon-svg').style.stroke = '#ffaa00';
         dockStatusText.innerText = 'Room In-Use';
         dockStatusText.style.color = '#ffaa00';
         activeBtns.style.display = 'none';
         inuseBtns.style.display = 'flex';
-    } else if (keyStatus === 'pending_refund') {
+        } else if (keyStatus === 'pending_refund') {
         dockIcon.innerHTML = '⏳';
         dockStatusText.innerText = 'Refund Pending';
         dockStatusText.style.color = '#3498db';
