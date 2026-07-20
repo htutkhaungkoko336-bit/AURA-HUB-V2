@@ -484,49 +484,76 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
-let isWheelOpen = false;
-
+let isWheelOpen = false; // ပုံမှန်အားဖြင့် ကျုံ့ထားမည် (false)
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
-    const menu = document.getElementById('orb-menu');
-    if (menu) {
-        menu.style.display = isWheelOpen ? 'flex' : 'none';
+    
+    const textAreas = document.getElementById('dock-text-area');
+    const actionWrapper = document.getElementById('dock-action-wrapper');
+    const dockBox = document.getElementById('dock-box');
+
+    if (isWheelOpen) {
+        // ရှည်ထွက်လာချိန် (Expand)
+        if (textAreas) {
+            textAreas.style.display = 'block';
+            setTimeout(() => textAreas.style.opacity = '1', 50);
+        }
+        if (actionWrapper) {
+            actionWrapper.style.display = 'block';
+            setTimeout(() => actionWrapper.style.opacity = '1', 50);
+        }
+        if (dockBox) {
+            dockBox.style.width = 'auto';
+        }
+    } else {
+        // ပြန်ကျုံ့သွားချိန် (Collapse - သော့အဝိုင်းလေးသာ ကျန်မည်)
+        if (textAreas) {
+            textAreas.style.opacity = '0';
+            setTimeout(() => textAreas.style.display = 'none', 300);
+        }
+        if (actionWrapper) {
+            actionWrapper.style.opacity = '0';
+            setTimeout(() => actionWrapper.style.display = 'none', 300);
+        }
     }
 }
 
 // Bottom Sheet Dock ၏ Status များကို ထိန်းချုပ်မည့် Function
 window.updateWheelUI = function(keyStatus) {
     const dockContainer = document.getElementById('action-wheel-container');
-    const dockIcon = document.getElementById('dock-icon');
+    const dockIconElem = document.getElementById('dock-icon-element');
     const dockStatusText = document.getElementById('dock-status-text');
     const activeBtns = document.getElementById('dock-active-btns');
     const inuseBtns = document.getElementById('dock-inuse-btns');
 
     if (!dockContainer) return;
 
-    // Admin ဆီက Confirm ဖြစ်ပြီးမှသာ Dock ကို ပြမယ် (အခြားနေရာတွေမှာလိုရင် display block လုပ်ပေးနိုင်ပါတယ်)
     dockContainer.style.display = 'block';
 
-if (keyStatus === 'active') {
-        // Active ဖြစ်နေချိန် ရှေးဟောင်းရွှေရောင်သော့
-        document.getElementById('dock-icon-svg').style.stroke = '#c9a66b';
-        dockStatusText.innerText = 'Active Key';
-        dockStatusText.style.color = '#c9a66b';
-        activeBtns.style.display = 'flex';
-        inuseBtns.style.display = 'none';
+    if (keyStatus === 'active') {
+        if (dockIconElem) dockIconElem.innerText = '🗝️';
+        if (dockStatusText) {
+            dockStatusText.innerText = 'Active Key';
+            dockStatusText.style.color = '#c9a66b';
+        }
+        if (activeBtns) activeBtns.style.display = 'flex';
+        if (inuseBtns) inuseBtns.style.display = 'none';
     } else if (keyStatus === 'in-use') {
-        // သော့သုံးထားချိန် (အဝါရောင် သို့မဟုတ် ငွေရောင်မှိုင်းမှိုင်း)
-        document.getElementById('dock-icon-svg').style.stroke = '#ffaa00';
-        dockStatusText.innerText = 'Room In-Use';
-        dockStatusText.style.color = '#ffaa00';
-        activeBtns.style.display = 'none';
-        inuseBtns.style.display = 'flex';
-        } else if (keyStatus === 'pending_refund') {
-        dockIcon.innerHTML = '⏳';
-        dockStatusText.innerText = 'Refund Pending';
-        dockStatusText.style.color = '#3498db';
-        activeBtns.style.display = 'none';
-        inuseBtns.style.display = 'none'; // Pending ဖြစ်နေချိန် ခလုတ်ပိတ်ထားရန်
+        if (dockIconElem) dockIconElem.innerText = '🔒';
+        if (dockStatusText) {
+            dockStatusText.innerText = 'Room In-Use';
+            dockStatusText.style.color = '#ffaa00';
+        }
+        if (activeBtns) activeBtns.style.display = 'none';
+        if (inuseBtns) inuseBtns.style.display = 'flex';
+    } else if (keyStatus === 'pending_refund') {
+        if (dockIconElem) dockIconElem.innerText = '⏳';
+        if (dockStatusText) {
+            dockStatusText.innerText = 'Refund Pending';
+            dockStatusText.style.color = '#3498db';
+        }
+        if (activeBtns) activeBtns.style.display = 'none';
+        if (inuseBtns) inuseBtns.style.display = 'none';
     }
 }

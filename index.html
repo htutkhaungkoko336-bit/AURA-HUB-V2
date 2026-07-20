@@ -322,26 +322,26 @@
         BACK
     </button></div>
     <!-- Bottom Sheet Action Dock Container -->
-    <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
+<div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
+    
+    <!-- Main Dock Box -->
+    <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
         
-        <div style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
-            
-            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
-            <div style="display: flex; align-items: center; gap: 10px;">
-<!-- သော့ထည့်ထားသော အဝိုင်း Container -->
-            <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
-                
-                <!-- သော့မှန်း သေချာသိသာစေရန် ရှင်းလင်းသော သော့သင်္ကေတ -->
+        <!-- ဘယ်ဘက်ခြမ်း: နှိပ်၍ ကျုံ့/ရှည် လုပ်ရန် Key Circle (onclick ထည့်ထားသည်) -->
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="dock-toggle-btn" onclick="toggleActionWheel()" style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0; cursor: pointer; transition: transform 0.2s;" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'">
                 <span id="dock-icon-element" style="font-size: 1.25rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🗝️</span>
-                
             </div>
-                            <div>
-                    <div style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
-                    <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
-                </div>
+            
+            <!-- Status Text (ကျုံ့ထားစဉ် ဖျောက်ထားရန် id="dock-text-area" ပေးထားသည်) -->
+            <div id="dock-text-area" style="transition: opacity 0.3s ease;">
+                <div style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
+                <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
             </div>
+        </div>
 
-            <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (Dynamic) -->
+        <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (ကျုံ့ထားစဉ် ဖျောက်ထားရန် id="dock-action-wrapper" ပေးထားသည်) -->
+        <div id="dock-action-wrapper" style="transition: opacity 0.3s ease, max-width 0.3s ease; overflow: hidden;">
             <div id="dock-action-area" style="display: flex; gap: 8px;">
                 <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
                 <div id="dock-active-btns" style="display: flex; gap: 8px;">
@@ -360,10 +360,10 @@
                     </button>
                 </div>
             </div>
-
         </div>
+
     </div>
-</div>
+</div></div>
 </div>
 <div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
     <div class="header-box">
