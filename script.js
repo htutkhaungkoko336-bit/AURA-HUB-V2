@@ -494,39 +494,67 @@ window.toggleActionWheel = function() {
         menu.style.display = isWheelOpen ? 'flex' : 'none';
     }
 }
+let isExpanded = false;
 
-// Bottom Sheet Dock ၏ Status များကို ထိန်းချုပ်မည့် Function
+// Dock ကို ရှည်ထွက်စေရန် သို့မဟုတ် ပြန်ကျုံ့ရန် လုပ်ဆောင်မည့် Function
+function toggleDock() {
+    const expandedContent = document.getElementById('dock-expanded-content');
+    const backBtn = document.getElementById('dock-back-btn');
+    
+    isExpanded = !isExpanded;
+
+    if (isExpanded) {
+        // ရှည်ထွက်လာချိန် (Expand)
+        backBtn.style.display = 'none'; // Back ခလုတ် ဖျောက်မည်
+        expandedContent.style.display = 'flex';
+        setTimeout(() => {
+            expandedContent.style.opacity = '1';
+        }, 50);
+    } else {
+        // ပြန်ကျုံ့သွားချိန် (Collapse)
+        expandedContent.style.opacity = '0';
+        setTimeout(() => {
+            expandedContent.style.display = 'none';
+            backBtn.style.display = 'flex'; // Back ခလုတ် ပြန်ပေါ်မည်
+        }, 300);
+    }
+}
+
+// Bottom Sheet ၏ Status များနှင့် UI ကို ထိန်းချုပ်မည့် Function
 window.updateWheelUI = function(keyStatus) {
     const dockContainer = document.getElementById('action-wheel-container');
-    const dockIcon = document.getElementById('dock-icon');
+    const dockIconElem = document.getElementById('dock-icon-element');
     const dockStatusText = document.getElementById('dock-status-text');
     const activeBtns = document.getElementById('dock-active-btns');
     const inuseBtns = document.getElementById('dock-inuse-btns');
 
     if (!dockContainer) return;
 
-    // Admin ဆီက Confirm ဖြစ်ပြီးမှသာ Dock ကို ပြမယ် (အခြားနေရာတွေမှာလိုရင် display block လုပ်ပေးနိုင်ပါတယ်)
     dockContainer.style.display = 'block';
 
-if (keyStatus === 'active') {
-        // Active ဖြစ်နေချိန် ရှေးဟောင်းရွှေရောင်သော့
-        document.getElementById('dock-icon-svg').style.stroke = '#c9a66b';
+    if (keyStatus === 'active') {
+        dockIconElem.innerText = '🗝️';
         dockStatusText.innerText = 'Active Key';
         dockStatusText.style.color = '#c9a66b';
         activeBtns.style.display = 'flex';
         inuseBtns.style.display = 'none';
     } else if (keyStatus === 'in-use') {
-        // သော့သုံးထားချိန် (အဝါရောင် သို့မဟုတ် ငွေရောင်မှိုင်းမှိုင်း)
-        document.getElementById('dock-icon-svg').style.stroke = '#ffaa00';
+        dockIconElem.innerText = '🔒';
         dockStatusText.innerText = 'Room In-Use';
         dockStatusText.style.color = '#ffaa00';
         activeBtns.style.display = 'none';
         inuseBtns.style.display = 'flex';
-        } else if (keyStatus === 'pending_refund') {
-        dockIcon.innerHTML = '⏳';
+    } else if (keyStatus === 'pending_refund') {
+        dockIconElem.innerText = '⏳';
         dockStatusText.innerText = 'Refund Pending';
         dockStatusText.style.color = '#3498db';
         activeBtns.style.display = 'none';
-        inuseBtns.style.display = 'none'; // Pending ဖြစ်နေချိန် ခလုတ်ပိတ်ထားရန်
+        inuseBtns.style.display = 'none';
     }
+}
+
+// Main Dashboard သို့ သွားမည့် Function
+function goToMainDashboard() {
+    console.log("Navigating to Main Dashboard...");
+    // ဥပမာ - window.location.href = 'dashboard.html'; လို့ ပြောင်းသုံးနိုင်ပါတယ်
 }

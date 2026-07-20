@@ -595,3 +595,124 @@ swiper-slide img {
     background: rgba(201, 166, 107, 0.15) !important; /* အနည်းငယ်အရောင်တင်ပေးခြင်း */
     transform: scale(1.1);
 }
+
+
+
+#dock-box {
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(201, 166, 107, 0.4);
+    border-radius: 30px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: auto;
+}
+
+#dock-back-btn {
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+#dock-back-btn:hover {
+    background: rgba(201,166,107,0.2);
+}
+
+#dock-key-circle {
+    width: 42px;
+    height: 42px;
+    background: radial-gradient(circle, rgba(218,192,45,0.3) 0%, rgba(20,20,20,0.95) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #dac02d;
+    box-shadow: 0 0 12px rgba(218,192,45,0.4);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+#dock-key-circle:active {
+    transform: scale(0.92);
+}
+
+#dock-icon-element {
+    font-size: 1.25rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+#dock-expanded-content {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    width: 230px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#dock-status-text {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #c9a66b;
+}
+
+#dock-action-area {
+    display: flex;
+    gap: 6px;
+}
+
+#dock-active-btns {
+    display: flex;
+}
+
+#create-room-btn {
+    background: linear-gradient(135deg, #c9a66b, #9a7b45);
+    color: #111;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 12px rgba(201,166,107,0.3);
+}
+
+#dock-inuse-btns {
+    display: flex;
+    gap: 6px;
+}
+
+#cancel-room-btn {
+    background: rgba(255, 170, 0, 0.2);
+    color: #ffaa00;
+    border: 1px solid #ffaa00;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+#refund-btn {
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
