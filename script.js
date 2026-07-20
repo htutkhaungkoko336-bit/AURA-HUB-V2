@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
-let isWheelOpen = true; // ပုံမှန်အားဖြင့် အစမှာ ရှည်လျားလျက် (ဖွင့်လျက်) ပြမည်
+let isWheelOpen = false; // ပုံမှန်အားဖြင့် ဖွင့်ထားမည်
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
@@ -493,30 +493,26 @@ window.toggleActionWheel = function() {
     const dockBox = document.getElementById('dock-box');
 
     if (isWheelOpen) {
-        // ရှည်ထွက်လာချိန် (ခလုတ်များပါ ပေါ်မည်၊ ရွှေရောင်ဘောင် အပြည့်ပြန်ဖြစ်မည်)
+        // ၁။ ပထမဦးစွာ ခလုတ်စာသားများကို ပေါ်လာစေရန် အရင်လုပ်မည်
         if (actionWrapper) {
-            actionWrapper.style.display = 'flex';
-            setTimeout(() => {
-                actionWrapper.style.opacity = '1';
-                actionWrapper.style.maxWidth = '300px';
-            }, 50);
+            actionWrapper.style.visibility = 'visible';
+            actionWrapper.style.opacity = '1';
         }
+        // ၂။ ရွှေရောင်ဘောင် အလျားကို မူလအပြည့်အတိုင်း ဖြည်းဖြည်းချင်း ရှည်ထွက်စေမည်
         if (dockBox) {
             dockBox.style.width = '100%';
-            dockBox.style.justifyContent = 'space-between';
+            dockBox.style.padding = '12px 18px';
         }
     } else {
-        // ပြန်ကျုံ့သွားချိန် (ညာဘက်ခလုတ်များ ပျောက်သွားပြီး Active Key စာသားအထိ ရွှေရောင်ဘောင် တိုသွားမည်)
+        // ၁။ ခလုတ်များကို အရင် ပျောက်သွားစေမည် (အရိပ်အယောင်မကျန်အောင်)
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
-            actionWrapper.style.maxWidth = '0px';
-            setTimeout(() => {
-                actionWrapper.style.display = 'none';
-            }, 300);
+            actionWrapper.style.visibility = 'hidden';
         }
+        // ၂။ ရွှေရောင်ဘောင် အလျားကို သော့နဲ့ စာသားအထိ ဖြည်းဖြည်းချင်း ကျုံ့သွားစေမည်
         if (dockBox) {
-            dockBox.style.width = 'max-content'; // စာသားနဲ့သော့ရှိရာ အကျယ်အဝန်းအထိသာ ရွှေရောင်ဘောင် ဝင်သွားမည်
-            dockBox.style.justifyContent = 'flex-start';
+            dockBox.style.width = '185px'; // သော့နဲ့ Active Key စာသားဆံ့ရုံ အတိအကျ ပမာဏ
+            dockBox.style.padding = '12px 14px';
         }
     }
 }
