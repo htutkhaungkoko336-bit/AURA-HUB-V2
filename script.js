@@ -486,7 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 let isWheelOpen = false;
 
-let isWheelOpen = false;
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
