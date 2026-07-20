@@ -408,30 +408,32 @@ async function updateBuyButtonStatus() {
             // updateWheelUI(data.keyStatus); 
         }        
                 // REJECT ဖြစ်တဲ့အပိုင်း
-        else if (data.status === 'reject') {
+            else if (data.status === 'reject') {
             if (actionBtns) actionBtns.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'flex'; 
 
             buyBtn.style.display = 'block';
             if (backBtn) backBtn.style.display = 'block';
             
-            // REJECTED ခလုတ်စတိုင်လ် (အတိုင်းအတာတစ်ခုထိသာ လင်းစေရန်)
+            // REJECTED ဖြစ်နေချိန် ပုံစံနှင့် Click လုပ်ဆောင်ချက်
             buyBtn.innerText = "REJECTED";
             buyBtn.style.backgroundColor = "#eb3838";
             buyBtn.style.opacity = "1"; 
-            buyBtn.style.boxShadow = "0 0 8px rgba(235, 56, 56, 0.4)"; // လျှော့ချထားသော အလင်းတန်း
+            buyBtn.style.boxShadow = "0 0 8px rgba(235, 56, 56, 0.4)";
             buyBtn.style.pointerEvents = "auto";
             
+            // တစ်ကြိမ်တည်းဖြင့် အကြောင်းရင်းပြပြီးသားဖြစ်စေရန်နှင့် Resubmit သို့ တိုက်ရိုက်ပြောင်းရန်
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
                 
-                // RESUBMIT NOW (ရွှေရောင်) ခလုတ်စတိုင်လ်
+                // နှိပ်ပြီးပါက RESUBMIT NOW အဖြစ်သို့ အပြီးတိုင်ပြောင်းမည်
                 buyBtn.innerText = "RESUBMIT NOW";
                 buyBtn.style.backgroundColor = "#dac02d";
                 buyBtn.style.color = "#000";
-                buyBtn.style.boxShadow = "0 0 10px rgba(218, 192, 45, 0.5)"; // လျှော့ချထားသော အလင်းတန်း
+                buyBtn.style.boxShadow = "0 0 10px rgba(218, 192, 45, 0.5)";
                 buyBtn.style.fontWeight = "bold";
                 
+                // နောက်တစ်ကြိမ်ထပ်နှိပ်လျှင် မှတ်ပုံတင်စာမျက်နှာသို့ သွားစေရန် onclick ကို ချိတ်ပေးမည်
                 buyBtn.onclick = () => {
                     openRegistrationPage();
                 };
