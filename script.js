@@ -484,37 +484,39 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
-let isWheelOpen = false; // ပုံမှန်အားဖြင့် ကျုံ့ထားမည် (false)
+let isWheelOpen = true; // ပုံမှန်အားဖြင့် အစမှာ ရှည်လျားလျက် (ဖွင့်လျက်) ပြမည်
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
-    const textAreas = document.getElementById('dock-text-area');
     const actionWrapper = document.getElementById('dock-action-wrapper');
     const dockBox = document.getElementById('dock-box');
 
     if (isWheelOpen) {
-        // ရှည်ထွက်လာချိန် (Expand)
-        if (textAreas) {
-            textAreas.style.display = 'block';
-            setTimeout(() => textAreas.style.opacity = '1', 50);
-        }
+        // ရှည်ထွက်လာချိန် (ခလုတ်များပါ ပေါ်မည်၊ ရွှေရောင်ဘောင် အပြည့်ပြန်ဖြစ်မည်)
         if (actionWrapper) {
-            actionWrapper.style.display = 'block';
-            setTimeout(() => actionWrapper.style.opacity = '1', 50);
+            actionWrapper.style.display = 'flex';
+            setTimeout(() => {
+                actionWrapper.style.opacity = '1';
+                actionWrapper.style.maxWidth = '300px';
+            }, 50);
         }
         if (dockBox) {
-            dockBox.style.width = 'auto';
+            dockBox.style.width = '100%';
+            dockBox.style.justifyContent = 'space-between';
         }
     } else {
-        // ပြန်ကျုံ့သွားချိန် (Collapse - သော့အဝိုင်းလေးသာ ကျန်မည်)
-        if (textAreas) {
-            textAreas.style.opacity = '0';
-            setTimeout(() => textAreas.style.display = 'none', 300);
-        }
+        // ပြန်ကျုံ့သွားချိန် (ညာဘက်ခလုတ်များ ပျောက်သွားပြီး Active Key စာသားအထိ ရွှေရောင်ဘောင် တိုသွားမည်)
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
-            setTimeout(() => actionWrapper.style.display = 'none', 300);
+            actionWrapper.style.maxWidth = '0px';
+            setTimeout(() => {
+                actionWrapper.style.display = 'none';
+            }, 300);
+        }
+        if (dockBox) {
+            dockBox.style.width = 'max-content'; // စာသားနဲ့သော့ရှိရာ အကျယ်အဝန်းအထိသာ ရွှေရောင်ဘောင် ဝင်သွားမည်
+            dockBox.style.justifyContent = 'flex-start';
         }
     }
 }
