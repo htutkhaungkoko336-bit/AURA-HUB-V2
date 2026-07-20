@@ -372,6 +372,7 @@ window.backToRegistration = () => {
     }
 };
 let lastStatus = ''; 
+let isResubmitMode = false; // RESUBMIT NOW ရောက်သွားပြီလား စစ်ရန် flag
 
 async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
@@ -407,33 +408,36 @@ async function updateBuyButtonStatus() {
             // Action Wheel ရဲ့ Icon နဲ့ State တွေကို ချိန်ညှိချင်ရင် ဒီမှာ function ထပ်ခေါ်လို့ရပါတယ်
             // updateWheelUI(data.keyStatus); 
         }        
-                // REJECT ဖြစ်တဲ့အပိုင်း
-            else if (data.status === 'reject') {
+        // REJECT ဖြစ်တဲ့အပိုင်း
+        else if (data.status === 'reject') {
+            // အကယ်၍ user က RESUBMIT NOW ကို ရောက်နေပြီဆိုရင် ၅ စက္ကန့်တစ်ကြိမ် အလိုအလျောက် ပြန်မပြောင်းစေရန် တားမည်
+            if (isResubmitMode) return; 
+
             if (actionBtns) actionBtns.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'flex'; 
 
             buyBtn.style.display = 'block';
             if (backBtn) backBtn.style.display = 'block';
             
-            // REJECTED ဖြစ်နေချိန် ပုံစံနှင့် Click လုပ်ဆောင်ချက်
+            // REJECTED ဖြစ်နေချိန် ပုံစံ
             buyBtn.innerText = "REJECTED";
             buyBtn.style.backgroundColor = "#eb3838";
             buyBtn.style.opacity = "1"; 
             buyBtn.style.boxShadow = "0 0 8px rgba(235, 56, 56, 0.4)";
             buyBtn.style.pointerEvents = "auto";
             
-            // တစ်ကြိမ်တည်းဖြင့် အကြောင်းရင်းပြပြီးသားဖြစ်စေရန်နှင့် Resubmit သို့ တိုက်ရိုက်ပြောင်းရန်
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
                 
-                // နှိပ်ပြီးပါက RESUBMIT NOW အဖြစ်သို့ အပြီးတိုင်ပြောင်းမည်
+                // RESUBMIT NOW သို့ ပြောင်းသွားပြီဖြစ်ကြောင်း flag ကို true လုပ်မည်
+                isResubmitMode = true; 
+
                 buyBtn.innerText = "RESUBMIT NOW";
                 buyBtn.style.backgroundColor = "#dac02d";
                 buyBtn.style.color = "#000";
                 buyBtn.style.boxShadow = "0 0 10px rgba(218, 192, 45, 0.5)";
                 buyBtn.style.fontWeight = "bold";
                 
-                // နောက်တစ်ကြိမ်ထပ်နှိပ်လျှင် မှတ်ပုံတင်စာမျက်နှာသို့ သွားစေရန် onclick ကို ချိတ်ပေးမည်
                 buyBtn.onclick = () => {
                     openRegistrationPage();
                 };
