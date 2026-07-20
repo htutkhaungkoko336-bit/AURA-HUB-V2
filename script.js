@@ -500,7 +500,7 @@ window.toggleActionWheel = function() {
     const backBtn = document.getElementById('dock-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ရှည်ထွက်လာချိန် Back Button ကို ဖြည်းဖြည်းချင်း ဖျောက်မည်
+        // ၁။ ရှည်ထွက်လာချိန် ညာဘက်က Back Button ကို အရင်ဖျောက်မည်
         if (backBtn) {
             backBtn.style.opacity = '0';
             setTimeout(() => backBtn.style.display = 'none', 200);
@@ -513,22 +513,26 @@ window.toggleActionWheel = function() {
         }
         // ၃။ လုပ်ဆောင်ချက် ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
-            actionWrapper.style.visibility = 'visible';
-            actionWrapper.style.opacity = '1';
+            actionWrapper.style.display = 'flex';
+            setTimeout(() => {
+                actionWrapper.style.visibility = 'visible';
+                actionWrapper.style.opacity = '1';
+            }, 50);
         }
     } else {
         // ၁။ လုပ်ဆောင်ချက် ခလုတ်များကို အရင် ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
+            setTimeout(() => actionWrapper.style.display = 'none', 200);
         }
-        // ၂။ ဘောင်ကို ကျုံ့သွားစေပြီး Back Button ပါဝင်ဆံ့မည့် အကျယ် (230px) သို့ ပြောင်းမည်
+        // ၂။ ဘောင်ကို ကျုံ့သွားစေပြီး Back Button ပါဝင်ဆံ့မည့် အကျယ်သို့ ပြောင်းမည်
         if (dockBox) {
             dockBox.style.width = '230px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
-        // ၃။ ကျုံ့သွားပြီးချိန်တွင် Back Button ကို ပြန်ပေါ်လာစေမည်
+        // ၃။ ကျုံ့သွားပြီးချိန်တွင် ညာဘက်ခြမ်း၌ Back Button ကို ပြန်ပေါ်လာစေမည်
         if (backBtn) {
             backBtn.style.display = 'flex';
             setTimeout(() => backBtn.style.opacity = '1', 200);
