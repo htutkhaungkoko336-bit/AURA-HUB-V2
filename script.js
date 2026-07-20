@@ -497,45 +497,45 @@ window.toggleActionWheel = function() {
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
     const dockBox = document.getElementById('dock-box');
-    const backBtn = document.getElementById('dock-back-btn');
+    const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ရှည်ထွက်လာချိန် ညာဘက်က Back Button ကို အရင်ဖျောက်မည်
-        if (backBtn) {
-            backBtn.style.opacity = '0';
-            setTimeout(() => backBtn.style.display = 'none', 200);
+        // ၁။ အပြင်ဘက် Back Button ကို အရင် ဖြည်းဖြည်းချင်း ဖျောက်မည်
+        if (externalBackBtn) {
+            externalBackBtn.style.opacity = '0';
+            externalBackBtn.style.transform = 'scale(0.9)';
+            setTimeout(() => externalBackBtn.style.display = 'none', 300);
         }
-        // ၂။ ဘောင်ကို အလျားပြည့် ရှည်ထွက်စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို အလျားပြည့် ရှည်ထွက်စေမည်
         if (dockBox) {
             dockBox.style.width = '100%';
             dockBox.style.padding = '12px 18px';
             dockBox.style.justifyContent = 'space-between';
         }
-        // ၃။ လုပ်ဆောင်ချက် ခလုတ်များကို ပေါ်လာစေမည်
+        // ၃။ အတွင်းရှိ လုပ်ဆောင်ချက် ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
-            actionWrapper.style.display = 'flex';
-            setTimeout(() => {
-                actionWrapper.style.visibility = 'visible';
-                actionWrapper.style.opacity = '1';
-            }, 50);
+            actionWrapper.style.visibility = 'visible';
+            actionWrapper.style.opacity = '1';
         }
     } else {
-        // ၁။ လုပ်ဆောင်ချက် ခလုတ်များကို အရင် ဖျောက်မည်
+        // ၁။ အတွင်းရှိ လုပ်ဆောင်ချက် ခလုတ်များကို အရင် ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
-            setTimeout(() => actionWrapper.style.display = 'none', 200);
         }
-        // ၂။ ဘောင်ကို ကျုံ့သွားစေပြီး Back Button ပါဝင်ဆံ့မည့် အကျယ်သို့ ပြောင်းမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို သော့နဲ့ စာသားအထိ ပြန်ကျုံ့စေမည်
         if (dockBox) {
-            dockBox.style.width = '230px';
+            dockBox.style.width = '185px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
-        // ၃။ ကျုံ့သွားပြီးချိန်တွင် ညာဘက်ခြမ်း၌ Back Button ကို ပြန်ပေါ်လာစေမည်
-        if (backBtn) {
-            backBtn.style.display = 'flex';
-            setTimeout(() => backBtn.style.opacity = '1', 200);
+        // ၃။ ကျုံ့သွားပြီးချိန်တွင် အပြင်ဘက် Back Button ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
+        if (externalBackBtn) {
+            externalBackBtn.style.display = 'block';
+            setTimeout(() => {
+                externalBackBtn.style.opacity = '1';
+                externalBackBtn.style.transform = 'scale(1)';
+            }, 50);
         }
     }
 }
