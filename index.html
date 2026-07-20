@@ -321,24 +321,38 @@
     >
         BACK
     </button></div>
-    <div id="action-buttons" style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+    <!-- Action Wheel Container -->
+    <div id="action-wheel-container" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 1000;">
         
-        <!-- အဓိက ခလုတ် -->
-        <div class="create-room-card" onclick="createNewRoom()" 
-            style="width: 100%; padding: 18px; border: 2px solid #c9a66b; border-radius: 12px; text-align: center; cursor: pointer; background: rgba(201,166,107,0.1);">
-            <span style="color: #c9a66b; font-size: 1.1rem; font-weight: bold;">New room ⊕</span>
+        <!-- Wheel Main Button (အလယ်က သော့ခလုတ်) -->
+        <div id="wheel-toggle-btn" onclick="toggleActionWheel()" 
+            style="width: 70px; height: 70px; background: #c9a66b; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(201,166,107,0.4); margin: 0 auto; transition: transform 0.3s ease;">
+            <span style="font-size: 1.8rem;" id="wheel-icon">🔑</span>
         </div>
 
-        <!-- ဒုတိယတန်း (Back နဲ့ Quit ကို ဘေးချင်းယှဉ်) -->
-        <div style="display: flex; gap: 10px;">
-            <button id="back-btn" onclick="goBack()" 
-                    style="flex: 1; padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 10px; cursor: pointer;">
-                Back
-            </button>
-            <button id="quit-btn" onclick="quitMatch()" 
-                    style="flex: 0.5; padding: 12px; background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; border-radius: 10px; cursor: pointer;">
-                Quit
-            </button>
+        <!-- Radial Menu Options (ပတ်လည်မှာ ပေါ်လာမယ့် ခလုတ်များ) -->
+        <div id="wheel-menu" style="display: none; position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; background: rgba(20, 20, 20, 0.95); padding: 12px 20px; border-radius: 30px; border: 1px solid #c9a66b; box-shadow: 0 5px 20px rgba(0,0,0,0.5); backdrop-filter: blur(5px);">
+            
+            <!-- Status က Active ဖြစ်နေရင် (အခန်းမရှိသေးရင်) -->
+            <div id="menu-active-state" style="display: flex; gap: 12px;">
+                <button onclick="createNewRoom()" style="background: #c9a66b; color: #111; border: none; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    <span>⊕ New Room</span>
+                </button>
+                <button onclick="joinRoomWithKey()" style="background: #333; color: #fff; border: 1px solid #555; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer;">
+                    <span>🗝️ Unlock & Join</span>
+                </button>
+            </div>
+
+            <!-- Status က In-Use ဖြစ်နေရင် (အခန်းထောင်ထားပြီးသားဆိုရင်) -->
+            <div id="menu-inuse-state" style="display: flex; gap: 12px; display: none;">
+                <button onclick="cancelMyRoom()" style="background: #ffaa00; color: #111; border: none; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer;">
+                    <span>❌ Cancel Room</span>
+                </button>
+                <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer;">
+                    <span>💰 Quit & Refund</span>
+                </button>
+            </div>
+
         </div>
     </div>
 </div>

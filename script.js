@@ -388,16 +388,25 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // ၁။ CONFIRM ဖြစ်နေရင်
+// ၁။ CONFIRM ဖြစ်နေရင်
         if (data.status === 'confirm') {
             buyBtn.style.display = 'none';
             if (backBtn) backBtn.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'none';
             
-            // Create New Room နှင့် Quit ခလုတ်များ ပေါ်စေရန်
-            if (actionBtns) actionBtns.style.display = 'flex';
-        } 
-        
+            // Action Wheel (သို့မဟုတ် actionBtns) ပေါ်လာစေရန်
+            const actionWheelContainer = document.getElementById('action-wheel-container');
+            if (actionWheelContainer) {
+                actionWheelContainer.style.display = 'block';
+            }
+            if (actionBtns) {
+                actionBtns.style.display = 'flex';
+            }
+            
+            // (Optional) Database ကနေ user ရဲ့ key_status ကိုပါ တစ်ခါတည်း စစ်ပြီး 
+            // Action Wheel ရဲ့ Icon နဲ့ State တွေကို ချိန်ညှိချင်ရင် ဒီမှာ function ထပ်ခေါ်လို့ရပါတယ်
+            // updateWheelUI(data.keyStatus); 
+        }        
                 // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             if (actionBtns) actionBtns.style.display = 'none';
