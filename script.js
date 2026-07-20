@@ -509,7 +509,7 @@ window.toggleActionWheel = function() {
             externalBackBtn.style.borderWidth = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 700);
+            }, 1000);
         }
         // ၂။ ရွှေရောင်ဘောင်ကို ပို၍နှေးပြီး ချောမွေ့စွာ ရှည်ထွက်စေမည်
         if (dockBox) {
