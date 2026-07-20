@@ -500,21 +500,20 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည် (ကြာချိန် 0.8s)
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
+            externalBackBtn.style.transform = 'scaleX(0)';
             externalBackBtn.style.width = '0px';
-            externalBackBtn.style.minWidth = '0px';
             externalBackBtn.style.padding = '0px';
             externalBackBtn.style.borderWidth = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 500); // Transition duration (0.5s) နဲ့ တိုက်ဆိုင်ထားသည်
+            }, 800);
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို တိကျသော အကျယ်အဝန်း (ဥပမာ 330px) သို့ ချောမွေ့စွာ ရှည်ထွက်စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို scaleX(1) ဖြင့် ဖြည်းဖြည်းချင်း ချောမွေ့စွာ ရှည်ထွက်စေမည်
         if (dockBox) {
-            dockBox.style.width = '330px';
-            dockBox.style.padding = '12px 18px';
+            dockBox.style.transform = 'scaleX(1)';
             dockBox.style.justifyContent = 'space-between';
         }
         // ၃။ အတွင်းရှိ ခလုတ်များကို ပေါ်လာစေမည်
@@ -528,18 +527,17 @@ window.toggleActionWheel = function() {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစားသို့ ပြန်ကျုံ့စေမည်
         if (dockBox) {
-            dockBox.style.width = '185px';
-            dockBox.style.padding = '12px 14px';
+            dockBox.style.transform = 'scaleX(0.56)';
             dockBox.style.justifyContent = 'flex-start';
         }
         // ၃။ Back Button ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
+                externalBackBtn.style.transform = 'scaleX(1)';
                 externalBackBtn.style.width = '100px';
-                externalBackBtn.style.minWidth = '';
                 externalBackBtn.style.padding = '0';
                 externalBackBtn.style.borderWidth = '1px';
                 externalBackBtn.style.opacity = '1';
