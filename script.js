@@ -500,7 +500,7 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ အပြင်ဘက် Back Button ကို အရင် ဖြည်းဖြည်းချင်း ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို အရင် ဖြည်းဖြည်းချင်း ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.transform = 'scale(0.9)';
@@ -529,9 +529,9 @@ window.toggleActionWheel = function() {
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
-        // ၃။ ကျုံ့သွားပြီးချိန်တွင် အပြင်ဘက် Back Button ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
+        // ၃။ ကျုံ့သွားပြီးချိန်တွင် ညာဘက် Back Button ကို iOS ပုံစံအတိုင်း ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
-            externalBackBtn.style.display = 'block';
+            externalBackBtn.style.display = 'flex';
             setTimeout(() => {
                 externalBackBtn.style.opacity = '1';
                 externalBackBtn.style.transform = 'scale(1)';

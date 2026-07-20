@@ -327,18 +327,7 @@
     <!-- Dock နဲ့ Back Button ကို ဘေးချင်းယှဉ်တွဲပြရန် Outer Flex Container -->
     <div style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
         
-        <!-- အပြင်ဘက်တွင်ရှိမည့် မူလဒီဇိုင်းအတိုင်း Back Button (ကျုံ့ထားစဉ် ပေါ်နေမည်၊ ရှည်လာလျှင် ပျောက်မည်) -->
-        <button id="dock-external-back-btn" onclick="window.goBack()" 
-                style="width: 100px; height: 46px; border: 2px solid #c9a66b; border-radius: 12px; 
-                       background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); color: #c9a66b; font-weight: 700; cursor: pointer; 
-                       transition: all 0.3s ease, opacity 0.3s ease, transform 0.3s ease; text-transform: uppercase; font-size: 0.85rem;
-                       flex-shrink: 0; opacity: 1; visibility: visible;"
-                onmouseover="this.style.background='#c9a66b'; this.style.color='#000';"
-                onmouseout="this.style.background='rgba(0,0,0,0.7)'; this.style.color='#c9a66b';">
-            BACK
-        </button>
-
-        <!-- Main Dock Box (ရွှေရောင်ဘောင်) -->
+        <!-- Main Dock Box (ရွှေရောင်ဘောင် - ဘယ်ဘက်) -->
         <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; box-sizing: border-box;">
             
             <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status (နှိပ်၍ ကျုံ့/ရှည် လုပ်ရန်) -->
@@ -376,6 +365,18 @@
             </div>
 
         </div>
+
+        <!-- အပြင်ဘက် ညာဘက်တွင်ရှိမည့် iOS Style Back Button (ကျုံ့ထားစဉ် ပေါ်နေမည်၊ ရှည်လာလျှင် ဖျောက်မည်) -->
+        <button id="dock-external-back-btn" onclick="window.goBack()" 
+                style="height: 66px; width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
+                       background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+                       color: #c9a66b; font-weight: bold; cursor: pointer; 
+                       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
+                       flex-shrink: 0; opacity: 1; visibility: visible; box-shadow: 0 10px 30px rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;"
+                onmouseover="this.style.background='rgba(201, 166, 107, 0.2)'; this.style.borderColor='rgba(201, 166, 107, 0.8)';"
+                onmouseout="this.style.background='rgba(20, 20, 20, 0.85)'; this.style.borderColor='rgba(201, 166, 107, 0.4)';">
+            BACK
+        </button>
 
     </div>
 </div>
