@@ -324,11 +324,11 @@
     <!-- Bottom Sheet Action Dock Container -->
 <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
     
-    <!-- Dock နဲ့ Back Button ကို ဘေးချင်းယှဉ်တွဲပြရန် Outer Flex Container -->
-    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;">
+    <!-- Dock နဲ့ Back Button ကြား အကွာအဝေးကို 16px သို့ ပိုခွာပေးထားသည် -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
         
         <!-- Main Dock Box (ရွှေရောင်ဘောင် - ဘယ်ဘက်) -->
-        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; box-sizing: border-box;">
+        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1), padding 0.7s cubic-bezier(0.25, 1, 0.5, 1); overflow: hidden; box-sizing: border-box;">
             
             <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status (နှိပ်၍ ကျုံ့/ရှည် လုပ်ရန်) -->
             <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
@@ -343,7 +343,7 @@
             </div>
 
             <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (အစမှာ ဖျောက်ထားမည်) -->
-            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease 0.1s, visibility 0.3s ease 0.1s; display: flex; align-items: center; flex-shrink: 0;">
+            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.4s ease 0.2s, visibility 0.4s ease 0.2s; display: flex; align-items: center; flex-shrink: 0;">
                 <div id="dock-action-area" style="display: flex; gap: 8px;">
                     <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
                     <div id="dock-active-btns" style="display: flex; gap: 8px;">
@@ -366,12 +366,12 @@
 
         </div>
 
-        <!-- အပြင်ဘက် ညာဘက် Back Button (ဖြည်းဖြည်းချင်း ကျုံ့ဝင်ပြီး ပျောက်သွားရန် width နှင့် opacity ကို transition ထည့်ထားသည်) -->
+        <!-- အပြင်ဘက် ညာဘက် Back Button -->
         <button id="dock-external-back-btn" onclick="window.goBack()" 
                 style="height: 66px; width: 100px; max-width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
                        background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
                        color: #c9a66b; font-weight: bold; cursor: pointer; 
-                       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
+                       transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
                        flex-shrink: 0; opacity: 1; visibility: visible; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 0;"
                 onmouseover="this.style.background='rgba(201, 166, 107, 0.2)'; this.style.borderColor='rgba(201, 166, 107, 0.8)';"
                 onmouseout="this.style.background='rgba(20, 20, 20, 0.85)'; this.style.borderColor='rgba(201, 166, 107, 0.4)';">

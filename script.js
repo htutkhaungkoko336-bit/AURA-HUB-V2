@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
-let isWheelOpen = false; // အစမှာ ကျုံ့ထားသောပုံစံဖြင့် စတင်ပြသမည်
+let isWheelOpen = false;
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
@@ -500,42 +500,41 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း width နှင့် opacity လျှော့ချပြီး ကျုံ့ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည် (ကြာချိန် 0.5 စက္ကန့်)
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
             externalBackBtn.style.minWidth = '0px';
             externalBackBtn.style.padding = '0px';
             externalBackBtn.style.borderWidth = '0px';
-            externalBackBtn.style.marginRight = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 400); // Animation ပြီးမှ display none လုပ်မည်
+            }, 500);
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို အလျားပြည့် ရှည်ထွက်စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို ပို၍နှေးပြီး ချောမွေ့စွာ ရှည်ထွက်စေမည်
         if (dockBox) {
             dockBox.style.width = '100%';
             dockBox.style.padding = '12px 18px';
             dockBox.style.justifyContent = 'space-between';
         }
-        // ၃။ အတွင်းရှိ လုပ်ဆောင်ချက် ခလုတ်များကို ပေါ်လာစေမည်
+        // ၃။ အတွင်းရှိ ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
-        // ၁။ အတွင်းရှိ လုပ်ဆောင်ချက် ခလုတ်များကို အရင် ဖျောက်မည်
+        // ၁။ အတွင်းရှိ ခလုတ်များကို အရင် ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစားသို့ ပြန်ကျုံ့စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို ပို၍နှေးပြီး ချောမွေ့စွာ ပြန်ကျုံ့စေမည်
         if (dockBox) {
             dockBox.style.width = '185px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
-        // ၃။ ကျုံ့သွားပြီးချိန်တွင် ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း အကျယ်ပြန် விரிထွက်ပေါ်လာစေမည်
+        // ၃။ Back Button ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -543,7 +542,6 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.minWidth = '';
                 externalBackBtn.style.padding = '0';
                 externalBackBtn.style.borderWidth = '1px';
-                externalBackBtn.style.marginRight = '';
                 externalBackBtn.style.opacity = '1';
             }, 50);
         }
