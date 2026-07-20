@@ -322,53 +322,47 @@
         BACK
     </button></div>
     <!-- Bottom Sheet Action Dock Container -->
-<!-- Bottom Sheet Action Dock Container -->
-<div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: block;">
-    
-    <div style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+    <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
         
-        <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <!-- Home Button (အိမ်ပုံစံ ခလုတ်ငယ်) -->
-            <button onclick="goToHome()" title="Home" style="width: 36px; height: 36px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: 0.2s; flex-shrink: 0;" onmouseover="this.style.background='rgba(201,166,107,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-                <span style="font-size: 1rem;">🏠</span>
-            </button>
-            <!-- သော့ထည့်ထားသော အဝိုင်း Container -->
+        <div style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+            
+            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+<!-- သော့ထည့်ထားသော အဝိုင်း Container -->
             <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
                 
                 <!-- သော့မှန်း သေချာသိသာစေရန် ရှင်းလင်းသော သော့သင်္ကေတ -->
                 <span id="dock-icon-element" style="font-size: 1.25rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🗝️</span>
                 
             </div>
-
-            <div>
-                <div style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">STATUS</div>
-                <div id="dock-status-text" style="font-size: 0.85rem; font-weight: bold; color: #c9a66b;">Active Key</div>
+                            <div>
+                    <div style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
+                    <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
+                </div>
             </div>
+
+            <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (Dynamic) -->
+            <div id="dock-action-area" style="display: flex; gap: 8px;">
+                <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
+                <div id="dock-active-btns" style="display: flex; gap: 8px;">
+                    <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 16px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3);">
+                        Create Room
+                    </button>
+                </div>
+
+                <!-- Status က In-Use ဖြစ်နေရင်ပေါ်မည့် ခလုတ်များ -->
+                <div id="dock-inuse-btns" style="display: none; gap: 8px;">
+                    <button onclick="cancelMyRoom()" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border: 1px solid #ffaa00; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                        Cancel
+                    </button>
+                    <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                        Refund
+                    </button>
+                </div>
+            </div>
+
         </div>
-
-        <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (Dynamic) -->
-        <div id="dock-action-area" style="display: flex; gap: 8px;">
-            <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
-            <div id="dock-active-btns" style="display: flex; gap: 8px;">
-                <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 18px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3);">
-                    Create Room
-                </button>
-            </div>
-
-            <!-- Status က In-Use ဖြစ်နေရင်ပေါ်မည့် ခလုတ်များ -->
-            <div id="dock-inuse-btns" style="display: none; gap: 8px;">
-                <button onclick="cancelMyRoom()" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border: 1px solid #ffaa00; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.80rem;">
-                    Cancel
-                </button>
-                <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.80rem;">
-                    Refund
-                </button>
-            </div>
-        </div>
-
     </div>
-</div>
 </div>
 </div>
 <div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
