@@ -500,11 +500,17 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ညာဘက် Back Button ကို အရင် ဖြည်းဖြည်းချင်း ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း width နှင့် opacity လျှော့ချပြီး ကျုံ့ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
-            externalBackBtn.style.transform = 'scale(0.9)';
-            setTimeout(() => externalBackBtn.style.display = 'none', 300);
+            externalBackBtn.style.width = '0px';
+            externalBackBtn.style.minWidth = '0px';
+            externalBackBtn.style.padding = '0px';
+            externalBackBtn.style.borderWidth = '0px';
+            externalBackBtn.style.marginRight = '0px';
+            setTimeout(() => {
+                externalBackBtn.style.display = 'none';
+            }, 400); // Animation ပြီးမှ display none လုပ်မည်
         }
         // ၂။ ရွှေရောင်ဘောင်ကို အလျားပြည့် ရှည်ထွက်စေမည်
         if (dockBox) {
@@ -523,18 +529,22 @@ window.toggleActionWheel = function() {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို သော့နဲ့ စာသားအထိ ပြန်ကျုံ့စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစားသို့ ပြန်ကျုံ့စေမည်
         if (dockBox) {
             dockBox.style.width = '185px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
-        // ၃။ ကျုံ့သွားပြီးချိန်တွင် ညာဘက် Back Button ကို iOS ပုံစံအတိုင်း ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
+        // ၃။ ကျုံ့သွားပြီးချိန်တွင် ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း အကျယ်ပြန် விரிထွက်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
+                externalBackBtn.style.width = '100px';
+                externalBackBtn.style.minWidth = '';
+                externalBackBtn.style.padding = '0';
+                externalBackBtn.style.borderWidth = '1px';
+                externalBackBtn.style.marginRight = '';
                 externalBackBtn.style.opacity = '1';
-                externalBackBtn.style.transform = 'scale(1)';
             }, 50);
         }
     }
