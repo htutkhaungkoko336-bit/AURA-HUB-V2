@@ -486,10 +486,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 let isWheelOpen = false;
 
-// Action Wheel ကို ဖွင့်/ပိတ် လုပ်ရန်
 function toggleActionWheel() {
     isWheelOpen = !isWheelOpen;
     const menu = document.getElementById('wheel-menu');
+    // အဖွင့်အပိတ်လုပ်တဲ့အခါ flex သို့မဟုတ် none ကို သေချာချိန်းပေးရန်
     menu.style.display = isWheelOpen ? 'flex' : 'none';
 }
 
@@ -500,19 +500,16 @@ function updateWheelUI(keyStatus) {
     const wheelIcon = document.getElementById('wheel-icon');
 
     if (keyStatus === 'active') {
-        // သော့အလွတ်ရှိတယ် (အခန်းထောင်လို့ရပြီ)
         activeState.style.display = 'flex';
         inUseState.style.display = 'none';
-        wheelIcon.innerHTML = '🔑'; // ပုံမှန်သော့
+        wheelIcon.innerHTML = '🔑'; 
     } else if (keyStatus === 'in-use') {
-        // အခန်းထောင်ထားပြီးသား (သို့) သော့သုံးထားတယ်
         activeState.style.display = 'none';
         inUseState.style.display = 'flex';
-        wheelIcon.innerHTML = '🔒'; // သော့ခတ်ထားပုံစံ
+        wheelIcon.innerHTML = '🔒'; 
     } else if (keyStatus === 'pending_refund') {
-        // Refund တောင်းထားပြီး စောင့်ဆိုင်းဆဲ
         activeState.style.display = 'none';
         inUseState.style.display = 'none';
-        wheelIcon.innerHTML = '⏳'; // Pending ပုံစံ
+        wheelIcon.innerHTML = '⏳'; 
     }
 }
