@@ -328,14 +328,26 @@
             
             <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
             <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(201,166,107,0.2) 0%, rgba(20,20,20,0.8) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #c9a66b; box-shadow: 0 0 10px rgba(201,166,107,0.3);">
+            <div style="width: 44px; height: 44px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4);">
+                
+                <!-- ပုံထဲကအတိုင်း Quatrefoil ခေါင်းပါသော ရှေးဟောင်းသော့ SVG -->
+                <svg id="dock-icon-svg" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#dac02d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <!-- Quatrefoil Head (လေးခွပုံစံ ရှေးဟောင်းသော့ခေါင်း) -->
+                    <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V4z"/>
+                    <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3V4z"/>
+                    <path d="M9 10a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3v-3z"/>
+                    <path d="M15 10a3 3 0 0 1 3 3 3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3v-3z"/>
+                    <!-- Center Hole -->
+                    <circle cx="12" cy="7" r="1" fill="#dac02d"/>
                     
-                    <!-- ရှေးဟောင်း Skeleton Key ပုံစံ -->
-                    <svg id="dock-icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-                        <path d="M9.5 14.5L7 17v2h2v-2l2.5-2.5"/>
-                    </svg>
-                </div>
+                    <!-- Key Shaft & Teeth (သော့တံနှင့်သွားများ) -->
+                    <line x1="12" y1="10" x2="12" y2="20"/>
+                    <!-- Teeth (အောက်ခြေ သော့သွားပုံစံများ) -->
+                    <path d="M10 16h4v3h-4z"/>
+                    <path d="M11 19h2v2h-2z"/>
+                </svg>
+                
+            </div>
                 <div>
                     <div style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
                     <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
