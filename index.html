@@ -321,57 +321,50 @@
     >
         BACK
     </button></div>
-<!-- Bottom Sheet Action Dock Container -->
-<div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: block;">
-    
-    <div style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+    <!-- Bottom Sheet Action Dock Container -->
+    <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
         
-        <!-- ဘယ်ဘက်ခြမ်း: ရှေးဟောင်းသော့အိုင်ကွန် နှင့် Status -->
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <!-- သော့ထည့်ထားသော အဝိုင်း Container -->
-            <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
-                
-                <!-- အရွယ်အစား ချိန်ညှိထားသော ရှေးဟောင်းသော့ SVG -->
-                <svg id="dock-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dac02d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V4z"/>
-                    <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3V4z"/>
-                    <path d="M9 10a3 3 0 0 0-3 3 3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3v-3z"/>
-                    <path d="M15 10a3 3 0 0 1 3 3 3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3v-3z"/>
-                    <circle cx="12" cy="7" r="1" fill="#dac02d"/>
-                    <line x1="12" y1="10" x2="12" y2="20"/>
-                    <path d="M10 16h4v3h-4z"/>
-                    <path d="M11 19h2v2h-2z"/>
-                </svg>
+        <div style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+            
+            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(201,166,107,0.2) 0%, rgba(20,20,20,0.8) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #c9a66b; box-shadow: 0 0 10px rgba(201,166,107,0.3);">
+                    
+                    <!-- ရှေးဟောင်း Skeleton Key ပုံစံ -->
+                    <svg id="dock-icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c9a66b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                        <path d="M9.5 14.5L7 17v2h2v-2l2.5-2.5"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
+                    <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
+                </div>
             </div>
 
-            <div>
-                <div style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">STATUS</div>
-                <div id="dock-status-text" style="font-size: 0.85rem; font-weight: bold; color: #c9a66b;">Active Key</div>
+            <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (Dynamic) -->
+            <div id="dock-action-area" style="display: flex; gap: 8px;">
+                <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
+                <div id="dock-active-btns" style="display: flex; gap: 8px;">
+                    <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 16px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3);">
+                        Create Room
+                    </button>
+                </div>
+
+                <!-- Status က In-Use ဖြစ်နေရင်ပေါ်မည့် ခလုတ်များ -->
+                <div id="dock-inuse-btns" style="display: none; gap: 8px;">
+                    <button onclick="cancelMyRoom()" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border: 1px solid #ffaa00; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                        Cancel
+                    </button>
+                    <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                        Refund
+                    </button>
+                </div>
             </div>
+
         </div>
-
-        <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (Dynamic) -->
-        <div id="dock-action-area" style="display: flex; gap: 8px;">
-            <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
-            <div id="dock-active-btns" style="display: flex; gap: 8px;">
-                <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 18px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3);">
-                    Create Room
-                </button>
-            </div>
-
-            <!-- Status က In-Use ဖြစ်နေရင်ပေါ်မည့် ခလုတ်များ -->
-            <div id="dock-inuse-btns" style="display: none; gap: 8px;">
-                <button onclick="cancelMyRoom()" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border: 1px solid #ffaa00; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                    Cancel
-                </button>
-                <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                    Refund
-                </button>
-            </div>
-        </div>
-
     </div>
-</div></div>
+</div>
 </div>
 <div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
     <div class="header-box">
