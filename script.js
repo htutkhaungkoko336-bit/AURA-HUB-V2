@@ -486,18 +486,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 let isWheelOpen = false;
 
-function toggleActionWheel() {
+// window object ထဲ တိုက်ရိုက်ထည့်ပေးခြင်း
+window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     const menu = document.getElementById('wheel-menu');
-    // အဖွင့်အပိတ်လုပ်တဲ့အခါ flex သို့မဟုတ် none ကို သေချာချိန်းပေးရန်
-    menu.style.display = isWheelOpen ? 'flex' : 'none';
+    if (menu) {
+        menu.style.display = isWheelOpen ? 'flex' : 'none';
+    }
 }
 
 // User ရဲ့ Key Status ပေါ်မူတည်ပြီး UI ကို ပြောင်းပေးမယ့် Function
-function updateWheelUI(keyStatus) {
+window.updateWheelUI = function(keyStatus) {
     const activeState = document.getElementById('menu-active-state');
     const inUseState = document.getElementById('menu-inuse-state');
     const wheelIcon = document.getElementById('wheel-icon');
+
+    if (!activeState || !inUseState || !wheelIcon) return;
 
     if (keyStatus === 'active') {
         activeState.style.display = 'flex';
