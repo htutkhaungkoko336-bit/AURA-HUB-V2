@@ -497,69 +497,41 @@ window.toggleActionWheel = function() {
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
     const dockBox = document.getElementById('dock-box');
+    const backBtn = document.getElementById('dock-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ နှိပ်လိုက်ပါက ဘောင်ကို အလျားပြည့် ဖြည်းဖြည်းချင်း ရှည်ထွက်စေမည်
+        // ၁။ ရှည်ထွက်လာချိန် Back Button ကို ဖြည်းဖြည်းချင်း ဖျောက်မည်
+        if (backBtn) {
+            backBtn.style.opacity = '0';
+            setTimeout(() => backBtn.style.display = 'none', 200);
+        }
+        // ၂။ ဘောင်ကို အလျားပြည့် ရှည်ထွက်စေမည်
         if (dockBox) {
             dockBox.style.width = '100%';
             dockBox.style.padding = '12px 18px';
             dockBox.style.justifyContent = 'space-between';
         }
-        // ၂။ ခလုတ်များကို ဖြည်းဖြည်းချင်း ပေါ်လာစေမည်
+        // ၃။ လုပ်ဆောင်ချက် ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
-        // ၁။ ခလုတ်များကို အရင် ဖျောက်မည်
+        // ၁။ လုပ်ဆောင်ချက် ခလုတ်များကို အရင် ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ဘောင်ကို သော့နဲ့ စာသားအထိ ဖြည်းဖြည်းချင်း ကျုံ့သွားစေမည်
+        // ၂။ ဘောင်ကို ကျုံ့သွားစေပြီး Back Button ပါဝင်ဆံ့မည့် အကျယ် (230px) သို့ ပြောင်းမည်
         if (dockBox) {
-            dockBox.style.width = '185px';
+            dockBox.style.width = '230px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
-    }
-}
-
-// Bottom Sheet Dock ၏ Status များကို ထိန်းချုပ်မည့် Function
-window.updateWheelUI = function(keyStatus) {
-    const dockContainer = document.getElementById('action-wheel-container');
-    const dockIconElem = document.getElementById('dock-icon-element');
-    const dockStatusText = document.getElementById('dock-status-text');
-    const activeBtns = document.getElementById('dock-active-btns');
-    const inuseBtns = document.getElementById('dock-inuse-btns');
-
-    if (!dockContainer) return;
-
-    dockContainer.style.display = 'block';
-
-    if (keyStatus === 'active') {
-        if (dockIconElem) dockIconElem.innerText = '🗝️';
-        if (dockStatusText) {
-            dockStatusText.innerText = 'Active Key';
-            dockStatusText.style.color = '#c9a66b';
+        // ၃။ ကျုံ့သွားပြီးချိန်တွင် Back Button ကို ပြန်ပေါ်လာစေမည်
+        if (backBtn) {
+            backBtn.style.display = 'flex';
+            setTimeout(() => backBtn.style.opacity = '1', 200);
         }
-        if (activeBtns) activeBtns.style.display = 'flex';
-        if (inuseBtns) inuseBtns.style.display = 'none';
-    } else if (keyStatus === 'in-use') {
-        if (dockIconElem) dockIconElem.innerText = '🔒';
-        if (dockStatusText) {
-            dockStatusText.innerText = 'Room In-Use';
-            dockStatusText.style.color = '#ffaa00';
-        }
-        if (activeBtns) activeBtns.style.display = 'none';
-        if (inuseBtns) inuseBtns.style.display = 'flex';
-    } else if (keyStatus === 'pending_refund') {
-        if (dockIconElem) dockIconElem.innerText = '⏳';
-        if (dockStatusText) {
-            dockStatusText.innerText = 'Refund Pending';
-            dockStatusText.style.color = '#3498db';
-        }
-        if (activeBtns) activeBtns.style.display = 'none';
-        if (inuseBtns) inuseBtns.style.display = 'none';
     }
 }

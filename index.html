@@ -324,9 +324,14 @@
     <!-- Bottom Sheet Action Dock Container -->
 <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
     
-    <!-- Main Dock Box (အစမှာ ကျုံ့လျက်သား width: 185px ဖြင့် စတင်မည်) -->
-    <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; box-sizing: border-box;">
+    <!-- Main Dock Box (အစမှာ ကျုံ့လျက်သား width ဖြင့် စတင်မည်) -->
+    <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 230px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; box-sizing: border-box;">
         
+        <!-- အစမှာ ကျုံ့ထားစဉ် ပေါ်မည့် Back Button (ရှည်ထွက်လာရင် ဖျောက်မည်) -->
+        <div id="dock-back-btn" onclick="goBack()" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,0.08); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: opacity 0.2s ease; border: 1px solid rgba(255,255,255,0.15);" title="Back">
+            <span style="color: #fff; font-size: 1rem; font-weight: bold;">←</span>
+        </div>
+
         <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status (နှိပ်၍ ကျုံ့/ရှည် လုပ်ရန်) -->
         <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
             <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
@@ -339,7 +344,7 @@
             </div>
         </div>
 
-        <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (အစမှာ ပျောက်/ဖျက်ထားမည်) -->
+        <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ (အစမှာ ဖျောက်ထားမည်) -->
         <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease; display: flex; align-items: center; flex-shrink: 0;">
             <div id="dock-action-area" style="display: flex; gap: 8px;">
                 <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
@@ -362,7 +367,8 @@
         </div>
 
     </div>
-</div></div>
+</div>
+</div>
 </div>
 <div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
     <div class="header-box">
