@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
-let isWheelOpen = false; // ပုံမှန်အားဖြင့် ဖွင့်ထားမည်
+let isWheelOpen = false; // အစမှာ ကျုံ့ထားသောပုံစံဖြင့် စတင်ပြသမည်
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
@@ -493,26 +493,28 @@ window.toggleActionWheel = function() {
     const dockBox = document.getElementById('dock-box');
 
     if (isWheelOpen) {
-        // ၁။ ပထမဦးစွာ ခလုတ်စာသားများကို ပေါ်လာစေရန် အရင်လုပ်မည်
+        // ၁။ နှိပ်လိုက်ပါက ဘောင်ကို အလျားပြည့် ဖြည်းဖြည်းချင်း ရှည်ထွက်စေမည်
+        if (dockBox) {
+            dockBox.style.width = '100%';
+            dockBox.style.padding = '12px 18px';
+            dockBox.style.justifyContent = 'space-between';
+        }
+        // ၂။ ခလုတ်များကို ဖြည်းဖြည်းချင်း ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
-        // ၂။ ရွှေရောင်ဘောင် အလျားကို မူလအပြည့်အတိုင်း ဖြည်းဖြည်းချင်း ရှည်ထွက်စေမည်
-        if (dockBox) {
-            dockBox.style.width = '100%';
-            dockBox.style.padding = '12px 18px';
-        }
     } else {
-        // ၁။ ခလုတ်များကို အရင် ပျောက်သွားစေမည် (အရိပ်အယောင်မကျန်အောင်)
+        // ၁။ ခလုတ်များကို အရင် ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ရွှေရောင်ဘောင် အလျားကို သော့နဲ့ စာသားအထိ ဖြည်းဖြည်းချင်း ကျုံ့သွားစေမည်
+        // ၂။ ဘောင်ကို သော့နဲ့ စာသားအထိ ဖြည်းဖြည်းချင်း ကျုံ့သွားစေမည်
         if (dockBox) {
-            dockBox.style.width = '185px'; // သော့နဲ့ Active Key စာသားဆံ့ရုံ အတိအကျ ပမာဏ
+            dockBox.style.width = '185px';
             dockBox.style.padding = '12px 14px';
+            dockBox.style.justifyContent = 'flex-start';
         }
     }
 }
