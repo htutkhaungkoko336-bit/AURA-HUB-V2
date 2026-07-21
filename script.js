@@ -549,10 +549,18 @@ window.toggleActionWheel = function() {
 }
 
 
+// --- Create New Room Function (Device ID ကို အလိုအလျောက် စစ်ဆေးပြီး ဖန်တီးရန်) ---
 window.createNewRoom = async function() {
-    // ယာယီအားဖြင့် သင့် Firebase ထဲက ID ကို တိုက်ရိုက်ထည့်စမ်းကြည့်နိုင်ပါတယ်
-    const deviceId = localStorage.getItem('deviceId') || 'dev_d4whcxfj6'; 
+    // 1. localStorage ထဲမှာ deviceId ရှိပြီးသားလား စစ်မယ်၊ မရှိရင် အလိုအလျောက် အသစ်ထုတ်ပေးမယ်
+    let deviceId = localStorage.getItem('deviceId');
     
+    if (!deviceId) {
+        // Random ID တစ်ခု အလိုအလျောက် ဖန်တီးခြင်း
+        deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('deviceId', deviceId);
+        console.log("Device ID အသစ် ဖန်တီးပြီး သိမ်းဆည်းလိုက်ပါပြီ:", deviceId);
+    }
+
     const roomData = {
         deviceId: deviceId,
         teamName: "My Team",
@@ -576,6 +584,7 @@ window.createNewRoom = async function() {
 
         if (result.success) {
             alert(result.message);
+
             appendRoomCardToUI({
                 roomId: result.roomId,
                 teamName: roomData.teamName,
@@ -584,13 +593,14 @@ window.createNewRoom = async function() {
                 status: 'waiting',
                 createdAt: 'Just now'
             });
+
         } else {
             alert(result.message);
         }
 
     } catch (error) {
         console.error("Error creating room:", error);
-        alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
+        alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
 
