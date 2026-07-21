@@ -18,17 +18,19 @@ module.exports = async function handler(req, res) {
         }
 
         try {
-            // ၁။ User မှာ Active Key ရှိမရှိ စစ်ဆေးခြင်း (`userKeys` collection မှ)
-            const keyRef = db.collection('userKeys').doc(deviceId);
-            const keyDoc = await keyRef.get();
+            // ၁။ User မှာ Active Key ရှိမရှိ Field ထဲက deviceId နဲ့ Query ထုတ်၍ စစ်ဆေးခြင်း
+            const keysQuery = await db.collection('userKeys').where('deviceId', '==', deviceId).get();
 
-            if (!keyDoc.exists) {
+            if (keysQuery.empty) {
                 return res.status(403).json({ 
                     success: false, 
                     message: "သင့်တွင် အသုံးပြုနိုင်သော Key မရှိသေးပါ။ ကျေးဇူးပြု၍ Key အရင်ဝယ်ယူပါ။" 
                 });
             }
 
+            // တွေ့သွားတဲ့ Document ကို ယူသုံးရန်
+            const keyDoc = keysQuery.docs[0];
+            const keyRef = keyDoc.ref; 
             const keyData = keyDoc.data();
 
             if (keyData.status !== 'active') {
