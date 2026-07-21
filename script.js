@@ -547,39 +547,3 @@ window.toggleActionWheel = function() {
         }
     }
 }
-// Key တန်ဖိုးပေါ်မူတည်၍ UI နှင့် စာသားကို ချက်ချင်းပြောင်းပေးမည့် Function
-function setKeyTier(tierAmount) {
-    const statusText = document.getElementById('dock-status-text');
-    const labelText = document.getElementById('dock-label-text');
-    const dockBox = document.getElementById('dock-box');
-    const iconBg = document.getElementById('dock-icon-bg');
-
-    if (tierAmount === 5000) {
-        // ၅၀၀၀ တန် Key အတွက် သီးသန့် အလှဆင်ချက် (ဥပမာ - ရွှေရောင်ထိန်ထိန် သို့မဟုတ် အစိမ်း/အပြာရောင် လင်းလက်ချက်)
-        statusText.innerText = "5,000 MMK Key";
-        statusText.style.color = "#FFD700"; // ရွှေရောင်စစ်စစ်
-        labelText.innerText = "VIP TIER";
-        dockBox.style.borderColor = "rgba(255, 215, 0, 0.6)"; // ဘောင်ကို ရွှေရောင်ပိုလင်းစေရန်
-        iconBg.style.borderColor = "#FFD700";
-        iconBg.style.boxShadow = "0 0 15px rgba(255, 215, 0, 0.7)";
-    } 
-    else if (tierAmount === 10000) {
-        // ၁၀၀၀၀ တန် Key အတွက် အခြားအရောင် (ဥပမာ - ခရမ်းရောင်/ပတ္တမြားရောင်)
-        statusText.innerText = "10,000 MMK Key";
-        statusText.style.color = "#da70d6";
-        labelText.innerText = "ELITE TIER";
-        dockBox.style.borderColor = "rgba(218, 112, 214, 0.6)";
-        iconBg.style.borderColor = "#da70d6";
-        iconBg.style.boxShadow = "0 0 15px rgba(218, 112, 214, 0.7)";
-    } 
-    else {
-        // ပုံမှန် အခြေအနေ
-        statusText.innerText = "Active Key";
-        statusText.style.color = "#c9a66b";
-        labelText.innerText = "STATUS";
-        dockBox.style.borderColor = "rgba(201, 166, 107, 0.4)";
-    }
-}
-
-// ဥပမာ - အသုံးပြုသူရဲ့ Room Data ဝင်လာတဲ့အခါ ဒီလိုခေါ်သုံးလိုက်ုံပါပဲ
-// setKeyTier(5000);
