@@ -549,9 +549,9 @@ window.toggleActionWheel = function() {
 }
 
 
-// --- Create New Room Function (Global Scope အဖြစ် သတ်မှတ်ရန် window.createNewRoom သုံးပါ) ---
 window.createNewRoom = async function() {
-    const deviceId = localStorage.getItem('deviceId') || 'USER_DEVICE_ID_HERE'; 
+    // ယာယီအားဖြင့် သင့် Firebase ထဲက ID ကို တိုက်ရိုက်ထည့်စမ်းကြည့်နိုင်ပါတယ်
+    const deviceId = localStorage.getItem('deviceId') || 'dev_d4whcxfj6'; 
     
     const roomData = {
         deviceId: deviceId,
@@ -560,7 +560,7 @@ window.createNewRoom = async function() {
         mlbbId: "12345678",
         playerName: "Player Name",
         mode: "1vs1",
-        entryFee: "1000"
+        entryFee: "50000"
     };
 
     try {
@@ -576,7 +576,6 @@ window.createNewRoom = async function() {
 
         if (result.success) {
             alert(result.message);
-
             appendRoomCardToUI({
                 roomId: result.roomId,
                 teamName: roomData.teamName,
@@ -585,14 +584,13 @@ window.createNewRoom = async function() {
                 status: 'waiting',
                 createdAt: 'Just now'
             });
-
         } else {
             alert(result.message);
         }
 
     } catch (error) {
         console.error("Error creating room:", error);
-        alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
+        alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
     }
 }
 
