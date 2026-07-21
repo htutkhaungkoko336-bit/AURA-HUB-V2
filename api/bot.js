@@ -36,7 +36,7 @@ bot.action(/confirm_(.+)/, async (ctx) => {
         const now = new Date();
         const formattedDate = new Intl.DateTimeFormat('en-GB', {
             timeZone: 'Asia/Yangon',
-            day: '2-digit', month: '2-digit', year: 'numeric',
+            day: '2-digit', month: '2-digit', year: 'numeric',       
             hour: '2-digit', minute: '2-digit', hour12: true
         }).format(now);
 
