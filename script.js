@@ -549,20 +549,17 @@ window.toggleActionWheel = function() {
 }
 
 
-// --- Create New Room Function (Device ID ကို အလိုအလျောက် စစ်ဆေးပြီး ဖန်တီးရန်) ---
 window.createNewRoom = async function() {
-    // 1. localStorage ထဲမှာ deviceId ရှိပြီးသားလား စစ်မယ်၊ မရှိရင် အလိုအလျောက် အသစ်ထုတ်ပေးမယ်
-    let deviceId = localStorage.getItem('deviceId');
+    // Login ဝင်ထားတဲ့အချိန်က localStorage ထဲမှာ သိမ်းထားပြီးသား deviceId ကို တိုက်ရိုက်ယူသုံးပါ
+    const deviceId = localStorage.getItem('deviceId');
     
     if (!deviceId) {
-        // Random ID တစ်ခု အလိုအလျောက် ဖန်တီးခြင်း
-        deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        localStorage.setItem('deviceId', deviceId);
-        console.log("Device ID အသစ် ဖန်တီးပြီး သိမ်းဆည်းလိုက်ပါပြီ:", deviceId);
+        alert("ကျေးဇူးပြု၍ Login အရင်ဝင်ပါ။ (Device ID မတွေ့ရှိပါ)");
+        return;
     }
 
     const roomData = {
-        deviceId: deviceId,
+        deviceId: deviceId, // Login ဝင်တည်းက ID အမှန်
         teamName: "My Team",
         logo: "",
         mlbbId: "12345678",
@@ -603,7 +600,6 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-
 // --- UI ထဲသို့ Room Card ထည့်သွင်းပေးသည့် Function ---
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
