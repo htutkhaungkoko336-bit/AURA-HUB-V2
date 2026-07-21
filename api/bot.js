@@ -10,16 +10,51 @@ if (!getApps().length) {
 const db = getFirestore();
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
-// Confirm လုပ်ရင် Status ပြောင်းခြင်း
+// Confirm လုပ်ရင် Status ပြောင်းခြင်း နှင့် Key ဖန်တီးခြင်း
 bot.action(/confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     try {
-        // Firebase Status ပြောင်းမယ်
-        await db.collection("registrations").doc(docId).update({ status: "confirm" });
+        // ၁။ registrations ထဲက Data ကို အရင်ဖတ်မယ် (Entry Fee ယူဖို့အတွက်)
+        const regRef = db.collection("registrations").doc(docId);
+        const regDoc = await regRef.get();
+
+        if (!regDoc.exists) {
+            return ctx.answerCbQuery("Error: Registration အချက်အလက် မရှိပါ။");
+        }
+
+        const regData = regDoc.data();
+        const deviceId = regData.deviceId; // user ရဲ့ deviceId
+        const rawFee = regData.entryFee;   // ဥပမာ: "Entry Fee: 50000 Ks" သို့မဟုတ် "5000"
+
+        // Entry Fee စာသားထဲက ကိန်းဂဏန်းကို ဖြတ်ထုတ်ခြင်း (ဥပမာ 5000 သို့မဟုတ် 10000)
+        const feeNumber = parseInt(rawFee.replace(/[^0-9]/g, '')) || 5000;
+
+        // ၂။ Firebase Status ကို confirm လို့ ပြောင်းမယ်
+        await regRef.update({ status: "confirm" });
+
+        // ၃။ User အတွက် Key တစ်ချောင်းကို active ဖြစ်အောင် ဖန်တီးပေးမယ် (သို့မဟုတ် users collection ထဲ ထည့်မယ်)
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Yangon',
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true
+        }).format(now);
+
+        // deviceId ကို doc ID အဖြစ် သုံးပြီး active key ကို သိမ်းဆည်းမည်
+        if (deviceId) {
+            await db.collection("users").doc(deviceId).set({
+                activeKey: {
+                    tier: feeNumber,          // ယူထားတဲ့ Key တန်ဖိုး (ဥပမာ 5000)
+                    status: 'active',         // 'active' သို့မဟုတ် 'in-use'
+                    roomId: null,
+                    activatedAt: formattedDate // အချိန် field
+                }
+            }, { merge: true });
+        }
         
-        // Message ပြင်မယ်
-        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Status:</b> Confirmed", { parse_mode: "HTML" });
-        await ctx.answerCbQuery("အောင်မြင်စွာ Confirmed လုပ်လိုက်ပါပြီ");
+        // ၄။ Telegram Message ပြင်မယ်
+        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Status:</b> Confirmed & Key Activated", { parse_mode: "HTML" });
+        await ctx.answerCbQuery("အောင်မြင်စွာ Confirmed လုပ်ပြီး Key ထည့်သွင်းလိုက်ပါပြီ");
     } catch (err) {
         console.error(err);
         await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
