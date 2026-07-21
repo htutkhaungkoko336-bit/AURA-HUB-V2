@@ -10,11 +10,11 @@ if (!getApps().length) {
 const db = getFirestore();
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
-// Confirm လုပ်ရင် Status ပြောင်းခြင်း နှင့် Key ဖန်တီးခြင်း
+// Confirm လုပ်ရင် Status ပြောင်းခြင်း နှင့် သီးသန့် Collection ထဲသို့ Key ဖန်တီးခြင်း
 bot.action(/confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     try {
-        // ၁။ registrations ထဲက Data ကို အရင်ဖတ်မယ် (Entry Fee ယူဖို့အတွက်)
+        // ၁။ registrations ထဲက Data ကို အရင်ဖတ်မယ် (Entry Fee နဲ့ deviceId ယူဖို့)
         const regRef = db.collection("registrations").doc(docId);
         const regDoc = await regRef.get();
 
@@ -26,35 +26,37 @@ bot.action(/confirm_(.+)/, async (ctx) => {
         const deviceId = regData.deviceId; // user ရဲ့ deviceId
         const rawFee = regData.entryFee;   // ဥပမာ: "Entry Fee: 50000 Ks" သို့မဟုတ် "5000"
 
-        // Entry Fee စာသားထဲက ကိန်းဂဏန်းကို ဖြတ်ထုတ်ခြင်း (ဥပမာ 5000 သို့မဟုတ် 10000)
+        if (!deviceId) {
+            return ctx.answerCbQuery("Error: Device ID မတွေ့ရှိပါ။");
+        }
+
+        // Entry Fee စာသားထဲက ကိန်းဂဏန်းကို ဖြတ်ထုတ်ခြင်း (ဥပမာ 5000 သို့မဟုတ် 50000)
         const feeNumber = parseInt(rawFee.replace(/[^0-9]/g, '')) || 5000;
 
         // ၂။ Firebase Status ကို confirm လို့ ပြောင်းမယ်
         await regRef.update({ status: "confirm" });
 
-        // ၃။ User အတွက် Key တစ်ချောင်းကို active ဖြစ်အောင် ဖန်တီးပေးမယ် (သို့မဟုတ် users collection ထဲ ထည့်မယ်)
+        // ၃။ အချိန်ကို ပြင်ဆင်ခြင်း
         const now = new Date();
         const formattedDate = new Intl.DateTimeFormat('en-GB', {
             timeZone: 'Asia/Yangon',
-            day: '2-digit', month: '2-digit', year: 'numeric',       
+            day: '2-digit', month: '2-digit', year: 'numeric',
             hour: '2-digit', minute: '2-digit', hour12: true
         }).format(now);
 
-        // deviceId ကို doc ID အဖြစ် သုံးပြီး active key ကို သိမ်းဆည်းမည်
-        if (deviceId) {
-            await db.collection("users").doc(deviceId).set({
-                activeKey: {
-                    tier: feeNumber,          // ယူထားတဲ့ Key တန်ဖိုး (ဥပမာ 5000)
-                    status: 'active',         // 'active' သို့မဟုတ် 'in-use'
-                    roomId: null,
-                    activatedAt: formattedDate // အချိန် field
-                }
-            }, { merge: true });
-        }
+        // ၄။ "userKeys" ဟုခေါ်သော Collection သပ်သပ်ထဲသို့ Key အချက်အလက် သိမ်းဆည်းခြင်း
+        // User တစ်ဦးလျှင် Key တစ်ချောင်းသာ ရှိစေရန် deviceId ကို Document ID အဖြစ် သုံးပါမည်
+        await db.collection("userKeys").doc(deviceId).set({
+            deviceId: deviceId,
+            keyTier: feeNumber,          // key တန်ဖိုး (ဥပမာ: 5000, 10000)
+            status: 'active',            // 'active' သို့မဟုတ် 'in-use'
+            roomId: null,                // Room ထဲ ဝင်ထားခြင်း မရှိသေးပါ
+            activatedAt: formattedDate   // Time field (ဝယ်ယူပြီး Confirmed ဖြစ်သည့်အချိန်)
+        });
         
-        // ၄။ Telegram Message ပြင်မယ်
+        // ၅။ Telegram Message ပြင်မယ်
         await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Status:</b> Confirmed & Key Activated", { parse_mode: "HTML" });
-        await ctx.answerCbQuery("အောင်မြင်စွာ Confirmed လုပ်ပြီး Key ထည့်သွင်းလိုက်ပါပြီ");
+        await ctx.answerCbQuery("အောင်မြင်စွာ Confirmed လုပ်ပြီး Key သီးသန့်ထည့်သွင်းလိုက်ပါပြီ");
     } catch (err) {
         console.error(err);
         await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
