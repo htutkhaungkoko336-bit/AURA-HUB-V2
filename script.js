@@ -549,15 +549,13 @@ window.toggleActionWheel = function() {
 }
 
 
-// --- Create New Room Function ---
-async function createNewRoom() {
-    // ဥပမာ - LocalStorage သို့မဟုတ် Form ထဲကနေ deviceId နဲ့ အခြားအချက်အလက်များကို ယူမည်
-    const deviceId = localStorage.getItem('deviceId') || 'USER_DEVICE_ID_HERE'; // လိုအပ်သလို ချိန်ပါ
+// --- Create New Room Function (Global Scope အဖြစ် သတ်မှတ်ရန် window.createNewRoom သုံးပါ) ---
+window.createNewRoom = async function() {
+    const deviceId = localStorage.getItem('deviceId') || 'USER_DEVICE_ID_HERE'; 
     
-    // Form ထဲက သို့မဟုတ် UI ကနေ ရယူထားမည့် အချက်အလက်များ (သင့်လျော်သလို ထည့်သွင်းနိုင်သည်)
     const roomData = {
         deviceId: deviceId,
-        teamName: "My Team", // လိုအပ်ပါက input ထဲက တန်ဖိုးကို ယူပါ
+        teamName: "My Team",
         logo: "",
         mlbbId: "12345678",
         playerName: "Player Name",
@@ -566,7 +564,6 @@ async function createNewRoom() {
     };
 
     try {
-        // Backend API ကို Request ပို့ခြင်း (သင့် server endpoint လမ်းကြောင်းအတိုင်း ချိန်ပါ)
         const response = await fetch('/api/create-room', {
             method: 'POST',
             headers: {
@@ -578,9 +575,8 @@ async function createNewRoom() {
         const result = await response.json();
 
         if (result.success) {
-            alert(result.message); // Room အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ။
+            alert(result.message);
 
-            // Room Card အသစ်ကို UI ပေါ်သို့ ဖန်တီးပြသရန်
             appendRoomCardToUI({
                 roomId: result.roomId,
                 teamName: roomData.teamName,
@@ -591,7 +587,7 @@ async function createNewRoom() {
             });
 
         } else {
-            alert(result.message); // Key မရှိခြင်း (သို့) အသုံးမပြုနိုင်ခြင်း Error ပြရန်
+            alert(result.message);
         }
 
     } catch (error) {
@@ -605,7 +601,6 @@ function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
-    // Room Card HTML ပုံစံဖန်တီးခြင်း
     const cardHTML = `
         <div class="room-card" id="room-${room.roomId}" style="background: #151515; border: 1px solid #333; border-radius: 10px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
             <div>
@@ -620,6 +615,5 @@ function appendRoomCardToUI(room) {
         </div>
     `;
 
-    // match-content ရဲ့ အစဆုံး သို့မဟုတ် အဆုံးမှာ ပေါင်းထည့်ရန်
     matchContent.insertAdjacentHTML('afterbegin', cardHTML);
 }
