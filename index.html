@@ -328,44 +328,43 @@
     <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
         
         <!-- Main Dock Box (ရွှေရောင်ဘောင် - ဘယ်ဘက်) -->
-        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box; will-change: width, padding;">
-            
-            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
-            <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
-                <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
-                    <span id="dock-icon-element" style="font-size: 1.25rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🗝️</span>
-                </div>
-                
-                <div id="dock-text-area">
-                    <div style="font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
-                    <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
-                </div>
-            </div>
-
-            <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ -->
-            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
-                <div id="dock-action-area" style="display: flex; gap: 8px;">
-                    <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
-                    <div id="dock-active-btns" style="display: flex; gap: 8px;">
-                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 16px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3);">
-                            Create Room
-                        </button>
-                    </div>
-
-                    <!-- Status က In-Use ဖြစ်နေရင်ပေါ်မည့် ခလုတ်များ -->
-                    <div id="dock-inuse-btns" style="display: none; gap: 8px;">
-                        <button onclick="cancelMyRoom()" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border: 1px solid #ffaa00; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                            Cancel
-                        </button>
-                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                            Refund
-                        </button>
-                    </div>
-                </div>
-            </div>
-
+<div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1), padding 0.8s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box; will-change: width, padding;">
+    
+    <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status (နှိပ်၍ ကျုံ့/ရှည် လုပ်ရန်) -->
+    <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
+        <div id="dock-icon-bg" style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.3) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.5); flex-shrink: 0; transition: all 0.3s ease;">
+            <span id="dock-icon-element" style="font-size: 1.25rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🗝️</span>
         </div>
+        
+        <div id="dock-text-area">
+            <div id="dock-label-text" style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">STATUS</div>
+            <div id="dock-status-text" style="font-size: 0.95rem; font-weight: bold; color: #c9a66b; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">Active Key</div>
+        </div>
+    </div>
 
+    <!-- ညာဘက်ခြမ်း: လုပ်ဆောင်ချက် ခလုတ်များ -->
+    <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
+        <div id="dock-action-area" style="display: flex; gap: 8px;">
+            <!-- Status က Active ဖြစ်နေရင်ပေါ်မည့် ခလုတ် -->
+            <div id="dock-active-btns" style="display: flex; gap: 8px;">
+                <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 16px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3);">
+                    Create Room
+                </button>
+            </div>
+
+            <!-- Status က In-Use ဖြစ်နေရင်ပေါ်မည့် ခလုတ်များ -->
+            <div id="dock-inuse-btns" style="display: none; gap: 8px;">
+                <button onclick="cancelMyRoom()" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border: 1px solid #ffaa00; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                    Cancel
+                </button>
+                <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 8px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                    Refund
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
         <!-- အပြင်ဘက် ညာဘက် Back Button -->
         <button id="dock-external-back-btn" onclick="window.goBack()" 
                 style="height: 66px; width: 100px; max-width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
