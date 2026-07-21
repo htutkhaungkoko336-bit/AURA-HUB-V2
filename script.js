@@ -388,26 +388,32 @@ async function updateBuyButtonStatus() {
         if (response.status === 404) return;
 
         const data = await response.json();
-        
-// ၁။ CONFIRM ဖြစ်နေရင်
+
+        //Confirm ဖြစ်ရင်
         if (data.status === 'confirm') {
             buyBtn.style.display = 'none';
             if (backBtn) backBtn.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'none';
             
-            // Action Wheel (သို့မဟုတ် actionBtns) ပေါ်လာစေရန်
             const actionWheelContainer = document.getElementById('action-wheel-container');
-            if (actionWheelContainer) {
-                actionWheelContainer.style.display = 'block';
-            }
-            if (actionBtns) {
-                actionBtns.style.display = 'flex';
-            }
+            if (actionWheelContainer) actionWheelContainer.style.display = 'block';
+            if (actionBtns) actionBtns.style.display = 'flex';
             
-            // (Optional) Database ကနေ user ရဲ့ key_status ကိုပါ တစ်ခါတည်း စစ်ပြီး 
-            // Action Wheel ရဲ့ Icon နဲ့ State တွေကို ချိန်ညှိချင်ရင် ဒီမှာ function ထပ်ခေါ်လို့ရပါတယ်
-            // updateWheelUI(data.keyStatus); 
-        }        
+            // Server ဘက်က room ရှိနေပြီ (in-use ဖြစ်နေပြီ) လို့ ပို့လာရင်
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
+            const statusText = document.getElementById('dock-status-text');
+
+            if (data.hasActiveRoom) { // Server ဘက်က property နာမည်နဲ့ ချိန်ကိုက်ပါ
+                if (activeBtns) activeBtns.style.display = 'none';
+                if (inuseBtns) inuseBtns.style.display = 'flex';
+                if (statusText) statusText.innerText = 'In-Use Key';
+            } else {
+                if (activeBtns) activeBtns.style.display = 'flex';
+                if (inuseBtns) inuseBtns.style.display = 'none';
+                if (statusText) statusText.innerText = 'Active Key';
+            }
+        }
         // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             // အကယ်၍ user က RESUBMIT NOW ကို ရောက်နေပြီဆိုရင် ၅ စက္ကန့်တစ်ကြိမ် အလိုအလျောက် ပြန်မပြောင်းစေရန် တားမည်
