@@ -550,7 +550,6 @@ window.toggleActionWheel = function() {
 
 
 window.createNewRoom = async function() {
-    // Login ဝင်ထားတဲ့အချိန်က localStorage ထဲမှာ သိမ်းထားပြီးသား deviceId ကို တိုက်ရိုက်ယူသုံးပါ
     const deviceId = localStorage.getItem('deviceId');
     
     if (!deviceId) {
@@ -559,7 +558,7 @@ window.createNewRoom = async function() {
     }
 
     const roomData = {
-        deviceId: deviceId, // Login ဝင်တည်းက ID အမှန်
+        deviceId: deviceId,
         teamName: "My Team",
         logo: "",
         mlbbId: "12345678",
@@ -571,9 +570,7 @@ window.createNewRoom = async function() {
     try {
         const response = await fetch('/api/create-room', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(roomData)
         });
 
@@ -582,14 +579,24 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
+            // Room Card ကို UI ထဲ ထည့်မယ်
             appendRoomCardToUI({
                 roomId: result.roomId,
                 teamName: roomData.teamName,
                 mode: roomData.mode,
                 entryFee: roomData.entryFee,
-                status: 'waiting',
+                status: 'in-use', // Status ကို in-use လို့ သတ်မှတ်လိုက်မယ်
                 createdAt: 'Just now'
             });
+
+            // === ဤနေရာတွင် Create Room ကိုဖျောက်ပြီး In-use ခလုတ် (Refund) ကို ပေါ်ခိုင်းမည် ===
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
+            const statusText = document.getElementById('dock-status-text');
+
+            if (activeBtns) activeBtns.style.display = 'none';
+            if (inuseBtns) inuseBtns.style.display = 'flex';
+            if (statusText) statusText.innerText = 'In-Use Key';
 
         } else {
             alert(result.message);
