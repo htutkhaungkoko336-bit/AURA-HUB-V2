@@ -670,7 +670,7 @@ swiper-slide img {
 
 .btn-join-plus {
     background: #c9a66b;
-    color: #ffffff; /* #white အစား #ffffff သို့မဟုတ် white လို့ပြောင်းပါ */
+    color: #ffffff;
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -678,9 +678,20 @@ swiper-slide img {
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
 }
+
 .btn-cancel-room {
-    background: rgba(255, 69, 58, 0.15);
-    color: #ff453a;
-    border: 1px solid rgba(255, 69, 58, 0.3);
+    background: rgba(201, 166, 107, 0.15); /* ရွှေရောင် နောက်ခံ ဖျော့ဖျော့ */
+    color: #c9a66b;                         /* စာသား ရွှေရောင် */
+    border: 1px solid rgba(201, 166, 107, 0.4); /* ရွှေရောင် ဘောင် */
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
