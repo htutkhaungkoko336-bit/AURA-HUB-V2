@@ -634,13 +634,13 @@ function appendRoomCardToUI(room) {
     if (!matchContent) return;
 
     const currentDeviceId = localStorage.getItem('aura_device_id');
-    
-    // 🔍 ဘာတွေကွာနေလဲ အသေအချာ သိရအောင် console မှာ ထုတ်ကြည့်ခြင်း
-    console.log("Current User Device ID:", currentDeviceId);
-    console.log("Room's Device ID:", room.deviceId);
-    console.log("Are they equal?", room.deviceId === currentDeviceId);
-
     const isOwner = String(room.deviceId) === String(currentDeviceId);
+
+    // 🌟 ေဒတာများကို registrations မှ လိုအပ်သလို ပုံဖော်ခြင်း 🌟
+    const logoUrl = room.logo || 'default-logo.png';
+    const squadName = room.squadName || room.teamName || 'My Team';
+    const modeText = room.mode ? ` (${room.mode})` : '';
+    const feeText = room.entryFee ? room.entryFee : '0 Ks';
 
     const actionButtonHTML = isOwner 
         ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
@@ -649,10 +649,10 @@ function appendRoomCardToUI(room) {
     const cardHTML = `
         <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
             <div class="room-left">
-                <img src="${room.logo || 'default-logo.png'}" class="room-logo" alt="Logo">
+                <img src="${logoUrl}" class="room-logo" alt="Logo">
                 <div class="room-info">
-                    <span class="room-fee">Fee: ${room.entryFee}</span>
-                    <span class="room-team-name">${room.teamName} (${room.mode})</span>
+                    <span class="room-fee">Fee: ${feeText}${modeText}</span>
+                    <span class="room-team-name">${squadName}</span>
                 </div>
             </div>
             <div class="room-right">
