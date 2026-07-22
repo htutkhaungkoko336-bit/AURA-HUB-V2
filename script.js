@@ -578,14 +578,39 @@ window.createNewRoom = async function() {
         return;
     }
 
+    // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
+    const currentMode = window.currentMode || '5vs5';
+    const is1v1Visible = (currentMode === '1vs1');
+
+    // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
+    let teamName = "";
+    let logoUrl = "";
+    let mlbbId = "";
+    let playerName = "";
+    let entryFee = "";
+
+    if (is1v1Visible) {
+        teamName = document.getElementById('solo-player-name')?.value || 'My Team';
+        logoUrl = document.getElementById('logoPreview1vs1')?.src || '';
+        mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
+        playerName = teamName;
+        entryFee = document.getElementById('fee-1vs1')?.innerText || '0 Ks';
+    } else {
+        teamName = document.getElementById('squad-name')?.value || 'My Team';
+        logoUrl = document.getElementById('logoPreview')?.src || '';
+        mlbbId = document.querySelector('#page-5vs5 .player-row input[type="number"]')?.value || 'N/A';
+        playerName = document.getElementById('player-name-5vs5')?.value || 'Player Name';
+        entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
+    }
+
     const roomData = {
         deviceId: deviceId,
-        teamName: "My Team",
-        logo: "",
-        mlbbId: "12345678",
-        playerName: "Player Name",
-        mode: "1vs1",
-        entryFee: "50000"
+        teamName: teamName,
+        logo: logoUrl.startsWith('data:') ? '' : logoUrl, // Base64 ဖြစ်နေရင် Backend က handle လုပ်ဖို့ (သို့) URL သက်သက်ဖြစ်ရင် ပို့ရန်
+        mlbbId: mlbbId,
+        playerName: playerName,
+        mode: currentMode,
+        entryFee: entryFee
     };
 
     try {
@@ -600,11 +625,12 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // 🌟 ဤနေရာတွင် deviceId ကို ထည့်ပေးရန် လိုအပ်ပါသည် 🌟
+            // 🌟 3. UI ပေါ်သို့ User ဖြည့်ထားတဲ့ အချက်အလက်အတိုင်း Room Card ထည့်ပေးခြင်း
             appendRoomCardToUI({
                 roomId: result.roomId,
-                deviceId: deviceId, // ဒီနေရာမှာ deviceId ထည့်ပေးလိုက်ပါ
+                deviceId: deviceId,
                 teamName: roomData.teamName,
+                logo: roomData.logo,
                 mode: roomData.mode,
                 entryFee: roomData.entryFee,
                 status: 'in-use',
@@ -613,7 +639,6 @@ window.createNewRoom = async function() {
 
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
-            const statusText = document.getElementById('dock-status-text');
 
             if (activeBtns) activeBtns.style.display = 'none';
             if (inuseBtns) inuseBtns.style.display = 'flex';
@@ -683,7 +708,7 @@ async function loadActiveRooms() {
                 matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
 
                 result.rooms.forEach(room => {
-                    appendRoomCardToUI(room);
+                    appendRoomCardToUI(room); 
                 });
             }
         }
