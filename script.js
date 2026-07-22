@@ -663,3 +663,23 @@ function appendRoomCardToUI(room) {
 
     matchContent.insertAdjacentHTML('afterbegin', cardHTML);
 }
+async function loadActiveRooms() {
+    try {
+        const response = await fetch('/api/active-rooms');
+        const result = await response.json();
+
+        if (result.success) {
+            const matchContent = document.getElementById('match-content');
+            matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
+
+            result.rooms.forEach(room => {
+                appendRoomCardToUI(room);
+            });
+        }
+    } catch (error) {
+        console.error("Failed to load rooms:", error);
+    }
+}
+
+// စာမျက်နှာ စဖွင့်ချင်း (သို့မဟုတ် လိုအပ်ချိန်တွင်) ခေါ်ရန်
+loadActiveRooms();

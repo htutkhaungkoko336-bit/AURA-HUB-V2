@@ -10,6 +10,7 @@ const app = getApps().length === 0
 const db = getFirestore(app);
 
 module.exports = async function handler(req, res) {
+    // 1️⃣ POST Method - Room အသစ်ဖန်တီးရန်
     if (req.method === 'POST') {
         const { deviceId, teamName, logo, mlbbId, playerName, mode, entryFee } = req.body;
 
@@ -28,7 +29,6 @@ module.exports = async function handler(req, res) {
                 });
             }
 
-            // တွေ့သွားတဲ့ Document ကို ယူသုံးရန်
             const keyDoc = keysQuery.docs[0];
             const keyRef = keyDoc.ref; 
             const keyData = keyDoc.data();
@@ -79,8 +79,46 @@ module.exports = async function handler(req, res) {
             console.error("Create Room Error:", error);
             return res.status(500).json({ success: false, message: error.message });
         }
-    } else {
-        res.setHeader('Allow', ['POST']);
+    } 
+    // 2️⃣ GET Method - Active Room စာရင်းများကို ဆွဲထုတ်ရန်
+    else if (req.method === 'GET') {
+        try {
+            const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
+            let roomList = [];
+
+            for (const doc of roomsSnapshot.docs) {
+                let roomData = doc.data();
+                
+                // registrations collection ထဲမှ hostDevice နဲ့ ကိုက်ညီတဲ့ ဒေတာ ယူရန်
+                const regSnapshot = await db.collection('registrations')
+                    .where('deviceId', '==', roomData.hostDeviceId)
+                    .get();
+
+                let regData = {};
+                if (!regSnapshot.empty) {
+                    regData = regSnapshot.docs[0].data();
+                }
+
+                roomList.push({
+                    roomId: doc.id,
+                    deviceId: roomData.hostDeviceId,
+                    logo: regData.logo || roomData.logo || '',
+                    squadName: regData.heroName || roomData.teamName || 'My Team',
+                    mode: roomData.mode || '1vs1',
+                    entryFee: regData.entryFee || roomData.entryFee || '0',
+                    status: roomData.status
+                });
+            }
+
+            return res.status(200).json({ success: true, rooms: roomList });
+        } catch (error) {
+            console.error("Error fetching rooms:", error);
+            return res.status(500).json({ success: false, message: "Server Error" });
+        }
+    } 
+    // 3️⃣ အခြား Method များအတွက်
+    else {
+        res.setHeader('Allow', ['POST', 'GET']);
         return res.status(405).json({ message: `Method ${req.method} not allowed` });
     }
 };
