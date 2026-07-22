@@ -632,13 +632,15 @@ function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
-    // လက်ရှိ Login ဝင်ထားသော User ရဲ့ Device ID ကို ယူမည်
     const currentDeviceId = localStorage.getItem('aura_device_id');
     
-    // Room တည်ထောင်သူ ဟုတ်မဟုတ် စစ်ဆေးခြင်း
-    const isOwner = room.deviceId === currentDeviceId;
+    // 🔍 ဘာတွေကွာနေလဲ အသေအချာ သိရအောင် console မှာ ထုတ်ကြည့်ခြင်း
+    console.log("Current User Device ID:", currentDeviceId);
+    console.log("Room's Device ID:", room.deviceId);
+    console.log("Are they equal?", room.deviceId === currentDeviceId);
 
-    // ပိုင်ရှင်ဆိုရင် Cancel ခလုတ်၊ မဟုတ်ရင် '+' ခလုတ်ပြရန်
+    const isOwner = String(room.deviceId) === String(currentDeviceId);
+
     const actionButtonHTML = isOwner 
         ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
         : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}')">+</button>`;
