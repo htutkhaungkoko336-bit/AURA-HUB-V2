@@ -666,20 +666,31 @@ function appendRoomCardToUI(room) {
 async function loadActiveRooms() {
     try {
         const response = await fetch('/api/active-rooms');
+        
+        // 🌟 Response က JSON ဟုတ်မဟုတ် အရင်စစ်ဆေးခြင်း 🌟
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const textResponse = await response.text();
+            console.error("Server did not return JSON. Response was:", textResponse);
+            return;
+        }
+
         const result = await response.json();
 
         if (result.success) {
             const matchContent = document.getElementById('match-content');
-            matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
+            if (matchContent) {
+                matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
 
-            result.rooms.forEach(room => {
-                appendRoomCardToUI(room);
-            });
+                result.rooms.forEach(room => {
+                    appendRoomCardToUI(room);
+                });
+            }
         }
     } catch (error) {
         console.error("Failed to load rooms:", error);
     }
 }
 
-// စာမျက်နှာ စဖွင့်ချင်း (သို့မဟုတ် လိုအပ်ချိန်တွင်) ခေါ်ရန်
+// စာမျက်နှာ စဖွင့်ချင်း ခေါ်ရန်
 loadActiveRooms();
