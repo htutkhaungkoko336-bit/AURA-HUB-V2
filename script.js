@@ -600,8 +600,10 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
+            // 🌟 ဤနေရာတွင် deviceId ကို ထည့်ပေးရန် လိုအပ်ပါသည် 🌟
             appendRoomCardToUI({
                 roomId: result.roomId,
+                deviceId: deviceId, // ဒီနေရာမှာ deviceId ထည့်ပေးလိုက်ပါ
                 teamName: roomData.teamName,
                 mode: roomData.mode,
                 entryFee: roomData.entryFee,
@@ -616,7 +618,6 @@ window.createNewRoom = async function() {
             if (activeBtns) activeBtns.style.display = 'none';
             if (inuseBtns) inuseBtns.style.display = 'flex';
             
-            // 🌟 Room အသစ်ဆောက်လိုက်ချိန်မှာလည်း လက်ရှိ Key Tier ကို ပေါ်စေရန် (သို့မဟုတ် updateBuyButtonStatus ကို ပြန်ခေါ်နိုင်သည်) 🌟
             updateBuyButtonStatus();
 
         } else {
