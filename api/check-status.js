@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
 
         const data = snapshot.docs[0].data();
 
-        // 🌟 ၁။ userKeys collection ထဲမှ room/key အခြေအနေကိုပါ ထပ်စစ်မည် 🌟
+        // userKeys collection ထဲမှ room/key အခြေအနေကို စစ်ဆေးမည်
         const keyDocRef = db.collection("userKeys").doc(deviceId);
         const keyDoc = await keyDocRef.get();
         
@@ -39,18 +39,19 @@ module.exports = async (req, res) => {
 
         if (keyDoc.exists) {
             const keyData = keyDoc.data();
-            keyStatus = keyData.status || 'active'; // 'active' သို့မဟုတ် 'in-use'
+            keyStatus = keyData.status || 'active'; 
             roomId = keyData.roomId || null;
             hasActiveRoom = (keyStatus === 'in-use' && Boolean(roomId));
         }
 
-        // 🌟 ၂။ Response ထဲသို့ keyStatus နှင့် hasActiveRoom ကို ထည့်ပေးလိုက်မည် 🌟
+        // Response ထဲသို့ keyTier ပါ ထည့်သွင်းပေးခြင်း
         return res.status(200).json({
             status: data.status,
             rejectReason: data.rejectReason || null,
             keyStatus: keyStatus,
             roomId: roomId,
-            hasActiveRoom: hasActiveRoom
+            hasActiveRoom: hasActiveRoom,
+            keyTier: keyDoc.exists ? (keyDoc.data().keyTier || 0) : 0
         });
 
     } catch (err) {

@@ -374,6 +374,15 @@ window.backToRegistration = () => {
 let lastStatus = ''; 
 let isResubmitMode = false; // RESUBMIT NOW ရောက်သွားပြီလား စစ်ရန် flag
 
+// Key တန်ဖိုးကို လှပတဲ့ Format (ဥပမာ - 5000 ကို 5K, 10000 ကို 10K) ပြောင်းပေးမည့် helper function
+function formatKeyTier(tier) {
+    if (!tier) return 'Active Key';
+    if (tier >= 1000) {
+        return (tier / 1000) + 'K Key';
+    }
+    return tier + ' Ks Key';
+}
+
 async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
@@ -389,41 +398,43 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-    // ၁။ CONFIRM ဖြစ်နေရင်
-    if (data.status === 'confirm') {
-        buyBtn.style.display = 'none';
-        if (backBtn) backBtn.style.display = 'none';
-        if (buyRoomContainer) buyRoomContainer.style.display = 'none';
+        // 🌟 Server မှ ရလာမည့် keyTier ကို တွက်ချက်ခြင်း 🌟
+        const tierText = formatKeyTier(data.keyTier);
         
-        // Action Wheel ပေါ်လာစေရန်
-        const actionWheelContainer = document.getElementById('action-wheel-container');
-        if (actionWheelContainer) {
-            actionWheelContainer.style.display = 'block';
-        }
-        if (actionBtns) {
-            actionBtns.style.display = 'flex';
-        }
-        
-        // === ဤနေရာတွင် Server မှ Room ရှိမရှိ (In-Use ဟုတ်မဟုတ်) အခြေအနေကို စစ်ဆေးမည် ===
-        const activeBtns = document.getElementById('dock-active-btns');
-        const inuseBtns = document.getElementById('dock-inuse-btns');
-        const statusText = document.getElementById('dock-status-text');
+        // ၁။ CONFIRM ဖြစ်နေရင်
+        if (data.status === 'confirm') {
+            buyBtn.style.display = 'none';
+            if (backBtn) backBtn.style.display = 'none';
+            if (buyRoomContainer) buyRoomContainer.style.display = 'none';
+            
+            // Action Wheel ပေါ်လာစေရန်
+            const actionWheelContainer = document.getElementById('action-wheel-container');
+            if (actionWheelContainer) {
+                actionWheelContainer.style.display = 'block';
+            }
+            if (actionBtns) {
+                actionBtns.style.display = 'flex';
+            }
+            
+            // === Server မှ Room ရှိမရှိ (In-Use ဟုတ်မဟုတ်) အခြေအနေကို စစ်ဆေးမည် ===
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
+            const statusText = document.getElementById('dock-status-text');
 
-        // (မှတ်ချက် - Backend API မှ data.hasActiveRoom သို့မဟုတ် data.keyStatus === 'in-use' ပါလာသည်ဟု ယူဆပါသည်)
-        if (data.hasActiveRoom || data.keyStatus === 'in-use') {
-            // Room ထောင်ပြီးသား ဖြစ်နေလျှင် Create Room ကိုဖျောက်၍ Refund (In-use) ခလုတ်ပြမည်
-            if (activeBtns) activeBtns.style.display = 'none';
-            if (inuseBtns) inuseBtns.style.display = 'flex';
-            if (statusText) statusText.innerText = 'In-Use Key';
-        } else {
-            // Room မရှိသေးလျှင် Create Room ခလုတ်ပြမည်
-            if (activeBtns) activeBtns.style.display = 'flex';
-            if (inuseBtns) inuseBtns.style.display = 'none';
-            if (statusText) statusText.innerText = 'Active Key';
-        }
-}        // REJECT ဖြစ်တဲ့အပိုင်း
+            if (data.hasActiveRoom || data.keyStatus === 'in-use') {
+                // Room ထောင်ပြီးသား ဖြစ်နေလျှင် Create Room ကိုဖျောက်၍ Refund (In-use) ခလုတ်ပြမည်
+                if (activeBtns) activeBtns.style.display = 'none';
+                if (inuseBtns) inuseBtns.style.display = 'flex';
+                if (statusText) statusText.innerText = tierText; // ဥပမာ - "5K Key", "10K Key" စသည်ဖြင့်ပေါ်မည်
+            } else {
+                // Room မရှိသေးလျှင် Create Room ခလုတ်ပြမည်
+                if (activeBtns) activeBtns.style.display = 'flex';
+                if (inuseBtns) inuseBtns.style.display = 'none';
+                if (statusText) statusText.innerText = tierText; 
+            }
+        } 
+        // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
-            // အကယ်၍ user က RESUBMIT NOW ကို ရောက်နေပြီဆိုရင် ၅ စက္ကန့်တစ်ကြိမ် အလိုအလျောက် ပြန်မပြောင်းစေရန် တားမည်
             if (isResubmitMode) return; 
 
             if (actionBtns) actionBtns.style.display = 'none';
@@ -432,7 +443,6 @@ async function updateBuyButtonStatus() {
             buyBtn.style.display = 'block';
             if (backBtn) backBtn.style.display = 'block';
             
-            // REJECTED ဖြစ်နေချိန် ပုံစံ
             buyBtn.innerText = "REJECTED";
             buyBtn.style.backgroundColor = "#eb3838";
             buyBtn.style.opacity = "1"; 
@@ -442,7 +452,6 @@ async function updateBuyButtonStatus() {
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
                 
-                // RESUBMIT NOW သို့ ပြောင်းသွားပြီဖြစ်ကြောင်း flag ကို true လုပ်မည်
                 isResubmitMode = true; 
 
                 buyBtn.innerText = "RESUBMIT NOW";
@@ -459,7 +468,7 @@ async function updateBuyButtonStatus() {
         // ၃။ PENDING ဖြစ်နေရင်
         else {
             if (actionBtns) actionBtns.style.display = 'none';
-            if (buyRoomContainer) buyRoomContainer.style.display = 'flex'; // Pending မှာလည်း flex သုံးပေးပါ
+            if (buyRoomContainer) buyRoomContainer.style.display = 'flex';
             if (backBtn) backBtn.style.display = 'block';
             
             buyBtn.style.display = 'block';
@@ -473,7 +482,6 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
-
 // Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
 window.openRegistrationPage = () => {
     // ၁။ UI ပေါ်ရှိ Page များအားလုံးကို ဖျောက်ပါ
@@ -563,8 +571,6 @@ window.toggleActionWheel = function() {
 
 
 window.createNewRoom = async function() {
-    // ❌ အဟောင်း: const deviceId = localStorage.getItem('deviceId');
-    // ✅ အသစ် (မှန်ကန်သော Key နာမည်ကို ပြန်ညွှန်ပေးခြင်း):
     const deviceId = localStorage.getItem('aura_device_id');
     
     if (!deviceId) {
@@ -609,7 +615,9 @@ window.createNewRoom = async function() {
 
             if (activeBtns) activeBtns.style.display = 'none';
             if (inuseBtns) inuseBtns.style.display = 'flex';
-            if (statusText) statusText.innerText = 'In-Use Key';
+            
+            // 🌟 Room အသစ်ဆောက်လိုက်ချိန်မှာလည်း လက်ရှိ Key Tier ကို ပေါ်စေရန် (သို့မဟုတ် updateBuyButtonStatus ကို ပြန်ခေါ်နိုင်သည်) 🌟
+            updateBuyButtonStatus();
 
         } else {
             alert(result.message);
@@ -619,7 +627,8 @@ window.createNewRoom = async function() {
         console.error("Error creating room:", error);
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
-}// --- UI ထဲသို့ Room Card ထည့်သွင်းပေးသည့် Function ---
+}
+// --- UI ထဲသို့ Room Card ထည့်သွင်းပေးသည့် Function ---
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
