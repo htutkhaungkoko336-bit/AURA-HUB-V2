@@ -661,11 +661,14 @@ function appendRoomCardToUI(room) {
     const currentDeviceId = localStorage.getItem('aura_device_id');
     const isOwner = String(room.deviceId) === String(currentDeviceId);
 
-    // 🌟 ေဒတာများကို registrations မှ လိုအပ်သလို ပုံဖော်ခြင်း 🌟
     const logoUrl = room.logo || 'default-logo.png';
     const squadName = room.squadName || room.teamName || 'My Team';
     const modeText = room.mode ? ` (${room.mode})` : '';
-    const feeText = room.entryFee ? room.entryFee : '0 Ks';
+    
+    // Fee စာသားဖြုတ်ပြီး ပါလာတဲ့ တန်ဖိုးအတိုင်း သို့မဟုတ် Ks သက်သက် ပေါ်စေရန်
+    let rawFee = room.entryFee || '0 Ks';
+    let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '');
+    const feeText = `${cleanFee}${modeText}`;
 
     const actionButtonHTML = isOwner 
         ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
@@ -676,12 +679,12 @@ function appendRoomCardToUI(room) {
             <div class="room-left">
                 <img src="${logoUrl}" class="room-logo" alt="Logo">
                 <div class="room-info">
-                    <span class="room-fee">Fee: ${feeText}${modeText}</span>
+                    <span class="room-fee">${feeText}</span>
                     <span class="room-team-name">${squadName}</span>
                 </div>
             </div>
             <div class="room-right">
-                ${actionButtonHTML}
+                <div>${actionButtonHTML}</div>
             </div>
         </div>
     `;
@@ -716,6 +719,14 @@ async function loadActiveRooms() {
         console.error("Failed to load rooms:", error);
     }
 }
-
 // စာမျက်နှာ စဖွင့်ချင်း ခေါ်ရန်
 loadActiveRooms();
+
+// 🌟 တခြားသူများ Room ထောင်ထားသည်များကို Live မြင်ရရန် (ဥပမာ - ၃ စက္ကန့် တစ်ကြိမ် Auto Update လုပ်မည်)
+setInterval(() => {
+    // Match Center သို့မဟုတ် Room List ပွင့်နေမှသာ Fetch လုပ်ရန် (Resource သက်သာစေရန်)
+    const matchCenter = document.getElementById('page-match-center');
+    if (matchCenter && matchCenter.style.display !== 'none') {
+        loadActiveRooms();
+    }
+}, 3000);
