@@ -595,3 +595,92 @@ swiper-slide img {
     background: rgba(201, 166, 107, 0.15) !important; /* အနည်းငယ်အရောင်တင်ပေးခြင်း */
     transform: scale(1.1);
 }
+
+/* iOS Style Room Card */
+.room-card-ios {
+    background: rgba(28, 28, 30, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.room-card-ios:active {
+    transform: scale(0.98);
+}
+
+.room-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.room-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #2c2c2e;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.room-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.room-fee {
+    font-size: 0.75rem;
+    color: #c9a66b;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.room-team-name {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.room-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* iOS Style Action Buttons (+ vs Cancel) */
+.ios-action-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-join-plus {
+    background: #0a84ff;
+    color: #ffffff; /* #white အစား #ffffff သို့မဟုတ် white လို့ပြောင်းပါ */
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+.btn-cancel-room {
+    background: rgba(255, 69, 58, 0.15);
+    color: #ff453a;
+    border: 1px solid rgba(255, 69, 58, 0.3);
+}

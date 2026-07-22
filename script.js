@@ -628,21 +628,32 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-// --- UI ထဲသို့ Room Card ထည့်သွင်းပေးသည့် Function ---
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
+    // လက်ရှိ Login ဝင်ထားသော User ရဲ့ Device ID ကို ယူမည်
+    const currentDeviceId = localStorage.getItem('aura_device_id');
+    
+    // Room တည်ထောင်သူ ဟုတ်မဟုတ် စစ်ဆေးခြင်း
+    const isOwner = room.deviceId === currentDeviceId;
+
+    // ပိုင်ရှင်ဆိုရင် Cancel ခလုတ်၊ မဟုတ်ရင် '+' ခလုတ်ပြရန်
+    const actionButtonHTML = isOwner 
+        ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
+        : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}')">+</button>`;
+
     const cardHTML = `
-        <div class="room-card" id="room-${room.roomId}" style="background: #151515; border: 1px solid #333; border-radius: 10px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-            <div>
-                <div class="room-price" style="color: #c9a66b; font-size: 1.1rem; font-weight: bold;">${room.teamName}</div>
-                <div class="room-type" style="color: #aaa; font-size: 0.75rem; margin-top: 4px;">Mode: ${room.mode} | Fee: ${room.entryFee}</div>
-                <div style="color: #888; font-size: 0.65rem; margin-top: 2px;">ID: ${room.roomId}</div>
+        <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
+            <div class="room-left">
+                <img src="${room.logo || 'default-logo.png'}" class="room-logo" alt="Logo">
+                <div class="room-info">
+                    <span class="room-fee">Fee: ${room.entryFee}</span>
+                    <span class="room-team-name">${room.teamName} (${room.mode})</span>
+                </div>
             </div>
-            <div style="text-align: right;">
-                <span class="room-status" style="color: #00ff00; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">${room.status}</span>
-                <div style="font-size: 0.65rem; color: #888; margin-top: 4px;">${room.createdAt}</div>
+            <div class="room-right">
+                ${actionButtonHTML}
             </div>
         </div>
     `;
