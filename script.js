@@ -563,7 +563,9 @@ window.toggleActionWheel = function() {
 
 
 window.createNewRoom = async function() {
-    const deviceId = localStorage.getItem('deviceId');
+    // ❌ အဟောင်း: const deviceId = localStorage.getItem('deviceId');
+    // ✅ အသစ် (မှန်ကန်သော Key နာမည်ကို ပြန်ညွှန်ပေးခြင်း):
+    const deviceId = localStorage.getItem('aura_device_id');
     
     if (!deviceId) {
         alert("ကျေးဇူးပြု၍ Login အရင်ဝင်ပါ။ (Device ID မတွေ့ရှိပါ)");
@@ -592,17 +594,15 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // Room Card ကို UI ထဲ ထည့်မယ်
             appendRoomCardToUI({
                 roomId: result.roomId,
                 teamName: roomData.teamName,
                 mode: roomData.mode,
                 entryFee: roomData.entryFee,
-                status: 'in-use', // Status ကို in-use လို့ သတ်မှတ်လိုက်မယ်
+                status: 'in-use',
                 createdAt: 'Just now'
             });
 
-            // === ဤနေရာတွင် Create Room ကိုဖျောက်ပြီး In-use ခလုတ် (Refund) ကို ပေါ်ခိုင်းမည် ===
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
             const statusText = document.getElementById('dock-status-text');
@@ -619,8 +619,7 @@ window.createNewRoom = async function() {
         console.error("Error creating room:", error);
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
-}
-// --- UI ထဲသို့ Room Card ထည့်သွင်းပေးသည့် Function ---
+}// --- UI ထဲသို့ Room Card ထည့်သွင်းပေးသည့် Function ---
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
