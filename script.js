@@ -780,7 +780,6 @@ window.cancelMyRoom = async function(roomId) {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
     }
 };
-// Global Scope သို့ တိုက်ရိုက်ချိတ်ဆက်ပေးခြင်း
 window.openSquadDetail = async function(roomId) {
     const modal = document.getElementById('room-detail-modal');
     const modalBody = document.getElementById('modal-body-content');
@@ -806,20 +805,17 @@ window.openSquadDetail = async function(roomId) {
         let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
-            // 1vs1 မုဒ်: In-Game Name, Logo, Phone No, Hero Pick
             contentHTML += `
                 <div class="ios-detail-item"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
                 <div class="ios-detail-item"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
                 <div class="ios-detail-item"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
             `;
         } else {
-            // 5vs5 မုဒ်: Squad Name, Player ၅ ယောက်စာ Names, Leader Phone No
             contentHTML += `
                 <div class="ios-detail-item"><span class="label">Squad Name</span><span class="value" style="color: #FFD700;">${d.squadName}</span></div>
             `;
 
-            // ကစားသမား ၅ ယောက်စာ ထည့်သွင်းခြင်း
-            let playersList = Array.isArray(d.players) ? d.players : [d.players];
+            let playersList = Array.isArray(d.players) ? d.players : [];
             playersList.forEach((pName, index) => {
                 contentHTML += `
                     <div class="ios-detail-item">

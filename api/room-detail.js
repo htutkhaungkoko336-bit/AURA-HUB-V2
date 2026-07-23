@@ -20,7 +20,6 @@ module.exports = async function handler(req, res) {
 
         const roomData = roomDoc.data();
 
-        // registrations collection မှ host data ကို ဆွဲရန်
         const regSnapshot = await db.collection('registrations')
             .where('deviceId', '==', roomData.hostDeviceId)
             .get();
@@ -41,15 +40,21 @@ module.exports = async function handler(req, res) {
             responseData.playerName = regData.playerName || roomData.playerName || 'N/A';
             responseData.heroName = regData.heroName || roomData.heroName || 'N/A';
         } else {
-            // 5vs5 အတွက် Squad Name နှင့် Player ၅ ယောက်စာ နာမည်များ (array သို့မဟုတ် string ဖြင့် သိမ်းထားသည်များကို ယူမည်)
             responseData.squadName = regData.squadName || roomData.squadName || 'N/A';
-            responseData.players = regData.players || roomData.players || [
-                regData.player1 || 'Player 1',
-                regData.player2 || 'Player 2',
-                regData.player3 || 'Player 3',
-                regData.player4 || 'Player 4',
-                regData.player5 || 'Player 5'
-            ];
+            
+            // 🌟 ေဒတာဘေ့စ်ထဲက Object ပုံစံ player များကို .name ဖြင့် သပ်ရပ်စွာ ထုတ်ယူခြင်း
+            let extractedPlayers = [];
+            for (let i = 1; i <= 5; i++) {
+                let p = regData[`player${i}`] || roomData[`player${i}`];
+                if (p) {
+                    // အကယ်၍ object ဖြစ်နေပါက p.name ကိုယူမည်၊ string ဖြစ်ပါက တိုက်ရိုက်ယူမည်
+                    let pName = (typeof p === 'object' && p !== null) ? (p.name || 'N/A') : p;
+                    extractedPlayers.push(pName);
+                } else {
+                    extractedPlayers.push('N/A');
+                }
+            }
+            responseData.players = extractedPlayers;
         }
 
         return res.status(200).json({ success: true, data: responseData });
