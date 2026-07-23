@@ -805,22 +805,18 @@ window.openSquadDetail = async function(roomId) {
         let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
-            // 1vs1 အတွက် ရိုးရှင်းသော အချက်အလက်များ
             contentHTML += `
                 <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
                 <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
                 <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
             `;
         } else {
-            // 5vs5 အတွက် Squad Name
-            contentHTML += `
-                <div class="ios-detail-row"><span class="label">Squad Name</span><span class="value" style="color: #FFD700;">${d.squadName}</span></div>
-            `;
-
-            // Player 1 to 5 ကို Group တစ်ခုအနေဖြင့် တစ်စုတည်း ခွဲထုတ်ပြခြင်း
+            // 🌟 SQ Name ကို Title အနေနဲ့ အပေါ်ဆုံးမှာ ထည့်သွင်းပြီး အလယ်ပို့ခြင်း
+            const squadNameText = d.squadName || d.sqName || 'SQUAD NAME';
+            
             contentHTML += `
                 <div class="players-group-container">
-                    <div class="players-group-title">Players (1 - 5)</div>
+                    <div class="players-group-title">${squadNameText}</div>
             `;
 
             let playersList = Array.isArray(d.players) ? d.players : [];
@@ -833,6 +829,7 @@ window.openSquadDetail = async function(roomId) {
                     </div>
                 `;
             });
+
             contentHTML += `</div>`; // Close group container
 
             // Leader Phone No
@@ -846,12 +843,5 @@ window.openSquadDetail = async function(roomId) {
     } catch (err) {
         console.error(err);
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
-    }
-};
-
-window.closeRoomDetailModal = function(event) {
-    if (!event || event.target.id === 'room-detail-modal' || event.target.classList.contains('ios-close-btn')) {
-        const modal = document.getElementById('room-detail-modal');
-        if (modal) modal.style.display = 'none';
     }
 };
