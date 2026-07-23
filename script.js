@@ -805,28 +805,39 @@ window.openSquadDetail = async function(roomId) {
         let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
+            // 1vs1 အတွက် ရိုးရှင်းသော အချက်အလက်များ
             contentHTML += `
-                <div class="ios-detail-item"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
-                <div class="ios-detail-item"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
-                <div class="ios-detail-item"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
+                <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
+                <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
+                <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
             `;
         } else {
+            // 5vs5 အတွက် Squad Name
             contentHTML += `
-                <div class="ios-detail-item"><span class="label">Squad Name</span><span class="value" style="color: #FFD700;">${d.squadName}</span></div>
+                <div class="ios-detail-row"><span class="label">Squad Name</span><span class="value" style="color: #FFD700;">${d.squadName}</span></div>
+            `;
+
+            // Player 1 to 5 ကို Group တစ်ခုအနေဖြင့် တစ်စုတည်း ခွဲထုတ်ပြခြင်း
+            contentHTML += `
+                <div class="players-group-container">
+                    <div class="players-group-title">Players (1 - 5)</div>
             `;
 
             let playersList = Array.isArray(d.players) ? d.players : [];
             playersList.forEach((pName, index) => {
                 contentHTML += `
-                    <div class="ios-detail-item">
-                        <span class="label">Player ${index + 1}</span>
-                        <span class="value">${pName || 'N/A'}</span>
+                    <div class="player-item-line">
+                        <span class="p-num">Player ${index + 1}</span>
+                        <span class="p-name">${pName || 'N/A'}</span>
                     </div>
                 `;
             });
 
+            contentHTML += `</div>`; // Close group container
+
+            // Leader Phone No
             contentHTML += `
-                <div class="ios-detail-item"><span class="label">Leader Ph</span><span class="value">${d.leaderPhone}</span></div>
+                <div class="ios-detail-row"><span class="label">Leader Phone</span><span class="value">${d.leaderPhone}</span></div>
             `;
         }
 
