@@ -669,13 +669,11 @@ function appendRoomCardToUI(room) {
     let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '');
     const feeText = `${cleanFee}`;
 
-    // 🌟 5vs5 နှင့် 1vs1 ပေါ်မူတည်၍ ပြမည့် စာသားကို ခွဲခြားခြင်း
+    // Mode ပေါ်မူတည်၍ Squad Name (သို့) Hero Name ကို ရွေးချယ်ခြင်း
     let mainTitle = '';
     if (mode === '1vs1') {
-        // 1vs1 ဆိုရင် Hero Name ကို ပြမည် (မရှိရင် Player Name သို့မဟုတ် Default)
         mainTitle = room.heroName || room.playerName || 'Hero Name';
     } else {
-        // 5vs5 ဆိုရင် Squad Name ကို ပြမည်
         mainTitle = room.squadName || room.teamName || 'Squad Name';
     }
 
@@ -688,7 +686,10 @@ function appendRoomCardToUI(room) {
             <div class="room-left">
                 <img src="${logoUrl}" class="room-logo" alt="Logo">
                 <div class="room-info">
-                    <span class="room-fee">${feeText}</span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span class="room-fee">${feeText}</span>
+                        <span class="room-mode-badge" style="font-size: 11px; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: #aaa;">${mode}</span>
+                    </div>
                     <span class="room-team-name">${mainTitle}</span>
                 </div>
             </div>
