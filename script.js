@@ -730,3 +730,43 @@ setInterval(() => {
         loadActiveRooms();
     }
 }, 3000);
+
+window.cancelMyRoom = async function(roomId) {
+    if (!confirm("ဒီ Room ကို ဖျက်သိမ်းမှာ သေချာပါသလား?")) return;
+
+    const deviceId = localStorage.getItem('aura_device_id');
+
+    try {
+        const response = await fetch('/api/cancel-room', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ roomId, deviceId })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Room ကို အောင်မြင်စွာ ဖျက်သိမ်းလိုက်ပါပြီ။");
+
+            // ၁။ UI ပေါ်က Room Card များကို ချက်ချင်းပြန်ဆွဲထုတ်ပြီး ရှင်းလင်းခြင်း (သို့မဟုတ် Card ကို ဖျောက်ခြင်း)
+            loadActiveRooms();
+
+            // ၂။ Dock Buttons များကို Create New Room ပြန်ပေါ်လာအောင် ပြောင်းခြင်း
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
+
+            if (activeBtns) activeBtns.style.display = 'flex';
+            if (inuseBtns) inuseBtns.style.display = 'none';
+
+            // ၃။ Status ကိုပါ တစ်ခါတည်း update လုပ်ပေးရန်
+            updateBuyButtonStatus();
+
+        } else {
+            alert(result.message || "Room ဖျက်သိမ်း၍ မရပါ။");
+        }
+
+    } catch (error) {
+        console.error("Error cancelling room:", error);
+        alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
+    }
+};
