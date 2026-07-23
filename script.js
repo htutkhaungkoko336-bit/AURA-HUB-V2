@@ -416,22 +416,23 @@ async function updateBuyButtonStatus() {
                 actionBtns.style.display = 'flex';
             }
             
-            const activeBtns = document.getElementById('dock-active-btns'); // Create New Room ခလုတ်
-            const inuseBtns = document.getElementById('dock-inuse-btns');   // Refund ခလုတ်
+            // === Server မှ Room ရှိမရှိ (In-Use ဟုတ်မဟုတ်) အခြေအနေကို စစ်ဆေးမည် ===
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
             const statusText = document.getElementById('dock-status-text');
 
             if (data.hasActiveRoom || data.keyStatus === 'in-use') {
-                // 🌟 Room ထောင်ထားစဉ် - CREATE NEW ROOM နဲ့ REFUND နှစ်ခုစလုံးကို အတူတူ ဖျောက်မည်
+                // Room ထောင်ပြီးသား ဖြစ်နေလျှင် Create Room ကိုဖျောက်၍ Refund (In-use) ခလုတ်ပြမည်
                 if (activeBtns) activeBtns.style.display = 'none';
+                if (inuseBtns) inuseBtns.style.display = 'flex';
+                if (statusText) statusText.innerText = tierText; // ဥပမာ - "5K Key", "10K Key" စသည်ဖြင့်ပေါ်မည်
+            } else {
+                // Room မရှိသေးလျှင် Create Room ခလုတ်ပြမည်
+                if (activeBtns) activeBtns.style.display = 'flex';
                 if (inuseBtns) inuseBtns.style.display = 'none';
                 if (statusText) statusText.innerText = tierText; 
-            } else {
-                // 🌟 Room မရှိတော့ပါက (သို့မဟုတ် Room Cancel လိုက်ပါက) - CREATE NEW ROOM နဲ့ REFUND နှစ်ခုစလုံးကို အတူတူ ပြန်ပြမည်
-                if (activeBtns) activeBtns.style.display = 'flex'; // (သို့မဟုတ် block - မူလ HTML ပုံစံအတိုင်း)
-                if (inuseBtns) inuseBtns.style.display = 'flex'; // (သို့မဟုတ် block - မူလ HTML ပုံစံအတိုင်း)
-                if (statusText) statusText.innerText = tierText; 
             }
-                } 
+        } 
         // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             if (isResubmitMode) return; 
@@ -779,3 +780,59 @@ window.cancelMyRoom = async function(roomId) {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
     }
 };
+async function openSquadDetail(roomId) {
+    const modal = document.getElementById('room-detail-modal');
+    const modalBody = document.getElementById('modal-body-content');
+    const modalTitle = document.getElementById('modal-title');
+    
+    if (!modal) return;
+
+    // Loading ပြနေခိုက်
+    modalBody.innerHTML = `<div style="text-align: center; padding: 20px; color: #FFD700;">Loading...</div>`;
+    modal.style.display = 'flex';
+
+    try {
+        const response = await fetch('/api/room-detail?roomId=' + encodeURIComponent(roomId));
+        const result = await response.json();
+
+        if (!result.success) {
+            modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">ဒေတာဆွဲယူ၍ မရပါ</p>`;
+            return;
+        }
+
+        const d = result.data;
+        modalTitle.innerText = d.mode === '1vs1' ? '1vs1 Match Details' : '5vs5 Squad Details';
+
+        let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
+
+        if (d.mode === '1vs1') {
+            // 1vs1 အတွက်: Logo, Name, Hero Name, Phone No
+            contentHTML += `
+                <div class="ios-detail-item"><span class="label">Name</span><span class="value">${d.playerName}</span></div>
+                <div class="ios-detail-item"><span class="label">Hero Name</span><span class="value" style="color: #FFD700;">${d.heroName}</span></div>
+                <div class="ios-detail-item"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
+            `;
+        } else {
+            // 5vs5 အတွက်: Logo, SQ Name, Player Name, Leader Ph No
+            contentHTML += `
+                <div class="ios-detail-item"><span class="label">Squad Name</span><span class="value" style="color: #FFD700;">${d.squadName}</span></div>
+                <div class="ios-detail-item"><span class="label">Player Name</span><span class="value">${d.playerName}</span></div>
+                <div class="ios-detail-item"><span class="label">Leader Ph</span><span class="value">${d.leaderPhone}</span></div>
+            `;
+        }
+
+        modalBody.innerHTML = contentHTML;
+
+    } catch (err) {
+        console.error(err);
+        modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
+    }
+}
+
+function closeRoomDetailModal(event) {
+    // Background ကို နှိပ်မှ သို့မဟုတ် Close ခလုတ်နှိပ်မှ ပိတ်ရန်
+    if (!event || event.target.id === 'room-detail-modal' || event.target.classList.contains('ios-close-btn')) {
+        const modal = document.getElementById('room-detail-modal');
+        if (modal) modal.style.display = 'none';
+    }
+}

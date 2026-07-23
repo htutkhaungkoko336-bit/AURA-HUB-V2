@@ -376,6 +376,18 @@
         </button>
 
     </div>
+    <!-- User Detail Popup Modal (iOS Style) -->
+    <div id="room-detail-modal" class="ios-modal-overlay" style="display: none;" onclick="closeRoomDetailModal(event)">
+        <div class="ios-modal-card" onclick="event.stopPropagation()">
+            <div class="ios-modal-header">
+                <h3 id="modal-title">Match Details</h3>
+                <button class="ios-close-btn" onclick="closeRoomDetailModal()">&times;</button>
+            </div>
+            <div class="ios-modal-body" id="modal-body-content">
+                <!-- Data တွေက JS ကနေ ဒီထဲကို ဝင်လာပါမယ် -->
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 <div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
