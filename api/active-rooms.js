@@ -32,12 +32,15 @@ module.exports = async function handler(req, res) {
                 regData = regSnapshot.docs[0].data();
             }
 
+            // 🌟 5vs5 နှင့် 1vs1 နှစ်ခုစလုံးအတွက် လိုအပ်သော အချက်အလက်များ ထည့်သွင်းခြင်း
             roomList.push({
                 roomId: doc.id,
                 deviceId: roomData.hostDeviceId,
                 logo: regData.logo || roomData.logo || '',
-                squadName: regData.heroName || roomData.teamName || 'My Team',
-                mode: roomData.mode || '1vs1',
+                squadName: regData.squadName || roomData.teamName || 'My Team',
+                heroName: regData.heroName || roomData.heroName || '', // 1vs1 အတွက် heroName
+                playerName: regData.playerName || roomData.playerName || '',
+                mode: roomData.mode || '5vs5',
                 entryFee: regData.entryFee || roomData.entryFee || '0',
                 status: roomData.status
             });

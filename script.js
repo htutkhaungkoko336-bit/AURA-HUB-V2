@@ -662,13 +662,22 @@ function appendRoomCardToUI(room) {
     const isOwner = String(room.deviceId) === String(currentDeviceId);
 
     const logoUrl = room.logo || 'default-logo.png';
-    const squadName = room.squadName || room.teamName || 'My Team';
-    const modeText = room.mode ? ` (${room.mode})` : '';
+    const mode = room.mode || '5vs5';
     
-    // Fee စာသားဖြုတ်ပြီး ပါလာတဲ့ တန်ဖိုးအတိုင်း သို့မဟုတ် Ks သက်သက် ပေါ်စေရန်
+    // Fee စာသား သန့်စင်ခြင်း
     let rawFee = room.entryFee || '0 Ks';
     let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '');
-    const feeText = `${cleanFee}${modeText}`;
+    const feeText = `${cleanFee}`;
+
+    // 🌟 5vs5 နှင့် 1vs1 ပေါ်မူတည်၍ ပြမည့် စာသားကို ခွဲခြားခြင်း
+    let mainTitle = '';
+    if (mode === '1vs1') {
+        // 1vs1 ဆိုရင် Hero Name ကို ပြမည် (မရှိရင် Player Name သို့မဟုတ် Default)
+        mainTitle = room.heroName || room.playerName || 'Hero Name';
+    } else {
+        // 5vs5 ဆိုရင် Squad Name ကို ပြမည်
+        mainTitle = room.squadName || room.teamName || 'Squad Name';
+    }
 
     const actionButtonHTML = isOwner 
         ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
@@ -680,7 +689,7 @@ function appendRoomCardToUI(room) {
                 <img src="${logoUrl}" class="room-logo" alt="Logo">
                 <div class="room-info">
                     <span class="room-fee">${feeText}</span>
-                    <span class="room-team-name">${squadName}</span>
+                    <span class="room-team-name">${mainTitle}</span>
                 </div>
             </div>
             <div class="room-right">
