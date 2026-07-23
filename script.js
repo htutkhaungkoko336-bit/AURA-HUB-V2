@@ -780,7 +780,8 @@ window.cancelMyRoom = async function(roomId) {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
     }
 };
-async function openSquadDetail(roomId) {
+// Global Scope သို့ တိုက်ရိုက်ချိတ်ဆက်ပေးခြင်း
+window.openSquadDetail = async function(roomId) {
     const modal = document.getElementById('room-detail-modal');
     const modalBody = document.getElementById('modal-body-content');
     const modalTitle = document.getElementById('modal-title');
@@ -806,14 +807,12 @@ async function openSquadDetail(roomId) {
         let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
-            // 1vs1 အတွက်: Logo, Name, Hero Name, Phone No
             contentHTML += `
                 <div class="ios-detail-item"><span class="label">Name</span><span class="value">${d.playerName}</span></div>
                 <div class="ios-detail-item"><span class="label">Hero Name</span><span class="value" style="color: #FFD700;">${d.heroName}</span></div>
                 <div class="ios-detail-item"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
             `;
         } else {
-            // 5vs5 အတွက်: Logo, SQ Name, Player Name, Leader Ph No
             contentHTML += `
                 <div class="ios-detail-item"><span class="label">Squad Name</span><span class="value" style="color: #FFD700;">${d.squadName}</span></div>
                 <div class="ios-detail-item"><span class="label">Player Name</span><span class="value">${d.playerName}</span></div>
@@ -827,12 +826,11 @@ async function openSquadDetail(roomId) {
         console.error(err);
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
-}
+};
 
-function closeRoomDetailModal(event) {
-    // Background ကို နှိပ်မှ သို့မဟုတ် Close ခလုတ်နှိပ်မှ ပိတ်ရန်
+window.closeRoomDetailModal = function(event) {
     if (!event || event.target.id === 'room-detail-modal' || event.target.classList.contains('ios-close-btn')) {
         const modal = document.getElementById('room-detail-modal');
         if (modal) modal.style.display = 'none';
     }
-}
+};
