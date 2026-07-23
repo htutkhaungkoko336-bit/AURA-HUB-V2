@@ -667,15 +667,12 @@ function appendRoomCardToUI(room) {
     // Fee စာသား သန့်စင်ခြင်း နှင့် 5000 -> 5K ပုံစံပြောင်းခြင်း
     let rawFee = room.entryFee || '0 Ks';
     let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '').trim();
-    
-    // ဂဏန်းသီးသန့်ထုတ်ယူပြီး K တပ်ဆင်ရန် (ဥပမာ: 5000 => 5K, 25000 => 25K)
     let numericFee = parseInt(cleanFee.replace(/[^0-9]/g, '')) || 0;
     let feeText = numericFee >= 1000 ? (numericFee / 1000) + 'K' : cleanFee;
 
-    // 🌟 25000 နဲ့ 50000 ဆိုရင် BO3၊ ကျန်တာဆိုရင် BO1 သတ်မှတ်ခြင်း
+    // 25000 နဲ့ 50000 ဆိုရင် BO3၊ ကျန်တာဆိုရင် BO1
     let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
 
-    // Mode ပေါ်မူတည်၍ Squad Name (သို့) Hero Name ကို ရွေးချယ်ခြင်း
     let mainTitle = '';
     if (mode === '1vs1') {
         mainTitle = room.heroName || room.playerName || 'Hero Name';
@@ -687,15 +684,16 @@ function appendRoomCardToUI(room) {
         ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
         : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}')">+</button>`;
 
+    // 🌟 FEE, MODE, BO သုံးခုစလုံးကို ရိုးရှင်းသပ်ရပ်စွာ တစ်န်းတည်းပြမည့် ပုံစံ
     const cardHTML = `
         <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
             <div class="room-left">
                 <img src="${logoUrl}" class="room-logo" alt="Logo">
                 <div class="room-info">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span class="room-fee">${feeText}</span>
-                        <span class="room-mode-badge" style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
-                        <span class="room-bo-badge" style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.1); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.3); padding: 1px 5px; border-radius: 4px;">${boType}</span>
+                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                        <span class="room-fee" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">${feeText}</span>
+                        <span class="room-mode-badge" style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
+                        <span class="room-bo-badge" style="font-size: 11px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${boType}</span>
                     </div>
                     <span class="room-team-name">${mainTitle}</span>
                 </div>
