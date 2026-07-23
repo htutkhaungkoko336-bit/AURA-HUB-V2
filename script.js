@@ -845,3 +845,10 @@ window.openSquadDetail = async function(roomId) {
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
 };
+// Modal ကို ပိတ်ရန် function အသစ်
+window.closeRoomDetailModal = function() {
+    const modal = document.getElementById('room-detail-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
