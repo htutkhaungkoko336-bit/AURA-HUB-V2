@@ -739,6 +739,7 @@ swiper-slide img {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 .ios-close-btn {
     background: none;
     border: none;
@@ -747,7 +748,7 @@ swiper-slide img {
     cursor: pointer;
 }
 
-/* 🌟 ရိုးရှင်းသပ်ရပ်သော စာသားလိုင်းများ (ဘောင်မပါတော့ပါ) */
+/* ရိုးရှင်းသပ်ရပ်သော စာသားလိုင်းများ */
 .ios-detail-row {
     display: flex;
     justify-content: space-between;
@@ -775,13 +776,16 @@ swiper-slide img {
     max-width: 65%;
 }
 
-/* 🌟 Player 1 မှ 5 အထိ တစ်စုတည်း ခွဲထုတ်ပြမည့် Group Box */
+/* Player 1 မှ 5 အထိ တစ်စုတည်း ခွဲထုတ်ပြမည့် Group Box */
 .players-group-container {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 215, 0, 0.15);
     border-radius: 16px;
     padding: 12px 16px;
     margin: 14px 0;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .players-group-title {
@@ -791,26 +795,39 @@ swiper-slide img {
     letter-spacing: 1px;
     margin-bottom: 8px;
     font-weight: 600;
+    text-align: center;
     border-bottom: 1px solid rgba(255, 215, 0, 0.15);
     padding-bottom: 6px;
 }
 
+/* Player တစ်ကြောင်းချင်းစီအတွက် (ဘယ်ဘက်မှာ ညီညာစွာ ဆက်ပေါ်ရန်) */
 .player-item-line {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 8px;
     padding: 6px 0;
     font-size: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.player-item-line span.p-num {
+.player-item-line:last-child {
+    border-bottom: none;
+}
+
+.player-item-line span.p-label {
     color: #888;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.player-item-line span.p-dash {
+    color: #666;
 }
 
 .player-item-line span.p-name {
     color: #fff;
-    font-weight: 500;
-    text-align: right;
+    font-weight: 600;
+    text-align: left;
 }
 
 .ios-modal-logo {

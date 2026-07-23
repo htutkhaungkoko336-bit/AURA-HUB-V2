@@ -827,12 +827,12 @@ window.openSquadDetail = async function(roomId) {
             playersList.forEach((pName, index) => {
                 contentHTML += `
                     <div class="player-item-line">
-                        <span class="p-num">Player ${index + 1}</span>
+                        <span class="p-label">PLAYER ${index + 1}</span>
+                        <span class="p-dash">-</span>
                         <span class="p-name">${pName || 'N/A'}</span>
                     </div>
                 `;
             });
-
             contentHTML += `</div>`; // Close group container
 
             // Leader Phone No
