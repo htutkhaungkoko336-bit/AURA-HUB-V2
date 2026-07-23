@@ -416,23 +416,22 @@ async function updateBuyButtonStatus() {
                 actionBtns.style.display = 'flex';
             }
             
-            // === Server မှ Room ရှိမရှိ (In-Use ဟုတ်မဟုတ်) အခြေအနေကို စစ်ဆေးမည် ===
-            const activeBtns = document.getElementById('dock-active-btns');
-            const inuseBtns = document.getElementById('dock-inuse-btns');
+            const activeBtns = document.getElementById('dock-active-btns'); // Create New Room ခလုတ်
+            const inuseBtns = document.getElementById('dock-inuse-btns');   // Refund ခလုတ်
             const statusText = document.getElementById('dock-status-text');
 
             if (data.hasActiveRoom || data.keyStatus === 'in-use') {
-                // Room ထောင်ပြီးသား ဖြစ်နေလျှင် Create Room ကိုဖျောက်၍ Refund (In-use) ခလုတ်ပြမည်
+                // 🌟 Room ထောင်ထားစဉ် - CREATE NEW ROOM နဲ့ REFUND နှစ်ခုစလုံးကို အတူတူ ဖျောက်မည်
                 if (activeBtns) activeBtns.style.display = 'none';
-                if (inuseBtns) inuseBtns.style.display = 'flex';
-                if (statusText) statusText.innerText = tierText; // ဥပမာ - "5K Key", "10K Key" စသည်ဖြင့်ပေါ်မည်
-            } else {
-                // Room မရှိသေးလျှင် Create Room ခလုတ်ပြမည်
-                if (activeBtns) activeBtns.style.display = 'flex';
                 if (inuseBtns) inuseBtns.style.display = 'none';
                 if (statusText) statusText.innerText = tierText; 
+            } else {
+                // 🌟 Room မရှိတော့ပါက (သို့မဟုတ် Room Cancel လိုက်ပါက) - CREATE NEW ROOM နဲ့ REFUND နှစ်ခုစလုံးကို အတူတူ ပြန်ပြမည်
+                if (activeBtns) activeBtns.style.display = 'flex'; // (သို့မဟုတ် block - မူလ HTML ပုံစံအတိုင်း)
+                if (inuseBtns) inuseBtns.style.display = 'flex'; // (သို့မဟုတ် block - မူလ HTML ပုံစံအတိုင်း)
+                if (statusText) statusText.innerText = tierText; 
             }
-        } 
+                } 
         // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             if (isResubmitMode) return; 
@@ -688,7 +687,7 @@ function appendRoomCardToUI(room) {
                 <div class="room-info">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="room-fee">${feeText}</span>
-                        <span class="room-mode-badge" style="font-size: 11px; background: rgba(255,255,255,0.1); padding: 1px 6px; border-radius: 4px; color: #aaa;">${mode}</span>
+                        <span class="room-mode-badge" style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000000; padding: 2px 8px; border-radius: 4px; box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);">${mode}</span>
                     </div>
                     <span class="room-team-name">${mainTitle}</span>
                 </div>
