@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
 
         const roomData = roomDoc.data();
 
-        // registrations collection မှ host data ကို ထပ်ဆွဲရန်
+        // registrations collection မှ host data ကို ဆွဲရန်
         const regSnapshot = await db.collection('registrations')
             .where('deviceId', '==', roomData.hostDeviceId)
             .get();
@@ -30,14 +30,27 @@ module.exports = async function handler(req, res) {
             regData = regSnapshot.docs[0].data();
         }
 
-        const responseData = {
-            mode: roomData.mode || '5vs5',
+        const mode = roomData.mode || '5vs5';
+        let responseData = {
+            mode: mode,
             logo: regData.logo || roomData.logo || 'default-logo.png',
-            squadName: regData.squadName || 'N/A',
-            playerName: regData.playerName || regData.squadName || 'N/A',
-            heroName: regData.heroName || 'N/A',
             leaderPhone: regData.kpayNo || regData.leaderPhone || roomData.leaderPhone || 'မပါရှိပါ။'
         };
+
+        if (mode === '1vs1') {
+            responseData.playerName = regData.playerName || roomData.playerName || 'N/A';
+            responseData.heroName = regData.heroName || roomData.heroName || 'N/A';
+        } else {
+            // 5vs5 အတွက် Squad Name နှင့် Player ၅ ယောက်စာ နာမည်များ (array သို့မဟုတ် string ဖြင့် သိမ်းထားသည်များကို ယူမည်)
+            responseData.squadName = regData.squadName || roomData.squadName || 'N/A';
+            responseData.players = regData.players || roomData.players || [
+                regData.player1 || 'Player 1',
+                regData.player2 || 'Player 2',
+                regData.player3 || 'Player 3',
+                regData.player4 || 'Player 4',
+                regData.player5 || 'Player 5'
+            ];
+        }
 
         return res.status(200).json({ success: true, data: responseData });
     } catch (error) {
