@@ -708,7 +708,17 @@ swiper-slide img {
     align-items: center;
     z-index: 2000;
 }
-
+/* 🌟 မူလပုံစံအတိုင်း ရွှေရောင်ဘောင်နဲ့ သင့်တော်တဲ့ အရွယ်အစားရှိမည့် Logo CSS */
+.ios-modal-logo {
+    width: 75px;
+    height: 75px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 2px solid #FFD700;
+    display: block;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
 .ios-modal-card {
     background: rgba(18, 18, 18, 0.95);
     border: 1px solid rgba(255, 215, 0, 0.35);
@@ -787,7 +797,7 @@ swiper-slide img {
     text-align: center;
 }
 
-/* ခန့်ညားထည်ဝါသော SQ NAME ခေါင်းစဉ် (ဒေတာက Squad Name ဖြစ်မည်) */
+/* ခန့်ညားထည်ဝါသော SQ NAME ခေါင်းစဉ် */
 .players-group-title {
     font-size: 14px;
     color: #FFD700;
