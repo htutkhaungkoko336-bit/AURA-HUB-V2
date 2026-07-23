@@ -800,13 +800,13 @@ swiper-slide img {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* တစ်ကြောင်းချင်းစီအတွက် (အလယ်ဗဟိုမှာ ညီညာစွာပေါ်ရန်) */
+/* 🌟 PLAYER 1 မှ 5 အထိ တစ်ကြောင်းချင်းစီကို အတန်းလိုက် ညီညာစေရန် */
 .player-item-line {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-    padding: 6px 0;
+    gap: 6px;
+    padding: 7px 0;
     font-size: 13px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
@@ -815,30 +815,27 @@ swiper-slide img {
     border-bottom: none;
 }
 
+/* PLAYER 1, PLAYER 2 စသည်တို့အတွက် အကျယ်သေချာသတ်မှတ်ပေးခြင်း (တန်းညီစေရန်) */
 .player-item-line span.p-label {
     color: #aaa;
     font-size: 12px;
     font-weight: 600;
+    width: 75px;        /* အကျယ်သေချာသတ်မှတ်လိုက်သဖြင့် မျဉ်း(-) တွေ တန်းနေမည် */
+    text-align: right;  /* ညာဘက်သို့ ကပ်ထားမည် */
 }
 
 .player-item-line span.p-dash {
     color: #FFD700;
     font-weight: bold;
+    text-align: center;
+    width: 15px;
 }
 
+/* ကစားသမားနာမည်များအတွက် */
 .player-item-line span.p-name {
     color: #fff;
     font-weight: 600;
     text-align: left;
-}
-
-.ios-modal-logo {
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 2px solid #FFD700;
-    display: block;
-    margin: 0 auto 15px auto;
-    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+    width: 110px;       /* နာမည်နေရာအတွက် အကျယ်သတ်မှတ်ပေးခြင်း */
+    word-break: break-word;
 }
