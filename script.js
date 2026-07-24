@@ -709,9 +709,13 @@ function appendRoomCardToUI(room) {
 }
 async function loadActiveRooms() {
     try {
-        const response = await fetch('/api/active-rooms');
+        // 🌟 ၁။ လက်ရှိ ဖွင့်ထားသော Mode ကို ယူပါ (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
+        const currentMode = window.currentMode || '5vs5';
+
+        // 🌟 ၂။ API URL ထဲသို့ query parameter အနေဖြင့် mode ထည့်ပေးပါ
+        const response = await fetch(`/api/active-rooms?mode=${currentMode}`);
         
-        // 🌟 Response က JSON ဟုတ်မဟုတ် အရင်စစ်ဆေးခြင်း 🌟
+        // Response က ဟုတ်မဟုတ် စစ်ဆေးခြင်း
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const textResponse = await response.text();

@@ -16,13 +16,20 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
+        // 🌟 Frontend က ပို့လိုက်သော mode ကို ဖမ်းယူခြင်း (မပါလာပါက 5vs5 ဟု ယူမည်)
+        const requestedMode = req.query.mode || '5vs5';
+
+        // 🌟 Firestore query တွင် mode ပါ ထည့်သွင်းစစ်ဆေးခြင်း
+        const roomsSnapshot = await db.collection('rooms')
+            .where('status', '==', 'waiting')
+            .where('mode', '==', requestedMode) // <-- ဤနေရာတွင် Mode အလိုက် Filter လုပ်ပါ
+            .get();
+
         let roomList = [];
 
         for (const doc of roomsSnapshot.docs) {
             let roomData = doc.data();
             
-            // registrations collection ထဲမှ hostDeviceId နဲ့ ကိုက်ညီတဲ့ ဒေတာ ယူရန်
             const regSnapshot = await db.collection('registrations')
                 .where('deviceId', '==', roomData.hostDeviceId)
                 .get();
@@ -32,21 +39,17 @@ module.exports = async function handler(req, res) {
                 regData = regSnapshot.docs[0].data();
             }
 
-        // 🌟 5vs5 နှင့် 1vs1 နှစ်ခုစလုံးအတွက် လိုအပ်သော အချက်အလက်များ ထည့်သွင်းခြင်း
-        roomList.push({
-            roomId: doc.id,
-            deviceId: roomData.hostDeviceId,
-            logo: regData.logo || roomData.logo || '',
-            squadName: regData.squadName || roomData.teamName || 'My Team',
-            heroName: regData.heroName || roomData.heroName || '', 
-            playerName: regData.playerName || roomData.playerName || '',
-            
-            // 🌟 ဤနေရာကို အောက်ပါအတိုင်း ပြင်ဆင်ပါ (registrations သို့မဟုတ် rooms ထဲမှ mode မှန်သမျှကို တိကျစွာ ယူရန်)
-            mode: regData.mode || roomData.mode || '5vs5',
-            
-            entryFee: regData.entryFee || roomData.entryFee || '0',
-            status: roomData.status
-        });
+            roomList.push({
+                roomId: doc.id,
+                deviceId: roomData.hostDeviceId,
+                logo: regData.logo || roomData.logo || '',
+                squadName: regData.squadName || roomData.teamName || 'My Team',
+                heroName: regData.heroName || roomData.heroName || '', 
+                playerName: regData.playerName || roomData.playerName || '',
+                mode: regData.mode || roomData.mode || requestedMode,
+                entryFee: regData.entryFee || roomData.entryFee || '0',
+                status: roomData.status
+            });
         }
 
         return res.status(200).json({ success: true, rooms: roomList });
