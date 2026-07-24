@@ -40,7 +40,20 @@ module.exports = async function handler(req, res) {
                 });
             }
 
-            // ၂. အချိန်ကို ပြင်ဆင်ခြင်း
+            // 🌟 ၂။ User ၏ registrations ဒေတာကို ရှာပြီး မူလ Mode ကို အဓိက သုံးရန် (Mode ရောထွေးမှု ကာကွယ်ရန်)
+            const regSnapshot = await db.collection('registrations')
+                .where('deviceId', '==', deviceId)
+                .get();
+
+            let actualMode = mode || "1vs1"; // Frontend က ပို့လိုက်သော mode (သို့မဟုတ် default)
+            if (!regSnapshot.empty) {
+                const regData = regSnapshot.docs[0].data();
+                if (regData.mode) {
+                    actualMode = regData.mode; // Register တင်ထားခဲ့သည့် မူလ mode ကိုသာ တိကျစွာ သုံးမည်
+                }
+            }
+
+            // ၃။ အချိန်ကို ပြင်ဆင်ခြင်း
             const now = new Date();
             const formattedDate = new Intl.DateTimeFormat('en-GB', {
                 timeZone: 'Asia/Yangon',
@@ -48,14 +61,14 @@ module.exports = async function handler(req, res) {
                 hour: '2-digit', minute: '2-digit', hour12: true
             }).format(now);
 
-            // ၃။ `rooms` collection အသစ်ထဲသို့ Room အချက်အလက်များ သိမ်းဆည်းခြင်း
+            // ၄။ `rooms` collection အသစ်ထဲသို့ Room အချက်အလက်များ သိမ်းဆည်းခြင်း (actualMode ကို ထည့်သွင်းမည်)
             const roomRef = await db.collection('rooms').add({
                 hostDeviceId: deviceId,
                 teamName: teamName || "My Team",
                 logo: logo || "",
                 mlbbId: mlbbId || "",
                 playerName: playerName || "",
-                mode: mode || "1vs1",
+                mode: actualMode, // <-- မှန်ကန်သော မူလ Mode ကို အသုံးပြုခြင်း
                 entryFee: entryFee || keyData.keyTier,
                 status: 'waiting',
                 createdAt: formattedDate
@@ -63,7 +76,7 @@ module.exports = async function handler(req, res) {
 
             const roomId = roomRef.id;
 
-            // ၄။ User ၏ Key Status ကို 'in-use' သို့ ပြောင်းလဲပြီး `roomId` ကို ချိတ်ပေးခြင်း
+            // ၅။ User ၏ Key Status ကို 'in-use' သို့ ပြောင်းလဲပြီး `roomId` ကို ချိတ်ပေးခြင်း
             await keyRef.update({
                 status: 'in-use',
                 roomId: roomId
