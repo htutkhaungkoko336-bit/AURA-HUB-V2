@@ -16,18 +16,13 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // 🌟 Frontend က ပို့လိုက်သော mode ကို ဖမ်းယူခြင်း (မပါလာပါက 5vs5 ဟု ယူမည်)
-        const requestedMode = req.query.mode || '5vs5';
-
-        const roomsSnapshot = await db.collection('rooms')
-            .where('status', '==', 'waiting')
-            .where('mode', '==', requestedMode) // <-- ဤနေရာတွင် Mode အလိုက် သီးသန့်စစ်ထုတ်ရန်
-            .get();
-            let roomList = [];
+        const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
+        let roomList = [];
 
         for (const doc of roomsSnapshot.docs) {
             let roomData = doc.data();
             
+            // registrations collection ထဲမှ hostDeviceId နဲ့ ကိုက်ညီတဲ့ ဒေတာ ယူရန်
             const regSnapshot = await db.collection('registrations')
                 .where('deviceId', '==', roomData.hostDeviceId)
                 .get();
@@ -37,14 +32,15 @@ module.exports = async function handler(req, res) {
                 regData = regSnapshot.docs[0].data();
             }
 
+            // 🌟 5vs5 နှင့် 1vs1 နှစ်ခုစလုံးအတွက် လိုအပ်သော အချက်အလက်များ ထည့်သွင်းခြင်း
             roomList.push({
                 roomId: doc.id,
                 deviceId: roomData.hostDeviceId,
                 logo: regData.logo || roomData.logo || '',
                 squadName: regData.squadName || roomData.teamName || 'My Team',
-                heroName: regData.heroName || roomData.heroName || '', 
+                heroName: regData.heroName || roomData.heroName || '', // 1vs1 အတွက် heroName
                 playerName: regData.playerName || roomData.playerName || '',
-                mode: regData.mode || roomData.mode || requestedMode,
+                mode: roomData.mode || '5vs5',
                 entryFee: regData.entryFee || roomData.entryFee || '0',
                 status: roomData.status
             });

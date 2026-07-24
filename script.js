@@ -568,57 +568,7 @@ window.toggleActionWheel = function() {
         }
     }
 }
-// Tab သို့မဟုတ် Mode ပြောင်းသည့် function များတွင် ဤကဲ့သို့ သတ်မှတ်ပါ
-window.switchMode = function(mode) {
-    window.currentMode = mode; // '1vs1' သို့မဟုတ် '5vs5'
 
-    // UI တွင် သက်ဆိုင်ရာ Page ကို ပြပါ
-    document.querySelectorAll('.sub-page').forEach(el => el.style.display = 'none');
-    
-    if (mode === '1vs1') {
-        document.getElementById('page-1vs1').style.display = 'block';
-    } else {
-        document.getElementById('page-5vs5').style.display = 'block';
-    }
-
-    // 🌟 အဓိက စစ်ဆေးချက် - User ၏ Active Status ကို စစ်ဆေးပြီး Button များကို ထိန်းချုပ်မည်
-    checkUserModeRestriction();
-    
-    // ထို Mode အလိုက် Room စာရင်းများကို လှမ်းဆွဲမည်
-    loadActiveRooms();
-};
-
-// 🌟 User က တခြား Mode မှာ Room တင်ပြီးသားဆိုရင် လက်ရှိ Mode မှာ Key/Create ခလုတ်ဖျောက်မည့် function
-async function checkUserModeRestriction() {
-    const deviceId = localStorage.getItem('aura_device_id');
-    if (!deviceId) return;
-
-    try {
-        const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
-        if (!response.ok) return;
-        const data = await response.json();
-
-        // ဥပမာ - Server ဘက်က data ထဲမှာ user တင်ထားတဲ့ active room ရဲ့ mode ပါလာမယ်ဆိုရင် (သို့ data.mode)
-        // ဒါမှမဟုတ် registrations/rooms ထဲက mode နဲ့ လက်ရှိ window.currentMode မကိုက်ညီရင်
-        const activeRoomMode = data.roomMode; // Server မှ ပို့ပေးသော active room ရှိနေသည့် mode (1vs1 သို့မဟုတ် 5vs5)
-        
-        const buyBtn = document.getElementById('buy-room-btn');
-        const buyRoomContainer = document.getElementById('buy-room-container');
-        const actionBtns = document.getElementById('action-buttons');
-
-        if (data.hasActiveRoom && activeRoomMode && activeRoomMode !== window.currentMode) {
-            // တခြား Mode မှာ Room တင်ထားပြီးသားဖြစ်နေရင် ဤ Mode မှာ Create လုပ်ခွင့်မပေးဘဲ ဖျောက်မည်
-            if (buyBtn) buyBtn.style.display = 'none';
-            if (buyRoomContainer) buyRoomContainer.style.display = 'none';
-            if (actionBtns) actionBtns.style.display = 'none';
-            
-            // Back ခလုတ် တစ်ခုတည်းသာ ကျန်အောင် ထိန်းချုပ်ခြင်း (သို့မဟုတ် သက်ဆိုင်ရာ Back UI ပြရန်)
-            console.log(`🔒 သင်သည် ${activeRoomMode} တွင် Room တင်ထားပြီးဖြစ်သဖြင့် ဤ Mode တွင် Create လုပ်၍မရပါ။`);
-        }
-    } catch (e) {
-        console.error("Restriction check error:", e);
-    }
-}
 
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
@@ -723,12 +673,11 @@ function appendRoomCardToUI(room) {
     // 25000 နဲ့ 50000 ဆိုရင် BO3၊ ကျန်တာဆိုရင် BO1
     let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
 
-    // 🌟 Mode ပေါ်မူတည်၍ Squad Name (သို့) Hero Name များကို အမှန်တကယ် ဆွဲထုတ်ရန် (Fallback များပါဝင်သည်)
     let mainTitle = '';
     if (mode === '1vs1') {
-        mainTitle = room.heroName || room.playerName || room.squadName || room.teamName || 'Hero Name';
+        mainTitle = room.heroName || room.playerName || 'Hero Name';
     } else {
-        mainTitle = room.squadName || room.teamName || room.playerName || 'Squad Name';
+        mainTitle = room.squadName || room.teamName || 'Squad Name';
     }
 
     const actionButtonHTML = isOwner 
@@ -759,14 +708,13 @@ function appendRoomCardToUI(room) {
 }
 async function loadActiveRooms() {
     try {
-        // 🌟 လက်ရှိဖွင့်ထားသော Mode ကို ယူမည် (Default သည် 5vs5)
-        const currentMode = window.currentMode || '5vs5';
-
-        // 🌟 Backend ဆီသို့ mode ပါ ထည့်၍ လှမ်းတောင်းမည်
-        const response = await fetch(`/api/active-rooms?mode=${currentMode}`);
+        const response = await fetch('/api/active-rooms');
         
+        // 🌟 Response က JSON ဟုတ်မဟုတ် အရင်စစ်ဆေးခြင်း 🌟
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
+            const textResponse = await response.text();
+            console.error("Server did not return JSON. Response was:", textResponse);
             return;
         }
 
@@ -775,12 +723,9 @@ async function loadActiveRooms() {
         if (result.success) {
             const matchContent = document.getElementById('match-content');
             if (matchContent) {
-                matchContent.innerHTML = ''; // အဟောင်းများ ရှင်းထုတ်မည်
+                matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
 
-                // 🌟 အကယ်၍ Backend က အကြောင်းကြောင်းကြောင့် အကုန်ပို့လာခဲ့လျှင်တောင် Frontend မှာ ထပ်မံ Filter လုပ်ချင်ပါက:
-                const filteredRooms = result.rooms.filter(room => room.mode === currentMode);
-
-                filteredRooms.forEach(room => {
+                result.rooms.forEach(room => {
                     appendRoomCardToUI(room); 
                 });
             }
@@ -862,21 +807,17 @@ window.openSquadDetail = async function(roomId) {
         const d = result.data;
         modalTitle.innerText = d.mode === '1vs1' ? '1vs1 Match Details' : '5vs5 Squad Details';
 
-        let contentHTML = `<img src="${d.logo || 'default-logo.png'}" class="ios-modal-logo" alt="Logo">`;
+        let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
-            const pName = d.playerName || d.squadName || d.teamName || 'Unknown Player';
-            const hName = d.heroName || 'Unknown Hero';
-            const phone = d.leaderPhone || d.phone || 'N/A';
-
             contentHTML += `
-                <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${pName}</span></div>
-                <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${hName}</span></div>
-                <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${phone}</span></div>
+                <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
+                <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
+                <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
             `;
         } else {
-            // Squad Name ရှာမတွေ့ပါက Team Name သို့မဟုတ် Default နာမည်သုံးရန်
-            const squadNameText = d.squadName || d.teamName || d.playerName || 'MY TEAM';
+            // 🌟 SQ Name ကို Title အနေနဲ့ အပေါ်ဆုံးမှာ ထည့်သွင်းပြီး အလယ်ပို့ခြင်း
+            const squadNameText = d.squadName || d.sqName || 'SQUAD NAME';
             
             contentHTML += `
                 <div class="players-group-container">
@@ -884,23 +825,21 @@ window.openSquadDetail = async function(roomId) {
             `;
 
             let playersList = Array.isArray(d.players) ? d.players : [];
-            // ပုံမှန် 5 ယောက်ပြည့်အောင် လုပ်ဆောင်ခြင်း
-            for (let i = 0; i < 5; i++) {
-                let pName = playersList[i] || (i === 0 ? (d.playerName || 'N/A') : 'N/A');
+            playersList.forEach((pName, index) => {
                 contentHTML += `
                     <div class="player-item-line">
-                        <span class="p-label">PLAYER ${i + 1}</span>
+                        <span class="p-label">PLAYER ${index + 1}</span>
                         <span class="p-dash">-</span>
-                        <span class="p-name">${pName}</span>
+                        <span class="p-name">${pName || 'N/A'}</span>
                     </div>
                 `;
-            }
+            });
 
-            contentHTML += `</div>`; 
+            contentHTML += `</div>`; // Close group container
 
-            const phone = d.leaderPhone || d.phone || 'N/A';
+            // Leader Phone No
             contentHTML += `
-                <div class="ios-detail-row"><span class="label">Leader Phone</span><span class="value">${phone}</span></div>
+                <div class="ios-detail-row"><span class="label">Leader Phone</span><span class="value">${d.leaderPhone}</span></div>
             `;
         }
 
