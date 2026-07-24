@@ -673,11 +673,12 @@ function appendRoomCardToUI(room) {
     // 25000 နဲ့ 50000 ဆိုရင် BO3၊ ကျန်တာဆိုရင် BO1
     let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
 
+    // 🌟 Mode ပေါ်မူတည်၍ Squad Name (သို့) Hero Name များကို အမှန်တကယ် ဆွဲထုတ်ရန် (Fallback များပါဝင်သည်)
     let mainTitle = '';
     if (mode === '1vs1') {
-        mainTitle = room.heroName || room.playerName || 'Hero Name';
+        mainTitle = room.heroName || room.playerName || room.squadName || room.teamName || 'Hero Name';
     } else {
-        mainTitle = room.squadName || room.teamName || 'Squad Name';
+        mainTitle = room.squadName || room.teamName || room.playerName || 'Squad Name';
     }
 
     const actionButtonHTML = isOwner 
@@ -807,17 +808,21 @@ window.openSquadDetail = async function(roomId) {
         const d = result.data;
         modalTitle.innerText = d.mode === '1vs1' ? '1vs1 Match Details' : '5vs5 Squad Details';
 
-        let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
+        let contentHTML = `<img src="${d.logo || 'default-logo.png'}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
+            const pName = d.playerName || d.squadName || d.teamName || 'Unknown Player';
+            const hName = d.heroName || 'Unknown Hero';
+            const phone = d.leaderPhone || d.phone || 'N/A';
+
             contentHTML += `
-                <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
-                <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
-                <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
+                <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${pName}</span></div>
+                <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${hName}</span></div>
+                <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${phone}</span></div>
             `;
         } else {
-            // 🌟 SQ Name ကို Title အနေနဲ့ အပေါ်ဆုံးမှာ ထည့်သွင်းပြီး အလယ်ပို့ခြင်း
-            const squadNameText = d.squadName || d.sqName || 'SQUAD NAME';
+            // Squad Name ရှာမတွေ့ပါက Team Name သို့မဟုတ် Default နာမည်သုံးရန်
+            const squadNameText = d.squadName || d.teamName || d.playerName || 'MY TEAM';
             
             contentHTML += `
                 <div class="players-group-container">
@@ -825,21 +830,23 @@ window.openSquadDetail = async function(roomId) {
             `;
 
             let playersList = Array.isArray(d.players) ? d.players : [];
-            playersList.forEach((pName, index) => {
+            // ပုံမှန် 5 ယောက်ပြည့်အောင် လုပ်ဆောင်ခြင်း
+            for (let i = 0; i < 5; i++) {
+                let pName = playersList[i] || (i === 0 ? (d.playerName || 'N/A') : 'N/A');
                 contentHTML += `
                     <div class="player-item-line">
-                        <span class="p-label">PLAYER ${index + 1}</span>
+                        <span class="p-label">PLAYER ${i + 1}</span>
                         <span class="p-dash">-</span>
-                        <span class="p-name">${pName || 'N/A'}</span>
+                        <span class="p-name">${pName}</span>
                     </div>
                 `;
-            });
+            }
 
-            contentHTML += `</div>`; // Close group container
+            contentHTML += `</div>`; 
 
-            // Leader Phone No
+            const phone = d.leaderPhone || d.phone || 'N/A';
             contentHTML += `
-                <div class="ios-detail-row"><span class="label">Leader Phone</span><span class="value">${d.leaderPhone}</span></div>
+                <div class="ios-detail-row"><span class="label">Leader Phone</span><span class="value">${phone}</span></div>
             `;
         }
 
