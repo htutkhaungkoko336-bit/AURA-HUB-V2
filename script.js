@@ -58,13 +58,9 @@ window.nextMap = () => {
     // Global Mode ကို Update လုပ်ခြင်း
     window.currentMode = mapData[currentIndex].mode;
     
-    // UI အခြေအနေကို အပ်ဒိတ်လုပ်ခြင်း
     updateUI();
-    
-    // 🌟 Mode ပြောင်းသွားသည်နှင့် Create ခလုတ်အခြေအနေနှင့် Room များကို ချက်ချင်းစစ်ဆေးပြသရန်
-    updateBuyButtonStatus();
-    loadActiveRooms();
 };
+
 function updateUI() {
     const map = mapData[currentIndex];
     
@@ -401,21 +397,17 @@ async function updateBuyButtonStatus() {
         if (response.status === 404) return;
 
         const data = await response.json();
+        
+        // 🌟 Server မှ ရလာမည့် keyTier ကို တွက်ချက်ခြင်း 🌟
         const tierText = formatKeyTier(data.keyTier);
         
-        // 🌟 ၁။ ချက်ချင်း စစ်ဆေးရန်: User Register တင်ထားတဲ့ Mode နဲ့ လက်ရှိဖွင့်ထားတဲ့ Mode တူရဲ့လား 🌟
-        const registeredMode = data.mode || '5vs5'; // Backend က သိမ်းထားသော Mode (1vs1 သို့မဟုတ် 5vs5)
-        const currentActiveMode = window.currentMode || '5vs5'; // လက်ရှိ UI မှာ ရွေးထားတဲ့ Mode
-
-        // CONFIRM ဖြစ်နေချိန် Mode မတူရင် Create Room ခလုတ်ကို ဖျောက်ပြီး Back တစ်ခုတည်းပဲ ချန်မည်
-        const activeBtns = document.getElementById('dock-active-btns');
-        const inuseBtns = document.getElementById('dock-inuse-btns');
-        const statusText = document.getElementById('dock-status-text');
-
+        // ၁။ CONFIRM ဖြစ်နေရင်
         if (data.status === 'confirm') {
             buyBtn.style.display = 'none';
+            if (backBtn) backBtn.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'none';
             
+            // Action Wheel ပေါ်လာစေရန်
             const actionWheelContainer = document.getElementById('action-wheel-container');
             if (actionWheelContainer) {
                 actionWheelContainer.style.display = 'block';
@@ -423,28 +415,25 @@ async function updateBuyButtonStatus() {
             if (actionBtns) {
                 actionBtns.style.display = 'flex';
             }
+            
+            // === Server မှ Room ရှိမရှိ (In-Use ဟုတ်မဟုတ်) အခြေအနေကို စစ်ဆေးမည် ===
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
+            const statusText = document.getElementById('dock-status-text');
 
-            // 🌟 Mode ချკပ်ချက် - ဥပမာ: 1vs1 မှာ Register တင်ထားပြီး 5vs5 Mode ကို ရောက်နေရင် Create လုပ်ခွင့်မပေးပါ
-            if (registeredMode !== currentActiveMode) {
+            if (data.hasActiveRoom || data.keyStatus === 'in-use') {
+                // Room ထောင်ပြီးသား ဖြစ်နေလျှင် Create Room ကိုဖျောက်၍ Refund (In-use) ခလုတ်ပြမည်
                 if (activeBtns) activeBtns.style.display = 'none';
-                if (inuseBtns) inuseBtns.style.display = 'none'; // Create လည်းမပြ, Refund လည်းမပြ
-                if (statusText) statusText.innerText = `Registered in ${registeredMode.toUpperCase()}`;
-                if (backBtn) backBtn.style.display = 'block'; // Back တစ်ခုတည်းသာ ချန်မည်
+                if (inuseBtns) inuseBtns.style.display = 'flex';
+                if (statusText) statusText.innerText = tierText; // ဥပမာ - "5K Key", "10K Key" စသည်ဖြင့်ပေါ်မည်
             } else {
-                // Mode တူညီမှသာ ပုံမှန်အတိုင်း Room ရှိမရှိ စစ်မည်
-                if (backBtn) backBtn.style.display = 'none';
-                
-                if (data.hasActiveRoom || data.keyStatus === 'in-use') {
-                    if (activeBtns) activeBtns.style.display = 'none';
-                    if (inuseBtns) inuseBtns.style.display = 'flex';
-                    if (statusText) statusText.innerText = tierText;
-                } else {
-                    if (activeBtns) activeBtns.style.display = 'flex';
-                    if (inuseBtns) inuseBtns.style.display = 'none';
-                    if (statusText) statusText.innerText = tierText; 
-                }
+                // Room မရှိသေးလျှင် Create Room ခလုတ်ပြမည်
+                if (activeBtns) activeBtns.style.display = 'flex';
+                if (inuseBtns) inuseBtns.style.display = 'none';
+                if (statusText) statusText.innerText = tierText; 
             }
         } 
+        // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             if (isResubmitMode) return; 
 
@@ -457,20 +446,26 @@ async function updateBuyButtonStatus() {
             buyBtn.innerText = "REJECTED";
             buyBtn.style.backgroundColor = "#eb3838";
             buyBtn.style.opacity = "1"; 
+            buyBtn.style.boxShadow = "0 0 8px rgba(235, 56, 56, 0.4)";
             buyBtn.style.pointerEvents = "auto";
             
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
+                
                 isResubmitMode = true; 
+
                 buyBtn.innerText = "RESUBMIT NOW";
                 buyBtn.style.backgroundColor = "#dac02d";
                 buyBtn.style.color = "#000";
+                buyBtn.style.boxShadow = "0 0 10px rgba(218, 192, 45, 0.5)";
+                buyBtn.style.fontWeight = "bold";
                 
                 buyBtn.onclick = () => {
                     openRegistrationPage();
                 };
             };
         }
+        // ၃။ PENDING ဖြစ်နေရင်
         else {
             if (actionBtns) actionBtns.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'flex';
@@ -715,6 +710,7 @@ async function loadActiveRooms() {
     try {
         const response = await fetch('/api/active-rooms');
         
+        // 🌟 Response က JSON ဟုတ်မဟုတ် အရင်စစ်ဆေးခြင်း 🌟
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const textResponse = await response.text();
@@ -729,21 +725,7 @@ async function loadActiveRooms() {
             if (matchContent) {
                 matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
 
-                // 🌟 လက်ရှိဖွင့်ထားသော Mode ကို ရယူခြင်း (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
-                const currentActiveMode = window.currentMode || '5vs5';
-
-                // 🌟 Mode နှင့် ကိုက်ညီသော Room များကိုသာ Filter လုပ်ခြင်း
-                const filteredRooms = result.rooms.filter(room => {
-                    const roomMode = room.mode || '5vs5';
-                    return roomMode.toLowerCase() === currentActiveMode.toLowerCase();
-                });
-
-                if (filteredRooms.length === 0) {
-                    matchContent.innerHTML = `<div style="text-align: center; color: #888; padding: 20px;">No active ${currentActiveMode} rooms found.</div>`;
-                    return;
-                }
-
-                filteredRooms.forEach(room => {
+                result.rooms.forEach(room => {
                     appendRoomCardToUI(room); 
                 });
             }
