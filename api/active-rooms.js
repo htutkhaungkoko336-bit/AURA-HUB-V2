@@ -19,13 +19,11 @@ module.exports = async function handler(req, res) {
         // 🌟 Frontend က ပို့လိုက်သော mode ကို ဖမ်းယူခြင်း (မပါလာပါက 5vs5 ဟု ယူမည်)
         const requestedMode = req.query.mode || '5vs5';
 
-        // 🌟 Firestore query တွင် mode ပါ ထည့်သွင်းစစ်ဆေးခြင်း
         const roomsSnapshot = await db.collection('rooms')
             .where('status', '==', 'waiting')
-            .where('mode', '==', requestedMode) // <-- ဤနေရာတွင် Mode အလိုက် Filter လုပ်ပါ
+            .where('mode', '==', requestedMode) // <-- ဤနေရာတွင် Mode အလိုက် သီးသန့်စစ်ထုတ်ရန်
             .get();
-
-        let roomList = [];
+            let roomList = [];
 
         for (const doc of roomsSnapshot.docs) {
             let roomData = doc.data();

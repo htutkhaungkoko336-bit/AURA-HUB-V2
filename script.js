@@ -568,7 +568,57 @@ window.toggleActionWheel = function() {
         }
     }
 }
+// Tab သို့မဟုတ် Mode ပြောင်းသည့် function များတွင် ဤကဲ့သို့ သတ်မှတ်ပါ
+window.switchMode = function(mode) {
+    window.currentMode = mode; // '1vs1' သို့မဟုတ် '5vs5'
 
+    // UI တွင် သက်ဆိုင်ရာ Page ကို ပြပါ
+    document.querySelectorAll('.sub-page').forEach(el => el.style.display = 'none');
+    
+    if (mode === '1vs1') {
+        document.getElementById('page-1vs1').style.display = 'block';
+    } else {
+        document.getElementById('page-5vs5').style.display = 'block';
+    }
+
+    // 🌟 အဓိက စစ်ဆေးချက် - User ၏ Active Status ကို စစ်ဆေးပြီး Button များကို ထိန်းချုပ်မည်
+    checkUserModeRestriction();
+    
+    // ထို Mode အလိုက် Room စာရင်းများကို လှမ်းဆွဲမည်
+    loadActiveRooms();
+};
+
+// 🌟 User က တခြား Mode မှာ Room တင်ပြီးသားဆိုရင် လက်ရှိ Mode မှာ Key/Create ခလုတ်ဖျောက်မည့် function
+async function checkUserModeRestriction() {
+    const deviceId = localStorage.getItem('aura_device_id');
+    if (!deviceId) return;
+
+    try {
+        const response = await fetch('/api/check-status?deviceId=' + encodeURIComponent(deviceId));
+        if (!response.ok) return;
+        const data = await response.json();
+
+        // ဥပမာ - Server ဘက်က data ထဲမှာ user တင်ထားတဲ့ active room ရဲ့ mode ပါလာမယ်ဆိုရင် (သို့ data.mode)
+        // ဒါမှမဟုတ် registrations/rooms ထဲက mode နဲ့ လက်ရှိ window.currentMode မကိုက်ညီရင်
+        const activeRoomMode = data.roomMode; // Server မှ ပို့ပေးသော active room ရှိနေသည့် mode (1vs1 သို့မဟုတ် 5vs5)
+        
+        const buyBtn = document.getElementById('buy-room-btn');
+        const buyRoomContainer = document.getElementById('buy-room-container');
+        const actionBtns = document.getElementById('action-buttons');
+
+        if (data.hasActiveRoom && activeRoomMode && activeRoomMode !== window.currentMode) {
+            // တခြား Mode မှာ Room တင်ထားပြီးသားဖြစ်နေရင် ဤ Mode မှာ Create လုပ်ခွင့်မပေးဘဲ ဖျောက်မည်
+            if (buyBtn) buyBtn.style.display = 'none';
+            if (buyRoomContainer) buyRoomContainer.style.display = 'none';
+            if (actionBtns) actionBtns.style.display = 'none';
+            
+            // Back ခလုတ် တစ်ခုတည်းသာ ကျန်အောင် ထိန်းချုပ်ခြင်း (သို့မဟုတ် သက်ဆိုင်ရာ Back UI ပြရန်)
+            console.log(`🔒 သင်သည် ${activeRoomMode} တွင် Room တင်ထားပြီးဖြစ်သဖြင့် ဤ Mode တွင် Create လုပ်၍မရပါ။`);
+        }
+    } catch (e) {
+        console.error("Restriction check error:", e);
+    }
+}
 
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
@@ -709,17 +759,14 @@ function appendRoomCardToUI(room) {
 }
 async function loadActiveRooms() {
     try {
-        // 🌟 ၁။ လက်ရှိ ဖွင့်ထားသော Mode ကို ယူပါ (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
+        // 🌟 လက်ရှိဖွင့်ထားသော Mode ကို ယူမည် (Default သည် 5vs5)
         const currentMode = window.currentMode || '5vs5';
 
-        // 🌟 ၂။ API URL ထဲသို့ query parameter အနေဖြင့် mode ထည့်ပေးပါ
+        // 🌟 Backend ဆီသို့ mode ပါ ထည့်၍ လှမ်းတောင်းမည်
         const response = await fetch(`/api/active-rooms?mode=${currentMode}`);
         
-        // Response က ဟုတ်မဟုတ် စစ်ဆေးခြင်း
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-            const textResponse = await response.text();
-            console.error("Server did not return JSON. Response was:", textResponse);
             return;
         }
 
@@ -728,9 +775,12 @@ async function loadActiveRooms() {
         if (result.success) {
             const matchContent = document.getElementById('match-content');
             if (matchContent) {
-                matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
+                matchContent.innerHTML = ''; // အဟောင်းများ ရှင်းထုတ်မည်
 
-                result.rooms.forEach(room => {
+                // 🌟 အကယ်၍ Backend က အကြောင်းကြောင်းကြောင့် အကုန်ပို့လာခဲ့လျှင်တောင် Frontend မှာ ထပ်မံ Filter လုပ်ချင်ပါက:
+                const filteredRooms = result.rooms.filter(room => room.mode === currentMode);
+
+                filteredRooms.forEach(room => {
                     appendRoomCardToUI(room); 
                 });
             }
