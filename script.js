@@ -398,8 +398,12 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // 🌟 Server မှ ရလာမည့် keyTier ကို တွက်ချက်ခြင်း 🌟
+        // 🌟 Server ကပြန်ပေးတဲ့ Mode ကို ယူမယ် (မရှိရင် 5vs5 ပေါ့)
+        const registeredMode = (data.mode || '5vs5').toUpperCase(); // 1VS1 သို့မဟုတ် 5VS5 လို့ အလှပြဖို့
         const tierText = formatKeyTier(data.keyTier);
+        
+        // 🌟 "Status" စာသားအစား Mode နှင့် Key Tier ကို တွဲပြရန် (ဥပမာ: "5VS5 - 5K Key")
+        const displayText = `${registeredMode} | ${tierText}`;
         
         // ၁။ CONFIRM ဖြစ်နေရင်
         if (data.status === 'confirm') {
@@ -416,24 +420,23 @@ async function updateBuyButtonStatus() {
                 actionBtns.style.display = 'flex';
             }
             
-            // === Server မှ Room ရှိမရှိ (In-Use ဟုတ်မဟုတ်) အခြေအနေကို စစ်ဆေးမည် ===
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
             const statusText = document.getElementById('dock-status-text');
 
             if (data.hasActiveRoom || data.keyStatus === 'in-use') {
-                // Room ထောင်ပြီးသား ဖြစ်နေလျှင် Create Room ကိုဖျောက်၍ Refund (In-use) ခလုတ်ပြမည်
                 if (activeBtns) activeBtns.style.display = 'none';
                 if (inuseBtns) inuseBtns.style.display = 'flex';
-                if (statusText) statusText.innerText = tierText; // ဥပမာ - "5K Key", "10K Key" စသည်ဖြင့်ပေါ်မည်
+                // 🌟 Status နေရာတွင် Mode ကို အစားထိုးပြသခြင်း
+                if (statusText) statusText.innerText = displayText; 
             } else {
-                // Room မရှိသေးလျှင် Create Room ခလုတ်ပြမည်
                 if (activeBtns) activeBtns.style.display = 'flex';
                 if (inuseBtns) inuseBtns.style.display = 'none';
-                if (statusText) statusText.innerText = tierText; 
+                // 🌟 Status နေရာတွင် Mode ကို အစားထိုးပြသခြင်း
+                if (statusText) statusText.innerText = displayText; 
             }
         } 
-        // REJECT ဖြစ်တဲ့အပိုင်း
+        // ... (အောက်ဘက် Reject နှင့် Pending အပိုင်းများမှာ မူလအတိုင်း ထားပါ)        // REJECT ဖြစ်တဲ့အပိုင်း
         else if (data.status === 'reject') {
             if (isResubmitMode) return; 
 
