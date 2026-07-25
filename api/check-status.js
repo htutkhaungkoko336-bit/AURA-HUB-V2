@@ -20,8 +20,8 @@ module.exports = async (req, res) => {
 
     try {
         const snapshot = await db.collection("registrations")
-                                     .where("deviceId", "==", deviceId)
-                                     .get();
+                                   .where("deviceId", "==", deviceId)
+                                   .get();
 
         if (snapshot.empty) {
             return res.status(404).json({ status: "not_found" });
@@ -44,14 +44,15 @@ module.exports = async (req, res) => {
             hasActiveRoom = (keyStatus === 'in-use' && Boolean(roomId));
         }
 
-        // Response ထဲသို့ keyTier ပါ ထည့်သွင်းပေးခြင်း
+        // Response ထဲသို့ mode နှင့် keyTier ပါ ထည့်သွင်းပေးခြင်း 🌟
         return res.status(200).json({
             status: data.status,
             rejectReason: data.rejectReason || null,
             keyStatus: keyStatus,
             roomId: roomId,
             hasActiveRoom: hasActiveRoom,
-            keyTier: keyDoc.exists ? (keyDoc.data().keyTier || 0) : 0
+            keyTier: keyDoc.exists ? (keyDoc.data().keyTier || 0) : 0,
+            mode: data.mode || '5vs5' // 🌟 Database ထဲမှ registrations collection ရှိ mode ကို ထည့်ပေးလိုက်ပါပြီ
         });
 
     } catch (err) {

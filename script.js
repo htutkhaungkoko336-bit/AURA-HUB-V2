@@ -398,12 +398,9 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // 🌟 Server ကပြန်ပေးတဲ့ Mode ကို ယူမယ် (မရှိရင် 5vs5 ပေါ့)
-        const registeredMode = (data.mode || '5vs5').toUpperCase(); // 1VS1 သို့မဟုတ် 5VS5 လို့ အလှပြဖို့
-        const tierText = formatKeyTier(data.keyTier);
-        
-        // 🌟 "Status" စာသားအစား Mode နှင့် Key Tier ကို တွဲပြရန် (ဥပမာ: "5VS5 - 5K Key")
-        const displayText = `${registeredMode} | ${tierText}`;
+        // 🌟 1. Server မှလာသော mode ကို ယူမည် (မရှိလျှင် '5vs5')
+        const registeredMode = (data.mode || '5vs5').toUpperCase(); // '1VS1' သို့မဟုတ် '5VS5'
+        const tierText = formatKeyTier(data.keyTier); // ဥပမာ - '15K Key'
         
         // ၁။ CONFIRM ဖြစ်နေရင်
         if (data.status === 'confirm') {
@@ -411,7 +408,6 @@ async function updateBuyButtonStatus() {
             if (backBtn) backBtn.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'none';
             
-            // Action Wheel ပေါ်လာစေရန်
             const actionWheelContainer = document.getElementById('action-wheel-container');
             if (actionWheelContainer) {
                 actionWheelContainer.style.display = 'block';
@@ -424,19 +420,22 @@ async function updateBuyButtonStatus() {
             const inuseBtns = document.getElementById('dock-inuse-btns');
             const statusText = document.getElementById('dock-status-text');
 
+            // 🌟 2. ပြုံမနေစေဘဲ အပေါ်က Mode၊ အောက်က Key Tier ဖြစ်အောင် HTML Structure ဖြင့် သပ်သပ်ရပ်ရပ် ချပြခြင်း
+            if (statusText) {
+                statusText.innerHTML = `
+                    <div style="font-size: 13px; font-weight: bold; color: #FFD700; line-height: 1.2;">${registeredMode}</div>
+                    <div style="font-size: 11px; color: #aaa; line-height: 1.2; margin-top: 2px;">${tierText}</div>
+                `;
+            }
+
             if (data.hasActiveRoom || data.keyStatus === 'in-use') {
                 if (activeBtns) activeBtns.style.display = 'none';
                 if (inuseBtns) inuseBtns.style.display = 'flex';
-                // 🌟 Status နေရာတွင် Mode ကို အစားထိုးပြသခြင်း
-                if (statusText) statusText.innerText = displayText; 
             } else {
                 if (activeBtns) activeBtns.style.display = 'flex';
                 if (inuseBtns) inuseBtns.style.display = 'none';
-                // 🌟 Status နေရာတွင် Mode ကို အစားထိုးပြသခြင်း
-                if (statusText) statusText.innerText = displayText; 
             }
-        } 
-        // ... (အောက်ဘက် Reject နှင့် Pending အပိုင်းများမှာ မူလအတိုင်း ထားပါ)        // REJECT ဖြစ်တဲ့အပိုင်း
+        }
         else if (data.status === 'reject') {
             if (isResubmitMode) return; 
 
