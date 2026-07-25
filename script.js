@@ -398,10 +398,33 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        // 🌟 1. Server မှလာသော mode ကို ယူမည် (မရှိလျှင် '5vs5')
-        const registeredMode = (data.mode || '5vs5').toUpperCase(); // '1VS1' သို့မဟုတ် '5VS5'
-        const tierText = formatKeyTier(data.keyTier); // ဥပမာ - '15K Key'
+        const registeredMode = (data.mode || '5vs5').toLowerCase(); // ဥပမာ - '1vs1' သို့မဟုတ် '5vs5'
+        const currentActiveMode = (window.currentMode || '5vs5').toLowerCase(); // လက်ရှိ UI မှာ ရွေးထားတဲ့ mode
+        const tierText = formatKeyTier(data.keyTier);
         
+        const statusText = document.getElementById('dock-status-text');
+        if (statusText) {
+            statusText.innerHTML = `
+                <div style="font-size: 13px; font-weight: bold; color: #FFD700; line-height: 1.2;">${registeredMode.toUpperCase()} MODE</div>
+                <div style="font-size: 11px; color: #aaa; line-height: 1.2; margin-top: 2px;">${tierText}</div>
+            `;
+        }
+
+        // 🌟 1. User register တင်ထားတဲ့ mode နဲ့ လက်ရှိ ဖွင့်ထားတဲ့ mode မတူဘူးဆိုရင် (ဥပမာ - 1vs1 တင်ထားပြီး 5vs5 ထဲ ဝင်နေရင်)
+        if (registeredMode !== currentActiveMode) {
+            if (buyBtn) buyBtn.style.display = 'none';
+            if (buyRoomContainer) buyRoomContainer.style.display = 'none';
+            if (actionBtns) actionBtns.style.display = 'none';
+            
+            const activeBtns = document.getElementById('dock-active-btns');
+            const inuseBtns = document.getElementById('dock-inuse-btns');
+            if (activeBtns) activeBtns.style.display = 'none';
+            if (inuseBtns) inuseBtns.style.display = 'none';
+
+            // Back ခလုတ် တစ်ခုတည်းသာ ပေါ်စေရန်
+            if (backBtn) backBtn.style.display = 'block';
+            return; // ဒီနေရာမှာပဲ ရပ်မယ်
+        }
         // ၁။ CONFIRM ဖြစ်နေရင်
         if (data.status === 'confirm') {
             buyBtn.style.display = 'none';
