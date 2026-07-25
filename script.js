@@ -420,14 +420,12 @@ async function updateBuyButtonStatus() {
             const inuseBtns = document.getElementById('dock-inuse-btns');
             const statusText = document.getElementById('dock-status-text');
 
-            // 🌟 2. ပြုံမနေစေဘဲ အပေါ်က Mode၊ အောက်က Key Tier ဖြစ်အောင် HTML Structure ဖြင့် သပ်သပ်ရပ်ရပ် ချပြခြင်း
             if (statusText) {
                 statusText.innerHTML = `
-                    <div style="font-size: 13px; font-weight: bold; color: #FFD700; line-height: 1.2;">${registeredMode}</div>
+                    <div style="font-size: 13px; font-weight: bold; color: #FFD700; line-height: 1.2;">${registeredMode} MODE</div>
                     <div style="font-size: 11px; color: #aaa; line-height: 1.2; margin-top: 2px;">${tierText}</div>
                 `;
             }
-
             if (data.hasActiveRoom || data.keyStatus === 'in-use') {
                 if (activeBtns) activeBtns.style.display = 'none';
                 if (inuseBtns) inuseBtns.style.display = 'flex';
