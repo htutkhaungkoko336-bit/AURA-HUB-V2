@@ -23,7 +23,7 @@ import {
     cancelMatchFromPopup 
 } from './matchmaking.js';
 
-// Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း (HTML က onclick များအတွက် အလုပ်လုပ်စေရန်)
+// Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း (HTML က onclick များအတွက်)
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
 window.switchToWaitingTab = switchToWaitingTab;
@@ -33,7 +33,6 @@ window.fetchUserMatches = fetchUserMatches;
 window.openMatchDetailModal = openMatchDetailModal;
 window.setReadyFromPopup = setReadyFromPopup;
 window.cancelMatchFromPopup = cancelMatchFromPopup;
-
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;

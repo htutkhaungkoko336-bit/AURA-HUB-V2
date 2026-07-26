@@ -159,7 +159,7 @@ export function openMatchDetailModal(matchId, match) {
     modal.style.display = 'flex';
 }
 
-// --- Confirm / Ready (Backend API သို့ ပို့ရန်) ---
+// --- Confirm / Ready ---
 export async function setReadyFromPopup() {
     if (!currentSelectedMatchId) return;
     const deviceId = localStorage.getItem('aura_device_id');
@@ -183,7 +183,7 @@ export async function setReadyFromPopup() {
     }
 }
 
-// --- Match ဖျက်သိမ်းခြင်း (Backend API သို့ ပို့ရန်) ---
+// --- Match ဖျက်သိမ်းခြင်း ---
 export async function cancelMatchFromPopup() {
     if (!currentSelectedMatchId) return;
     if (!confirm("ဤ Match ကို ဖျက်သိမ်းရန် သေချာပါသလား?")) return;
@@ -207,9 +207,8 @@ export async function cancelMatchFromPopup() {
     }
 }
 
-// --- Tab Switching Functions ---
+// --- Tab Switching (အရောင်အပြောင်းအလဲမရှိ၊ နှိပ်လျှင် Data တန်းပေါ်မည်) ---
 export function switchToWaitingTab() {
-    setActiveTab('waiting');
     const contentContainer = document.getElementById('match-content');
     if (contentContainer) {
         contentContainer.innerHTML = `<!-- Waiting Room UI Content -->`;
@@ -217,16 +216,11 @@ export function switchToWaitingTab() {
 }
 
 export function switchToPlayingTab() {
-    setActiveTab('playing');
-    
     const contentContainer = document.getElementById('match-content');
     if (contentContainer) {
+        // ခေါင်းစီးစာသား (ONGOING MATCHES) များကို ဖြုတ်ထားပြီး Container ကို တန်းပြထားသည်
         contentContainer.innerHTML = `
-            <div class="header-box" style="text-align: center; margin-bottom: 20px;">
-                <h1 style="color:#c9a66b; font-size: 1.2rem;">ONGOING MATCHES</h1>
-                <p style="font-size: 0.8rem; color: #aaa;">Click a room card to view details & confirm</p>
-            </div>
-            <div id="room-cards-container" style="display: flex; flex-direction: column; gap: 15px; padding-bottom: 50px;">
+            <div id="room-cards-container" style="display: flex; flex-direction: column; gap: 15px; padding-top: 10px; padding-bottom: 50px;">
                 <!-- Dynamic ဖြင့် ဝင်လာမည့် Room Cards များ -->
             </div>
         `;
@@ -236,28 +230,8 @@ export function switchToPlayingTab() {
 }
 
 export function switchToResultTab() {
-    setActiveTab('result');
     const contentContainer = document.getElementById('match-content');
     if (contentContainer) {
         contentContainer.innerHTML = `<!-- Result UI Content -->`;
     }
-}
-
-// Tab ၏ Active ပုံစံနှင့် အရောင်ပြောင်းလဲမှုကို ထိန်းချုပ်ရန်
-function setActiveTab(tabName) {
-    const tabs = ['waiting', 'playing', 'result'];
-    tabs.forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        if (btn) {
-            if (t === tabName) {
-                btn.classList.add('active');
-                btn.style.color = '#c9a66b';
-                btn.style.borderBottom = '2px solid #c9a66b';
-            } else {
-                btn.classList.remove('active');
-                btn.style.color = '#888';
-                btn.style.borderBottom = 'none';
-            }
-        }
-    });
 }
