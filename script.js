@@ -104,38 +104,49 @@ window.joinRoom = (price) => {
         if (feeDisplay) feeDisplay.innerText = `Entry Fee: ${price} Ks`;
     }
 };
-// ၁။ Validation: 5vs5 အတွက်
 window.validate5vs5 = function() {
     const squadName = document.getElementById('squad-name')?.value.trim();
     const kpayName = document.getElementById('kpay-name')?.value.trim();
     const kpayNo = document.getElementById('kpay-no')?.value.trim();
+    const contact5vs5 = document.getElementById('contact-5vs5')?.value.trim(); // 👉 Contact ထည့်စစ်ရန်
     const logoInput = document.getElementById('sqLogo');
     const players = document.querySelectorAll('#page-5vs5 .player-grid-container input');
     
     let allPlayersFilled = true;
     players.forEach(input => { if(input.value.trim() === "") allPlayersFilled = false; });
 
-    return !(squadName === "" || kpayName === "" || kpayNo === "" || logoInput.files.length === 0 || !allPlayersFilled);
+    return !(squadName === "" || kpayName === "" || kpayNo === "" || !contact5vs5 || logoInput.files.length === 0 || !allPlayersFilled);
 };
-// ၂။ Validation: 1vs1 အတွက်
+// ၂။ Validation: 1vs1 အတွက် (Contact ပါ ထည့်စစ်ဆေးရန် ပြင်ဆင်ပြီး)
 window.validate1vs1 = function() {
     const inputs = document.querySelectorAll('#page-1vs1 input[type="text"], #page-1vs1 input[type="number"]');
     const logoInput = document.getElementById('sqLogo1vs1');
+    const contactInput = document.getElementById('contact-1vs1'); // 👉 Contact ပါ ထည့်စစ်မည်
+    
     let allFilled = true;
     inputs.forEach(input => { if(input.value.trim() === "") allFilled = false; });
 
-    return !( !allFilled || logoInput.files.length === 0);
+    // Contact မဖြည့်ရသေးရင် (သို့) Logo မတင်ရသေးရင် (သို့) အခြား input တစ်ခုခု လပ်နေရင် false ပေးမည်
+    const isContactFilled = contactInput && contactInput.value.trim() !== "";
+    const isLogoUploaded = logoInput && logoInput.files.length > 0;
+
+    return (allFilled && isContactFilled && isLogoUploaded);
 };
-// ၃။ Page ကူးပြောင်းခြင်း (Confirm & Pay)
+// ၃။ Page ကူးပြောင်းခြင်း (Confirm & Pay) - ပြင်ဆင်ပြီး
 window.goToPayment = function() {
-    const is5vs5 = document.getElementById('page-5vs5').style.display !== 'none';
-    currentMode = is5vs5 ? '5vs5' : '1vs1'; 
+    // 5vs5 element ရှိမရှိနဲ့ အမှန်တကယ် ပေါ်နေခြင်း ရှိမရှိကို အသေအချာ စစ်ဆေးမည်
+    const page5vs5 = document.getElementById('page-5vs5');
+    const is5vs5 = page5vs5 && window.getComputedStyle(page5vs5).display !== 'none';
+    
+    // currentMode ကို တိကျစွာ အရင် သတ်မှတ်မည်
+    window.currentMode = is5vs5 ? '5vs5' : '1vs1'; 
     
     const isValid = is5vs5 ? window.validate5vs5() : window.validate1vs1();
 
     if (isValid) {
         document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
-        document.getElementById('page-payment-proof').style.display = 'flex';
+        const proofPage = document.getElementById('page-payment-proof');
+        if (proofPage) proofPage.style.display = 'flex';
     } else {
         alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါ။");
     }
