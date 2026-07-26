@@ -52,34 +52,39 @@ module.exports = async function handler(req, res) {
                 return res.status(400).json({ success: false, message: "သင့် Key မှာ အသုံးမပြုနိုင်သော အနေအထားတွင် ရှိနေပါသည်။" });
             }
 
-            // ၅. Host ၏ Registration အချက်အလက်များကိုပါ ထပ်မံဆွဲထုတ်ရန် (Team 2 ခုလုံးရဲ့ အချက်အလက်အပြည့်အစုံရရန်)
+            // ၅. Host ၏ Registration အချက်အလက်များကို ဆွဲထုတ်ခြင်း
             const hostRegQuery = await db.collection('registrations').where('deviceId', '==', roomData.hostDeviceId).get();
-            const hostData = !hostRegQuery.empty ? hostRegQuery.docs[0].data() : {};
+            const hostRegData = !hostRegQuery.empty ? hostRegQuery.docs[0].data() : {};
 
-            // ၆. `matches` collection အသစ်ထဲသို့ နှစ်ဖက်စလုံး၏ အချက်အလက်များ သိမ်းဆည်းခြင်း
+            // ၆. `matches` collection ထဲသို့ Mode ပေါ်မူတည်ပြီး အချက်အလက်များ တိကျမှန်ကန်စွာ သိမ်းဆည်းခြင်း
             const matchRef = await db.collection('matches').add({
                 roomId: roomId,
                 mode: roomData.mode,
-                entryFee: roomData.entryFee,
-                // Host Team info
+                entryFee: roomData.entryFee || hostRegData.entryFee || "0",
+                
+                // Host Team info (1vs1 ဆိုရင် playerName ကို ယူမယ်၊ 5vs5 ဆိုရင် squadName ကို ယူမယ်)
                 host: {
                     deviceId: roomData.hostDeviceId,
-                    teamName: roomData.teamName || hostData.squadName || hostData.playerName || "Host Team",
-                    logo: roomData.logo || hostData.logo || "",
-                    mlbbId: roomData.mlbbId || hostData.mlbbId || "",
-                    playerName: roomData.playerName || hostData.playerName || "",
-                    confirmed: false // Confirm နှိပ်ထားခြင်း ရှိမရှိ
-                },
-                // Joiner Team info
-                joiner: {
-                    deviceId: deviceId,
-                    teamName: joinerData.teamName || joinerData.squadName || joinerData.playerName || "Joiner Team",
-                    logo: joinerData.logo || "",
-                    mlbbId: joinerData.mlbbId || "",
-                    playerName: joinerData.playerName || joinerData.name || joinerData.player || "", // <-- ဒီနေရာကို အစုံထည့်ပေးလိုက်ပါ
+                    teamName: roomData.teamName || hostRegData.squadName || hostRegData.playerName || "Host",
+                    playerName: roomData.playerName || hostRegData.playerName || "",
+                    mlbbId: roomData.mlbbId || hostRegData.mlbbId || "",
+                    logo: roomData.logo || hostRegData.logo || "",
+                    heroName: hostRegData.heroName || "", // 1vs1 အတွက်
                     confirmed: false
                 },
-                status: 'pending_confirmation', // နှစ်ဖက်လုံး Confirm စောင့်ဆိုင်းနေသည့် status
+
+                // Joiner Team info (Frontend က ပို့လာတဲ့ joinerData ကို Mode အလိုက် အပြည့်အစုံဖမ်းမယ်)
+                joiner: {
+                    deviceId: deviceId,
+                    teamName: joinerData.teamName || joinerData.squadName || joinerData.playerName || joinerData.name || "Joiner",
+                    playerName: joinerData.playerName || joinerData.name || joinerData.player || "",
+                    mlbbId: joinerData.mlbbId || "",
+                    logo: joinerData.logo || "",
+                    heroName: joinerData.heroName || "",
+                    confirmed: false
+                },
+
+                status: 'pending_confirmation',
                 createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
             });
 
