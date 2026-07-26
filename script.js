@@ -730,59 +730,6 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-function appendRoomCardToUI(room) {
-    const matchContent = document.getElementById('match-content');
-    if (!matchContent) return;
-
-    const currentDeviceId = localStorage.getItem('aura_device_id');
-    const isOwner = String(room.deviceId) === String(currentDeviceId);
-
-    const logoUrl = room.logo || 'default-logo.png';
-    const mode = room.mode || '5vs5';
-    
-    // Fee စာသား သန့်စင်ခြင်း နှင့် 5000 -> 5K ပုံစံပြောင်းခြင်း
-    let rawFee = room.entryFee || '0 Ks';
-    let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '').trim();
-    let numericFee = parseInt(cleanFee.replace(/[^0-9]/g, '')) || 0;
-    let feeText = numericFee >= 1000 ? (numericFee / 1000) + 'K' : cleanFee;
-
-    // 25000 နဲ့ 50000 ဆိုရင် BO3၊ ကျန်တာဆိုရင် BO1
-    let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
-
-    let mainTitle = '';
-    if (mode === '1vs1') {
-        mainTitle = room.heroName || room.playerName || 'Hero Name';
-    } else {
-        mainTitle = room.squadName || room.teamName || 'Squad Name';
-    }
-// room object တစ်ခုလုံးကို encode လုပ်ပြီး string အနေနဲ့ ထည့်ပေးခြင်း
-const roomString = encodeURIComponent(JSON.stringify(room));
-
-const actionButtonHTML = isOwner 
-    ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
-    : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}', '${roomString}')">+</button>`;
-    // 🌟 FEE, MODE, BO သုံးခုစလုံးကို ရိုးရှင်းသပ်ရပ်စွာ တစ်န်းတည်းပြမည့် ပုံစံ
-    const cardHTML = `
-        <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
-            <div class="room-left">
-                <img src="${logoUrl}" class="room-logo" alt="Logo">
-                <div class="room-info">
-                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-                        <span class="room-fee" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">${feeText}</span>
-                        <span class="room-mode-badge" style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
-                        <span class="room-bo-badge" style="font-size: 11px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${boType}</span>
-                    </div>
-                    <span class="room-team-name">${mainTitle}</span>
-                </div>
-            </div>
-            <div class="room-right">
-                <div>${actionButtonHTML}</div>
-            </div>
-        </div>
-    `;
-
-    matchContent.insertAdjacentHTML('afterbegin', cardHTML);
-}
 async function loadActiveRooms() {
     try {
         const response = await fetch('/api/active-rooms');
