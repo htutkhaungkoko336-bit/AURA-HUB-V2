@@ -922,8 +922,14 @@ window.cancelContactEdit = function() {
     }
 };
 // Save လုပ်သည့်အခါ Database ဆီသို့ ပို့ရန် (Mode ပါ ပို့ပေးရန်)
-async function saveUpdatedContact(matchMode) {
-    const newContact = document.getElementById('update-contact-input').value.trim();
+window.saveUpdatedContact = async function(matchMode) {
+    const inputElement = document.getElementById('update-contact-input');
+    const displayElement = document.getElementById('display-contact');
+    const editContainer = document.getElementById('edit-contact-container');
+
+    if (!inputElement) return;
+
+    const newContact = inputElement.value.trim();
     if (!newContact) {
         alert("ကျေးဇူးပြု၍ Contact ထည့်ပါ။");
         return;
@@ -944,11 +950,11 @@ async function saveUpdatedContact(matchMode) {
 
         const result = await response.json();
         if (result.success) {
-            document.getElementById('display-contact').innerText = newContact;
-            document.getElementById('edit-contact-container').style.display = 'none';
+            if (displayElement) displayElement.innerText = newContact;
+            if (editContainer) editContainer.style.display = 'none';
             alert("Contact အချက်အလက် အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။");
         } else {
-            throw new Error(result.error);
+            throw new Error(result.message || "Unknown error");
         }
     } catch (error) {
         alert("Error updating contact: " + error.message);
