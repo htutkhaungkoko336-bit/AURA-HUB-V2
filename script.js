@@ -20,7 +20,9 @@ import {
     fetchUserMatches, 
     openMatchDetailModal, 
     setReadyFromPopup, 
-    cancelMatchFromPopup 
+    cancelMatchFromPopup,
+    fetchWaitingRooms,
+    appendRoomCardToUI
 } from './matchmaking.js';
 
 // Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း (HTML က onclick များအတွက်)
@@ -30,9 +32,11 @@ window.switchToWaitingTab = switchToWaitingTab;
 window.switchToPlayingTab = switchToPlayingTab;
 window.switchToResultTab = switchToResultTab;
 window.fetchUserMatches = fetchUserMatches;
+window.fetchWaitingRooms = fetchWaitingRooms;
 window.openMatchDetailModal = openMatchDetailModal;
 window.setReadyFromPopup = setReadyFromPopup;
 window.cancelMatchFromPopup = cancelMatchFromPopup;
+window.appendRoomCardToUI = appendRoomCardToUI;
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;

@@ -252,15 +252,15 @@ export async function cancelMatchFromPopup() {
     }
 }
 
-// --- Tab Switching & Active State (အရောင်ပြောင်းလဲမှုဖြင့်) ---
+// --- Tab Switching Logic (Exported) ---
 export function switchToWaitingTab() {
     setActiveTab('waiting');
-    fetchWaitingRooms(); // Waiting Tab နှိပ်လျှင် Waiting Room များပေါ်မည်
+    fetchWaitingRooms(); 
 }
 
 export function switchToPlayingTab() {
     setActiveTab('playing');
-    fetchUserMatches(); // Playing Tab နှိပ်လျှင် Match ဝင်ထားသည်များပေါ်မည်
+    fetchUserMatches(); 
 }
 
 export function switchToResultTab() {
@@ -271,7 +271,7 @@ export function switchToResultTab() {
     }
 }
 
-// ဘယ် Tab ကို နှိပ်ထားမှန်းသိရန် အရောင်ပြောင်းပေးသည့် ပုံစံ
+// --- Active Tab State Styling ---
 function setActiveTab(tabName) {
     const tabs = ['waiting', 'playing', 'result'];
     tabs.forEach(t => {
@@ -288,4 +288,12 @@ function setActiveTab(tabName) {
             }
         }
     });
+}
+
+// --- Unified Card Appender ---
+export function appendRoomCardToUI(roomHTMLString) {
+    const container = document.getElementById('room-cards-container');
+    if (container) {
+        container.innerHTML = roomHTMLString; 
+    }
 }
