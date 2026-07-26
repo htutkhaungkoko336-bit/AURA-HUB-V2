@@ -180,7 +180,7 @@ window.submitProof = async function() {
         
         const deviceId = localStorage.getItem('aura_device_id') || 'unknown';
         
-        // Payload တည်ဆောက်ခြင်း
+    // Payload တည်ဆောက်ခြင်း
         let payload = {
             deviceId: deviceId,
             logo: logoUrl,
@@ -197,11 +197,17 @@ window.submitProof = async function() {
             payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
             payload.entryFee = document.getElementById('fee-1vs1')?.innerText || '0 Ks';
             payload.mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
+            
+            // 👉 1vs1 အတွက် Contact ထည့်ရန်
+            payload.contact = document.getElementById('contact-1vs1')?.value || 'N/A';
         } else {
             payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
             payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
             payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
             payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
+            
+            // 👉 5vs5 အတွက် Contact ထည့်ရန်
+            payload.contact = document.getElementById('contact-5vs5')?.value || 'N/A';
             
             const playerRows = document.querySelectorAll('#page-5vs5 .player-row');
             playerRows.forEach((row, index) => {
@@ -212,7 +218,6 @@ window.submitProof = async function() {
                 };
             });
         }
-
         // အရင်က /api/update-registration ကို ခေါ်နေတာကို ဒီလိုပြင်ပါ
         const response = await fetch('/api/register', { 
             method: 'POST',
