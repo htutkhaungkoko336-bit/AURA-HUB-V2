@@ -1,23 +1,31 @@
 // matchmaking.js
 
-// HTML က ခေါ်နေတဲ့ joinOrViewRoom ကို window object ထဲ ချိတ်ပေးခြင်း
-window.joinOrViewRoom = function(roomDocId, roomDataStr) {
+export function joinOrViewRoom(roomDocId, roomDataStr) {
     let roomData = roomDataStr;
+    
     // အကယ်၍ string ပုံစံရောက်လာရင် object ပြန်ပြောင်းရန်
     if (typeof roomDataStr === 'string') {
         try {
             roomData = JSON.parse(decodeURIComponent(roomDataStr));
         } catch (e) {
-            console.error("Room data parse error:", e);
+            try {
+                roomData = JSON.parse(roomDataStr);
+            } catch (err) {
+                console.error("Room data parse error:", err);
+            }
         }
     }
     
-    // အထက်ပါ Mode နဲ့ Fee စစ်ဆေးပြီး join တဲ့ function ကို ဆက်သွားမည်
-    window.joinMatchRoom(roomDocId, roomData);
-};
+    // Data မမှန်ကန်ပါက သတိပေးပြီး ရပ်တန့်ရန်
+    if (!roomData || typeof roomData !== 'object') {
+        alert("❌ Room အချက်အလက် မမှန်ကန်ပါ။");
+        return;
+    }
+    
+    joinMatchRoom(roomDocId, roomData);
+}
 
-// ၁။ Room ဝင်ရောက်ခြင်း (Join Room) - Mode နှင့် Fee တူမှသာ ဝင်ခွင့်ပြုမည်
-window.joinMatchRoom = async function(roomDocId, roomData) {
+export async function joinMatchRoom(roomDocId, roomData) {
     const deviceId = localStorage.getItem('aura_device_id');
     if (!deviceId) {
         alert("Device ID မတွေ့ရှိပါ။ ကျေးဇူးပြု၍ Login ပြန်ဝင်ပါ။");
@@ -27,6 +35,12 @@ window.joinMatchRoom = async function(roomDocId, roomData) {
     const registrationData = JSON.parse(localStorage.getItem('aura_last_registration'));
     if (!registrationData) {
         alert("ကျေးဇူးပြု၍ ပထမဦးစွာ Registration လုပ်ပေးပါ။");
+        return;
+    }
+
+    // roomData သို့မဟုတ် property များ မပါလာပါက အမှားမတက်အောင် စစ်ဆေးခြင်း
+    if (!roomData || !roomData.mode || !roomData.entryFee) {
+        alert("❌ Room အချက်အလက်များ မပြည့်စုံပါ။");
         return;
     }
 
@@ -69,7 +83,7 @@ window.joinMatchRoom = async function(roomDocId, roomData) {
     } catch (error) {
         alert("Join လုပ်၍ မရပါ: " + error.message);
     }
-};
+}
 
 function handlePostJoinUI() {
     const createBtn = document.getElementById('create-room-btn');
