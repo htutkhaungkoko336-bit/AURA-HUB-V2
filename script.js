@@ -20,7 +20,6 @@ import {
     setReadyFromPopup, 
     cancelMatchFromPopup,
     fetchWaitingRooms,
-    appendRoomCardToUI
 } from './matchmaking.js';
 
 // Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း (HTML က onclick များအတွက်)
