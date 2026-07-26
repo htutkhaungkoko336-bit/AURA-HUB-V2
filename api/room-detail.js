@@ -31,10 +31,11 @@ module.exports = async function handler(req, res) {
 
         const mode = roomData.mode || '5vs5';
         let responseData = {
-            mode: mode,
-            logo: regData.logo || roomData.logo || 'default-logo.png',
-            leaderPhone: regData.kpayNo || regData.leaderPhone || roomData.leaderPhone || 'မပါရှိပါ။'
-        };
+                    mode: mode,
+                    logo: regData.logo || roomData.logo || 'default-logo.png',
+                    leaderPhone: regData.kpayNo || regData.leaderPhone || roomData.leaderPhone || 'မပါရှိပါ။',
+                    contact: regData.contact || roomData.contact || '' // 🌟 ဒီနေရာလေး ထည့်ပေးပါ
+                };
 
         if (mode === '1vs1') {
             responseData.playerName = regData.playerName || roomData.playerName || 'N/A';

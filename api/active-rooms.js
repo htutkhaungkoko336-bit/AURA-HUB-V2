@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
                     mode: roomData.mode || '5vs5',
                     entryFee: regData.entryFee || roomData.entryFee || '0',
                     status: roomData.status,
-                    contact: regData.contact || roomData.contact || '' // 🌟 Popup ထဲတွင် ပေါ်ရန် contact ပါ ထည့်ပေးလိုက်သည်
+                    contact: regData.contact || roomData.contact || '' 
                 });
             }
 
@@ -59,7 +59,6 @@ module.exports = async function handler(req, res) {
                 return res.status(400).json({ success: false, message: "Device ID is required" });
             }
 
-            // registrations collection ထဲတွင် ဤ deviceId ရှိနှင့်ပြီးသားလား ရှာမည်
             const regRef = db.collection('registrations');
             const snapshot = await regRef.where('deviceId', '==', deviceId).get();
 
@@ -68,7 +67,6 @@ module.exports = async function handler(req, res) {
                 updatedAt: new Date().toISOString()
             };
 
-            // Request ထဲမှ ပါလာသော data များကို ထည့်သွင်းခြင်း
             if (data.logo) dbData.logo = data.logo;
             if (data.paymentScreenshot) dbData.paymentScreenshot = data.paymentScreenshot;
             if (data.mode) dbData.mode = data.mode;
@@ -77,17 +75,15 @@ module.exports = async function handler(req, res) {
             if (data.playerName) dbData.playerName = data.playerName;
             if (data.entryFee) dbData.entryFee = data.entryFee;
 
-            // 🌟 သင်တောင်းဆိုထားသော Contact ပါလာပါက dbData ထဲသို့ ထည့်သွင်းခြင်း
+            // 🌟 Contact ပါလာပါက dbData ထဲသို့ ထည့်သွင်းပေးမည့် အပိုင်း
             if (data.contact) {
                 dbData.contact = data.contact;
             }
 
             if (!snapshot.empty) {
-                // ရှိပြီးသားဆိုလျှင် Update လုပ်မည် (Existing Document ကို Merge လုပ်ခြင်း)
                 const docId = snapshot.docs[0].id;
                 await regRef.doc(docId).set(dbData, { merge: true });
             } else {
-                // အသစ်ဆိုလျှင် အသစ်ထည့်မည်
                 await regRef.add(dbData);
             }
 
@@ -98,7 +94,6 @@ module.exports = async function handler(req, res) {
         }
     }
 
-    // အခြား Method များအတွက် 405 Method Not Allowed ပြန်မည်
     res.setHeader('Allow', ['GET', 'POST']);
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
 };
