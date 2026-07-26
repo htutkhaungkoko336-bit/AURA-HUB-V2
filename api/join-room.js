@@ -76,8 +76,8 @@ module.exports = async function handler(req, res) {
                     teamName: joinerData.teamName || joinerData.squadName || joinerData.playerName || "Joiner Team",
                     logo: joinerData.logo || "",
                     mlbbId: joinerData.mlbbId || "",
-                    playerName: joinerData.playerName || "",
-                    confirmed: false // Confirm နှိပ်ထားခြင်း ရှိမရှိ
+                    playerName: joinerData.playerName || joinerData.name || joinerData.player || "", // <-- ဒီနေရာကို အစုံထည့်ပေးလိုက်ပါ
+                    confirmed: false
                 },
                 status: 'pending_confirmation', // နှစ်ဖက်လုံး Confirm စောင့်ဆိုင်းနေသည့် status
                 createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
