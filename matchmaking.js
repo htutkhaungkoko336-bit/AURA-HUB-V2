@@ -3,7 +3,6 @@ let currentSelectedMatchId = null;
 export function joinOrViewRoom(roomDocId, roomDataStr) {
     let roomData = roomDataStr;
     
-    // အကယ်၍ string ပုံစံရောက်လာရင် object ပြန်ပြောင်းရန်
     if (typeof roomDataStr === 'string') {
         try {
             roomData = JSON.parse(decodeURIComponent(roomDataStr));
@@ -16,7 +15,6 @@ export function joinOrViewRoom(roomDocId, roomDataStr) {
         }
     }
     
-    // Data မမှန်ကန်ပါက သတိပေးပြီး ရပ်တန့်ရန်
     if (!roomData || typeof roomData !== 'object') {
         alert("❌ Room အချက်အလက် မမှန်ကန်ပါ။");
         return;
@@ -38,32 +36,27 @@ export async function joinMatchRoom(roomDocId, roomData) {
         return;
     }
 
-    // roomData သို့မဟုတ် property များ မပါလာပါက အမှားမတက်အောင် စစ်ဆေးခြင်း
     if (!roomData || !roomData.mode || !roomData.entryFee) {
         alert("❌ Room အချက်အလက်များ မပြည့်စုံပါ။");
         return;
     }
 
-    // Mode တူမတူ စစ်ဆေးခြင်း
     if (registrationData.mode !== roomData.mode) {
         alert(`❌ Mode မကိုက်ညီပါ။ ဤ Room သည် ${roomData.mode} Mode ဖြစ်ပါသည်။`);
         return;
     }
 
-    // Entry Fee နှုန်းထား တူမတူ စစ်ဆေးခြင်း
     if (registrationData.entryFee !== roomData.entryFee) {
         alert(`❌ Entry Fee နှုန်းထား မကိုက်ညီပါ။ (${roomData.entryFee} သာ လက်ခံသည်)`);
         return;
     }
 
-    // ကိုယ့်အခန်း ကိုယ်ပြန် join တာကို တားမြစ်ခြင်း
     if (roomData.hostDeviceId === deviceId) {
         alert("⚠️ မိမိဖန်တီးထားသော Room ကို မိမိပြန် join ၍ မရပါ။");
         return;
     }
 
     try {
-        // 1vs1 ဖြစ်လျှင် squadName ကို playerName အဖြစ် သတ်မှတ်ပေးရန်
         const formattedJoinerData = {
             ...registrationData,
             playerName: registrationData.playerName || registrationData.squadName || ""
@@ -216,45 +209,55 @@ export async function cancelMatchFromPopup() {
 
 // --- Tab Switching Functions ---
 export function switchToWaitingTab() {
-    hideAllSubPages();
-    const waitingLobby = document.getElementById('page-waiting-lobby');
-    if (waitingLobby) waitingLobby.style.display = 'block';
-    setActiveTabButton('tab-waiting');
+    setActiveTab('waiting');
+    const contentContainer = document.getElementById('match-content');
+    if (contentContainer) {
+        contentContainer.innerHTML = `<!-- Waiting Room UI Content -->`;
+    }
 }
 
 export function switchToPlayingTab() {
-    hideAllSubPages();
-    const playingLobby = document.getElementById('page-playing-lobby');
-    if (playingLobby) playingLobby.style.display = 'block';
-    setActiveTabButton('tab-playing');
-
-    // Playing Tab ရောက်တာနဲ့ Active Matches များကို လှမ်းဆွဲမည်
+    setActiveTab('playing');
+    
+    const contentContainer = document.getElementById('match-content');
+    if (contentContainer) {
+        contentContainer.innerHTML = `
+            <div class="header-box" style="text-align: center; margin-bottom: 20px;">
+                <h1 style="color:#c9a66b; font-size: 1.2rem;">ONGOING MATCHES</h1>
+                <p style="font-size: 0.8rem; color: #aaa;">Click a room card to view details & confirm</p>
+            </div>
+            <div id="room-cards-container" style="display: flex; flex-direction: column; gap: 15px; padding-bottom: 50px;">
+                <!-- Dynamic ဖြင့် ဝင်လာမည့် Room Cards များ -->
+            </div>
+        `;
+    }
+    
     fetchUserMatches();
 }
 
 export function switchToResultTab() {
-    hideAllSubPages();
-    const resultLobby = document.getElementById('page-result-lobby');
-    if (resultLobby) resultLobby.style.display = 'block';
-    setActiveTabButton('tab-result');
-}
-
-// Sub-page အားလုံးကို ဖုံးရန်
-function hideAllSubPages() {
-    document.querySelectorAll('.sub-page').forEach(page => {
-        page.style.display = 'none';
-    });
-}
-
-// လက်ရှိ နှိပ်ထားသော Tab ကို Active အရောင်ပြောင်းရန်
-function setActiveTabButton(activeId) {
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.style.color = '#888';
-        btn.style.borderBottom = 'none';
-    });
-    const activeBtn = document.getElementById(activeId);
-    if (activeBtn) {
-        activeBtn.style.color = '#c9a66b';
-        activeBtn.style.borderBottom = '2px solid #c9a66b';
+    setActiveTab('result');
+    const contentContainer = document.getElementById('match-content');
+    if (contentContainer) {
+        contentContainer.innerHTML = `<!-- Result UI Content -->`;
     }
+}
+
+// Tab ၏ Active ပုံစံနှင့် အရောင်ပြောင်းလဲမှုကို ထိန်းချုပ်ရန်
+function setActiveTab(tabName) {
+    const tabs = ['waiting', 'playing', 'result'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (btn) {
+            if (t === tabName) {
+                btn.classList.add('active');
+                btn.style.color = '#c9a66b';
+                btn.style.borderBottom = '2px solid #c9a66b';
+            } else {
+                btn.classList.remove('active');
+                btn.style.color = '#888';
+                btn.style.borderBottom = 'none';
+            }
+        }
+    });
 }
