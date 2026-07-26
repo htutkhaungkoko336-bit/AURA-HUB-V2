@@ -15,17 +15,21 @@ import {
     joinOrViewRoom, 
     joinMatchRoom, 
     switchToPlayingTab, 
-    fetchUserMatches, // listenUserMatches အစား fetchUserMatches ကို ထည့်သွင်းခြင်း
+    switchToWaitingTab,
+    switchToResultTab,
+    fetchUserMatches, 
     openMatchDetailModal, 
     setReadyFromPopup, 
     cancelMatchFromPopup 
 } from './matchmaking.js';
 
-// Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း
+// Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း (HTML က onclick များအတွက် အလုပ်လုပ်စေရန်)
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
+window.switchToWaitingTab = switchToWaitingTab;
 window.switchToPlayingTab = switchToPlayingTab;
-window.fetchUserMatches = fetchUserMatches; // window မှာလည်း ပြောင်းပေးရန်
+window.switchToResultTab = switchToResultTab;
+window.fetchUserMatches = fetchUserMatches;
 window.openMatchDetailModal = openMatchDetailModal;
 window.setReadyFromPopup = setReadyFromPopup;
 window.cancelMatchFromPopup = cancelMatchFromPopup;

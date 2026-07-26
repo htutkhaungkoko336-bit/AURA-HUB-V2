@@ -1,4 +1,4 @@
-// matchmaking.js
+let currentSelectedMatchId = null;
 
 export function joinOrViewRoom(roomDocId, roomDataStr) {
     let roomData = roomDataStr;
@@ -103,27 +103,12 @@ function handlePostJoinUI() {
     }
 }
 
-// matchmaking.js (Backend API ကို သုံးမည့် ပုံစံ)
-
-let currentSelectedMatchId = null;
-
-// --- ၁. Playing Tab သို့ ပြောင်းလဲခြင်း ---
-export function switchToPlayingTab() {
-    document.querySelectorAll('.sub-page').forEach(page => page.style.display = 'none');
-    const playingLobby = document.getElementById('page-playing-lobby');
-    if (playingLobby) playingLobby.style.display = 'flex';
-
-    // API မှတဆင့် Active Matches များကို ဆွဲထုတ်ရန်
-    fetchUserMatches();
-}
-
-// --- ၂. Backend API မှတဆင့် Match များကို ဆွဲထုတ်ခြင်း ---
+// --- Backend API မှတဆင့် Match များကို ဆွဲထုတ်ခြင်း ---
 export async function fetchUserMatches() {
     const deviceId = localStorage.getItem('aura_device_id');
     if (!deviceId) return;
 
     try {
-        // query parameters (type=matches & deviceId) ထည့်သွင်းရန်
         const response = await fetch(`/api/active-rooms?type=matches&deviceId=${deviceId}`);
         const data = await response.json();
         
@@ -142,7 +127,8 @@ export async function fetchUserMatches() {
         console.error("Error fetching matches:", error);
     }
 }
-// --- ၃. Room Card တည်ဆောက်ခြင်း ---
+
+// --- Room Card တည်ဆောက်ခြင်း ---
 export function renderRoomCard(matchId, match, container) {
     const card = document.createElement('div');
     card.className = 'room-card';
@@ -172,7 +158,7 @@ export function renderRoomCard(matchId, match, container) {
     container.appendChild(card);
 }
 
-// --- ၄. Modal ဖွင့်ခြင်း ---
+// --- Modal ဖွင့်ခြင်း ---
 export function openMatchDetailModal(matchId, match) {
     currentSelectedMatchId = matchId;
     const modal = document.getElementById('match-detail-popup');
@@ -180,13 +166,13 @@ export function openMatchDetailModal(matchId, match) {
     modal.style.display = 'flex';
 }
 
-// --- ၅. Confirm / Ready (Backend API သို့ ပို့ရန်) ---
+// --- Confirm / Ready (Backend API သို့ ပို့ရန်) ---
 export async function setReadyFromPopup() {
     if (!currentSelectedMatchId) return;
     const deviceId = localStorage.getItem('aura_device_id');
 
     try {
-        const response = await fetch('/api/ready-room', { // သင့် Backend API အမည်အတိုင်း ချိန်ရန်
+        const response = await fetch('/api/ready-room', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ roomId: currentSelectedMatchId, deviceId })
@@ -204,13 +190,13 @@ export async function setReadyFromPopup() {
     }
 }
 
-// --- ၆. Match ဖျက်သိမ်းခြင်း (Backend API သို့ ပို့ရန်) ---
+// --- Match ဖျက်သိမ်းခြင်း (Backend API သို့ ပို့ရန်) ---
 export async function cancelMatchFromPopup() {
     if (!currentSelectedMatchId) return;
     if (!confirm("ဤ Match ကို ဖျက်သိမ်းရန် သေချာပါသလား?")) return;
 
     try {
-        const response = await fetch('/api/cancel-room', { // သင့် Backend API အမည်အတိုင်း ချိန်ရန်
+        const response = await fetch('/api/cancel-room', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ roomId: currentSelectedMatchId })
@@ -225,5 +211,50 @@ export async function cancelMatchFromPopup() {
         }
     } catch (error) {
         console.error("Cancel Error:", error);
+    }
+}
+
+// --- Tab Switching Functions ---
+export function switchToWaitingTab() {
+    hideAllSubPages();
+    const waitingLobby = document.getElementById('page-waiting-lobby');
+    if (waitingLobby) waitingLobby.style.display = 'block';
+    setActiveTabButton('tab-waiting');
+}
+
+export function switchToPlayingTab() {
+    hideAllSubPages();
+    const playingLobby = document.getElementById('page-playing-lobby');
+    if (playingLobby) playingLobby.style.display = 'block';
+    setActiveTabButton('tab-playing');
+
+    // Playing Tab ရောက်တာနဲ့ Active Matches များကို လှမ်းဆွဲမည်
+    fetchUserMatches();
+}
+
+export function switchToResultTab() {
+    hideAllSubPages();
+    const resultLobby = document.getElementById('page-result-lobby');
+    if (resultLobby) resultLobby.style.display = 'block';
+    setActiveTabButton('tab-result');
+}
+
+// Sub-page အားလုံးကို ဖုံးရန်
+function hideAllSubPages() {
+    document.querySelectorAll('.sub-page').forEach(page => {
+        page.style.display = 'none';
+    });
+}
+
+// လက်ရှိ နှိပ်ထားသော Tab ကို Active အရောင်ပြောင်းရန်
+function setActiveTabButton(activeId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.style.color = '#888';
+        btn.style.borderBottom = 'none';
+    });
+    const activeBtn = document.getElementById(activeId);
+    if (activeBtn) {
+        activeBtn.style.color = '#c9a66b';
+        activeBtn.style.borderBottom = '2px solid #c9a66b';
     }
 }
