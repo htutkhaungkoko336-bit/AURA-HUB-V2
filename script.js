@@ -15,7 +15,7 @@ import {
     joinOrViewRoom, 
     joinMatchRoom, 
     switchToPlayingTab, 
-    listenUserMatches, 
+    fetchUserMatches, // listenUserMatches အစား fetchUserMatches ကို ထည့်သွင်းခြင်း
     openMatchDetailModal, 
     setReadyFromPopup, 
     cancelMatchFromPopup 
@@ -25,7 +25,7 @@ import {
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
 window.switchToPlayingTab = switchToPlayingTab;
-window.listenUserMatches = listenUserMatches;
+window.fetchUserMatches = fetchUserMatches; // window မှာလည်း ပြောင်းပေးရန်
 window.openMatchDetailModal = openMatchDetailModal;
 window.setReadyFromPopup = setReadyFromPopup;
 window.cancelMatchFromPopup = cancelMatchFromPopup;
