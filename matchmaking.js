@@ -123,7 +123,8 @@ export async function fetchUserMatches() {
     if (!deviceId) return;
 
     try {
-        const response = await fetch('/api/active-rooms'); // သို့မဟုတ် သင့် backend API endpoint
+        // query parameters (type=matches & deviceId) ထည့်သွင်းရန်
+        const response = await fetch(`/api/active-rooms?type=matches&deviceId=${deviceId}`);
         const data = await response.json();
         
         const container = document.getElementById('room-cards-container');
@@ -141,7 +142,6 @@ export async function fetchUserMatches() {
         console.error("Error fetching matches:", error);
     }
 }
-
 // --- ၃. Room Card တည်ဆောက်ခြင်း ---
 export function renderRoomCard(matchId, match, container) {
     const card = document.createElement('div');
