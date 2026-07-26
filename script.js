@@ -9,8 +9,6 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-// main.js
-
 import { 
     joinOrViewRoom, 
     joinMatchRoom, 
@@ -22,6 +20,7 @@ import {
     setReadyFromPopup, 
     cancelMatchFromPopup,
     fetchWaitingRooms,
+    appendRoomCardToUI
 } from './matchmaking.js';
 
 // Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း (HTML က onclick များအတွက်)
@@ -35,7 +34,6 @@ window.fetchWaitingRooms = fetchWaitingRooms;
 window.openMatchDetailModal = openMatchDetailModal;
 window.setReadyFromPopup = setReadyFromPopup;
 window.cancelMatchFromPopup = cancelMatchFromPopup;
-window.appendRoomCardToUI = appendRoomCardToUI;
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;
@@ -729,11 +727,9 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-// --- Card UI ကို တည်ဆောက်ပေးသော Function ---
 function appendRoomCardToUI(room) {
-    // Waiting Room သို့မဟုတ် Playing Tab အလိုက် ဝင်မယ့် Container များကို ရှာဖွေခြင်း
-    const container = document.getElementById('room-cards-container') || document.getElementById('match-content');
-    if (!container) return;
+    const matchContent = document.getElementById('match-content');
+    if (!matchContent) return;
 
     const currentDeviceId = localStorage.getItem('aura_device_id');
     const isOwner = String(room.deviceId) === String(currentDeviceId);
@@ -756,27 +752,24 @@ function appendRoomCardToUI(room) {
     } else {
         mainTitle = room.squadName || room.teamName || 'Squad Name';
     }
+// room object တစ်ခုလုံးကို encode လုပ်ပြီး string အနေနဲ့ ထည့်ပေးခြင်း
+const roomString = encodeURIComponent(JSON.stringify(room));
 
-    // Room object တစ်ခုလုံးကို encode လုပ်ပြီး string အနေနဲ့ ထည့်ပေးခြင်း
-    const roomString = encodeURIComponent(JSON.stringify(room));
-
-    // ပိုင်ရှင်ဟုတ်မဟုတ် အလိုက် Action Button ပြောင်းလဲခြင်း
-    const actionButtonHTML = isOwner 
-        ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId || room.id}')">Cancel</button>`
-        : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId || room.id}', '${roomString}')">+</button>`;
-
-    // 🌟 FEE, MODE, BO သုံးခုစလုံးကို ရိုးရှင်းသပ်ရပ်စွာ တစ်န်းတည်းပြမည့် iOS ဒီဇိုင်းပုံစံ Card HTML
+const actionButtonHTML = isOwner 
+    ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
+    : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}', '${roomString}')">+</button>`;
+    // 🌟 FEE, MODE, BO သုံးခုစလုံးကို ရိုးရှင်းသပ်ရပ်စွာ တစ်န်းတည်းပြမည့် ပုံစံ
     const cardHTML = `
-        <div class="room-card-ios" onclick="openSquadDetail('${room.roomId || room.id}')" style="background: rgba(201,166,107,0.05); border: 1px solid #333; border-radius: 12px; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; transition: 0.2s;">
-            <div class="room-left" style="display: flex; align-items: center; gap: 12px; width: 80%;">
-                <img src="${logoUrl}" class="room-logo" alt="Logo" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #c9a66b; object-fit: cover;">
-                <div class="room-info" style="overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-bottom: 4px;">
+        <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
+            <div class="room-left">
+                <img src="${logoUrl}" class="room-logo" alt="Logo">
+                <div class="room-info">
+                    <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
                         <span class="room-fee" style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">${feeText}</span>
                         <span class="room-mode-badge" style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
                         <span class="room-bo-badge" style="font-size: 11px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${boType}</span>
                     </div>
-                    <span class="room-team-name" style="font-size: 0.9rem; color: #f1e4b9; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${mainTitle}</span>
+                    <span class="room-team-name">${mainTitle}</span>
                 </div>
             </div>
             <div class="room-right">
@@ -785,9 +778,9 @@ function appendRoomCardToUI(room) {
         </div>
     `;
 
-    // Container ထဲသို့ အသစ်ပေါ်လာမည့် Card ကို ထည့်သွင်းခြင်း
-    container.insertAdjacentHTML('afterbegin', cardHTML);
-}async function loadActiveRooms() {
+    matchContent.insertAdjacentHTML('afterbegin', cardHTML);
+}
+async function loadActiveRooms() {
     try {
         const response = await fetch('/api/active-rooms');
         
