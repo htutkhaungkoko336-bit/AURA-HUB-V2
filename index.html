@@ -417,61 +417,20 @@
     </div>
 </div>
 </div>
-<div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000;">
-    <div class="header-box">
-        <h1 id="match-fee-display" style="color:#c9a66b;">MATCH FOUND</h1>
-        <p>CONFIRM TO GET TELEGRAM LINK</p>
+<!-- ၁။ Playing Lobby Tab (Ongoing Matches လစာရင်းနှင့် Room Cards များပြမည့်နေရာ) -->
+<div id="page-playing-lobby" class="sub-page" style="display: none; flex-direction: column; background: #000; padding: 15px; color: #fff;">
+    <div class="header-box" style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color:#c9a66b; font-size: 1.2rem;">ONGOING MATCHES</h1>
+        <p style="font-size: 0.8rem; color: #aaa;">Click a room card to view details & confirm</p>
     </div>
 
-    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; padding-bottom: 300px;">
-        
-        <div style="display: flex; justify-content: space-around; align-items: flex-start; padding: 20px 10px; background: rgba(201,166,107,0.03); border-radius: 15px; border: 1px solid #333;">
-            
-            <div id="team-a-side" style="text-align: center; width: 45%;">
-                <div style="position: relative; display: inline-block;">
-                    <img id="p-team-a-logo" src="https://i.ibb.co/4pGm0Zf/default-logo.png" style="width: 75px; height: 75px; border-radius: 50%; border: 2px solid #c9a66b; padding: 3px;">
-                    <div id="p-team-a-ready-badge" style="display:none; position: absolute; bottom: -5px; right: -5px; background: #00ff00; color: #000; font-size: 0.6rem; font-weight: bold; padding: 2px 6px; border-radius: 10px;">READY</div>
-                </div>
-                <h4 id="p-team-a-name" style="color: #f1e4b9; margin: 10px 0 5px 0; font-size: 0.9rem;">Team A</h4>
-                <div id="p-team-a-players" style="font-size: 0.7rem; color: #aaa; line-height: 1.6; text-align: center;"></div>
-            </div>
-
-            <div style="align-self: center;">
-                <div class="vs-circle">VS</div>
-            </div>
-
-            <div id="team-b-side" style="text-align: center; width: 45%;">
-                <div style="position: relative; display: inline-block;">
-                    <img id="p-team-b-logo" src="https://i.ibb.co/4pGm0Zf/default-logo.png" style="width: 75px; height: 75px; border-radius: 50%; border: 2px solid #444; padding: 3px;">
-                    <div id="p-team-b-ready-badge" style="display:none; position: absolute; bottom: -5px; right: -5px; background: #00ff00; color: #000; font-size: 0.6rem; font-weight: bold; padding: 2px 6px; border-radius: 10px;">READY</div>
-                </div>
-                <h4 id="p-team-b-name" style="color: #f1e4b9; margin: 10px 0 5px 0; font-size: 0.9rem;">Team B</h4>
-                <div id="p-team-b-players" style="font-size: 0.7rem; color: #aaa; line-height: 1.6; text-align: center;"></div>
-            </div>
-        </div>
-
-        <div id="match-status-msg" style="text-align: center; color: #c9a66b; font-size: 0.8rem; font-style: italic;">
-            Waiting for both teams to confirm...
-        </div>
+    <!-- Room Cards တွေ ဝင်မယ့် Container -->
+    <div id="room-cards-container" style="display: flex; flex-direction: column; gap: 15px; overflow-y: auto; max-height: 75vh; padding-bottom: 50px;">
+        <!-- Dynamic ဖြင့် ဝင်လာမည့် Room Cards များအတွက် နေရာ -->
     </div>
+</div>
 
-<div style="
-    position: fixed; 
-    bottom: 200px; 
-    left: 0; 
-    right: 0; 
-    padding: 0 20px 20px 20px; 
-    background: linear-gradient(to top, #000 80%, transparent); 
-    z-index: 1000;
-">
-    <button id="ready-btn" class="rule-btn gold-btn" style="width: 100%; margin-bottom: 10px; padding: 12px; border-radius: 8px;" onclick="setReady()">
-        CONFIRM (READY)
-    </button>
-    <button id="cancel-match-btn" class="rule-btn" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; color: #888; background: transparent;" onclick="cancelMatch()">
-        CANCEL MATCH
-    </button>
-</div>
-</div>
+<!-- ၂. Spin Container (လိုအပ်ပါက သုံးရန်) -->
 <div id="spin-container" style="display:none; text-align:center;">
     <div class="pointer"></div>
     <div id="main-wheel" class="wheel-design">
@@ -482,12 +441,71 @@
         Who gets the FIRST PICK?
     </div>
 </div>
-<div id="match-detail-popup" class="modal" style="display: none;">
-    <div class="modal-content" style="background: #111; color: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; margin: auto; margin-top: 20%;">
-        <h3 style="text-align: center; color: #d4af37;">Match Details</h3>
-        <div id="match-detail-body" style="display: flex; justify-content: space-around; margin: 20px 0;">
+
+<!-- ၃. Room Card ကို နှိပ်လျှင် ပေါ်လာမည့် Popup Box (Modal) -->
+<div id="match-detail-popup" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center;">
+    <div class="modal-content" style="background: #111; color: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 420px; border: 1px solid #c9a66b; position: relative; max-height: 90vh; overflow-y: auto; margin: auto; margin-top: 10%;">
+        
+        <!-- Top Tags (Entry Fee & Mode) -->
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;">
+            <span id="popup-entry-fee" style="background: #222; color: #c9a66b; font-size: 0.75rem; padding: 3px 10px; border-radius: 5px; border: 1px solid #444;">25K</span>
+            <span id="popup-mode" style="background: #222; color: #c9a66b; font-size: 0.75rem; padding: 3px 10px; border-radius: 5px; border: 1px solid #444;">5vs5</span>
+        </div>
+
+        <!-- Team A vs Team B Layout -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+            
+            <!-- Team A Side -->
+            <div style="text-align: center; width: 46%;">
+                <div style="position: relative; display: inline-block;">
+                    <img id="popup-team-a-logo" src="https://i.ibb.co/4pGm0Zf/default-logo.png" style="width: 65px; height: 65px; border-radius: 50%; border: 2px solid #c9a66b; padding: 2px; object-fit: cover;">
+                    <div id="popup-team-a-ready" style="display: none; position: absolute; bottom: 0; right: 0; background: #00ff00; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #111;" title="Ready"></div>
+                </div>
+                <h4 id="popup-team-a-name" style="color: #f1e4b9; margin: 8px 0 10px 0; font-size: 0.85rem;">Team A</h4>
+                
+                <!-- Player List A -->
+                <div id="popup-team-a-players" style="font-size: 0.7rem; color: #aaa; line-height: 1.8; text-align: left; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px;">
+                    <div>Player ①</div>
+                    <div>Player ②</div>
+                    <div>Player ③</div>
+                    <div>Player ④</div>
+                    <div>Player ⑤</div>
+                </div>
             </div>
-        <button onclick="document.getElementById('match-detail-popup').style.display='none'" style="width: 100%; padding: 10px; background: #c9a66b; border: none; border-radius: 5px; font-weight: bold;">Close</button>
+
+            <!-- VS Badge -->
+            <div style="align-self: center; margin-top: 20px;">
+                <div style="background: #222; border: 1px solid #c9a66b; color: #c9a66b; font-size: 0.75rem; font-weight: bold; padding: 6px 8px; border-radius: 6px;">VS</div>
+            </div>
+
+            <!-- Team B Side -->
+            <div style="text-align: center; width: 46%;">
+                <div style="position: relative; display: inline-block;">
+                    <img id="popup-team-b-logo" src="https://i.ibb.co/4pGm0Zf/default-logo.png" style="width: 65px; height: 65px; border-radius: 50%; border: 2px solid #444; padding: 2px; object-fit: cover;">
+                    <div id="popup-team-b-ready" style="display: none; position: absolute; bottom: 0; right: 0; background: #00ff00; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #111;" title="Ready"></div>
+                </div>
+                <h4 id="popup-team-b-name" style="color: #f1e4b9; margin: 8px 0 10px 0; font-size: 0.85rem;">Team B</h4>
+                
+                <!-- Player List B -->
+                <div id="popup-team-b-players" style="font-size: 0.7rem; color: #aaa; line-height: 1.8; text-align: left; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 8px;">
+                    <div>Player ①</div>
+                    <div>Player ②</div>
+                    <div>Player ③</div>
+                    <div>Player ④</div>
+                    <div>Player ⑤</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Action Buttons (Confirm & Cancel Match) -->
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button id="popup-confirm-btn" onclick="setReadyFromPopup()" style="flex: 1; padding: 10px; background: #c9a66b; color: #000; border: none; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">Confirm</button>
+            <button id="popup-cancel-btn" onclick="cancelMatchFromPopup()" style="flex: 1; padding: 10px; background: transparent; color: #888; border: 1px solid #444; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">Cancel Match</button>
+        </div>
+
+        <!-- Close Popup X Button -->
+        <button onclick="document.getElementById('match-detail-popup').style.display='none'" style="width: 100%; margin-top: 10px; padding: 8px; background: #222; color: #fff; border: 1px solid #444; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">Close</button>
     </div>
 </div>
 <script type="module" src="script.js">

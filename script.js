@@ -9,10 +9,27 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-import { joinOrViewRoom, joinMatchRoom } from './matchmaking.js';
+// main.js
 
+import { 
+    joinOrViewRoom, 
+    joinMatchRoom, 
+    switchToPlayingTab, 
+    listenUserMatches, 
+    openMatchDetailModal, 
+    setReadyFromPopup, 
+    cancelMatchFromPopup 
+} from './matchmaking.js';
+
+// Window object ပေါ်သို့ တိုက်ရိုက်ချိတ်ဆက်ခြင်း
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
+window.switchToPlayingTab = switchToPlayingTab;
+window.listenUserMatches = listenUserMatches;
+window.openMatchDetailModal = openMatchDetailModal;
+window.setReadyFromPopup = setReadyFromPopup;
+window.cancelMatchFromPopup = cancelMatchFromPopup;
+
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;
