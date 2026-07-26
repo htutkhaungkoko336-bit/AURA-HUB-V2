@@ -25,7 +25,6 @@ export default async function handler(req, res) {
             updatedAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
         };
 
-        // ... (data ဖြည့်တဲ့အပိုင်းကို အပေါ်ကအတိုင်း ထားထားပါ) ...
         if (data.mode === '5vs5') {
             dbData.squadName = data.squadName || null;
             dbData.logo = data.logo || null;
@@ -38,6 +37,8 @@ export default async function handler(req, res) {
             dbData.player3 = data.player3 || null;
             dbData.player4 = data.player4 || null;
             dbData.player5 = data.player5 || null;
+            // 5vs5 အတွက် Contact ထည့်သွင်းခြင်း
+            dbData.contact = data.contact || null; 
         } else if (data.mode === '1vs1') {
             dbData.playerName = data.squadName || null;
             dbData.mlbbId = data.mlbbId || null;
@@ -47,13 +48,15 @@ export default async function handler(req, res) {
             dbData.paymentScreenshot = data.paymentScreenshot || null;
             dbData.kpayName = data.kpayName || null;
             dbData.kpayNo = data.kpayNo || null;
+            // 1vs1 အတွက် Contact ထည့်သွင်းခြင်း
+            dbData.contact = data.contact || null; 
         }
 
         // --- ပြင်ဆင်ထားသောအပိုင်း ---
         // ၁။ တူညီသော Device ID ရှိမရှိ စစ်ဆေးပါ
         const querySnapshot = await db.collection('registrations')
-                                      .where('deviceId', '==', deviceId)
-                                      .get();
+                                     .where('deviceId', '==', deviceId)
+                                     .get();
 
         let docId;
         if (!querySnapshot.empty) {

@@ -147,7 +147,7 @@
        <button class="rule-btn" onclick="window.backToWaitingRoom()" style="margin-top: 20px; width: 90%; margin-left: auto; margin-right: auto; display: block;">Back to Previous Page</button>
     </div>
 
-    <!-- 4. 5VS5 REGISTRATION PAGE -->
+<!-- 4. 5VS5 REGISTRATION PAGE -->
     <div id="page-5vs5" class="sub-page" style="display: none;">
         <div class="header-box">
             <h1>5VS5 BATTLE ROOM</h1>
@@ -175,8 +175,14 @@
             <div class="kpay-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
                 <div class="input-box"><label>K-PAY NAME</label><input type="text" id="kpay-name" placeholder="Name"></div>
                 <div class="input-box"><label>K-PAY PHONE</label><input type="number" id="kpay-no" placeholder="09xxx"></div>
-            </div>       
+            </div>      
             
+            <!-- 5vs5 Contact Input -->
+            <div class="input-group" style="margin-top: 10px;">
+                <label style="color: #FFD700; font-size: 11px; display: block; margin-bottom: 4px;">CONTACT (Ph No / Telegram)</label>
+                <input type="text" id="contact-5vs5" placeholder="ဥပမာ - 0991234567 သို့ @username" style="width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px;">
+            </div>
+
             <!-- RE-ADDED: LOBBY PREVIEW -->
             <div class="mini-lobby" id="lobby-preview-5vs5">
                 <div class="lobby-header">
@@ -202,7 +208,7 @@
             <div class="logo-box">
                 <input type="file" id="sqLogo1vs1" hidden accept="image/*" onchange="previewLogo1vs1(event)">
                 <label for="sqLogo1vs1" id="logoLabel1vs1" style="cursor: pointer;">➕<br>Logo</label>
-                <img id="logoPreview1vs1" src="#" style="display:none; width:100%; height:100%; object-fit:cover; border-radius: 0;">         
+                <img id="logoPreview1vs1" src="#" style="display:none; width:100%; height:100%; object-fit:cover; border-radius: 0;">        
             </div>
         </div>
 
@@ -215,6 +221,12 @@
         <div class="kpay-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
             <div class="input-box"><label>K-PAY NAME</label><input type="text" id="kpay-name-solo" placeholder="Name"></div>
             <div class="input-box"><label>K-PAY PHONE</label><input type="number" id="kpay-no-solo" placeholder="09xxx"></div>
+        </div>
+
+        <!-- 1vs1 Contact Input -->
+        <div class="input-group" style="margin-top: 10px;">
+            <label style="color: #FFD700; font-size: 11px; display: block; margin-bottom: 4px;">CONTACT (Ph No / Telegram)</label>
+            <input type="text" id="contact-1vs1" placeholder="ဥပမာ - 0991234567 သို့ @username" style="width: 100%; padding: 10px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px;">
         </div>
 
         <button class="rule-btn gold-btn" style="margin-top: 20px; width: 100%;" onclick="goToPayment()">Confirm & Pay</button>
