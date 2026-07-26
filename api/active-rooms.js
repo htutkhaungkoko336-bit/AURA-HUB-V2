@@ -10,9 +10,37 @@ const app = getApps().length === 0
 const db = getFirestore(app);
 
 module.exports = async function handler(req, res) {
-    // 1️⃣ GET Method - Room များကို ဆွဲထုတ်ရန်
+    // 1️⃣ GET Method - Room များကို ဆွဲထုတ်ရန် (သို့မဟုတ် Match များကို ဆွဲထုတ်ရန်)
     if (req.method === 'GET') {
         try {
+            const { type, deviceId } = req.query;
+
+            // အကယ်၍ Active Matches များကို တောင်းဆိုလျှင် (Playing Tab အတွက်)
+            if (type === 'matches') {
+                if (!deviceId) {
+                    return res.status(400).json({ success: false, message: "Device ID is required" });
+                }
+
+                const matchesSnapshot = await db.collection('matches')
+                    .where('status', 'in', ['pending_confirmation', 'matched', 'ready'])
+                    .get();
+
+                let matchList = [];
+                matchesSnapshot.forEach(doc => {
+                    const matchData = doc.data();
+                    // Host သို့မဟုတ် Joiner တစ်ဦးဦးဖြစ်မှ ထည့်မည်
+                    if (matchData.host?.deviceId === deviceId || matchData.joiner?.deviceId === deviceId) {
+                        matchList.push({
+                            roomId: doc.id,
+                            ...matchData
+                        });
+                    }
+                });
+
+                return res.status(200).json({ success: true, rooms: matchList });
+            }
+
+            // မူလ Room များကို ဆွဲထုတ်သည့် Logic
             const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
             let roomList = [];
 
@@ -44,17 +72,58 @@ module.exports = async function handler(req, res) {
 
             return res.status(200).json({ success: true, rooms: roomList });
         } catch (error) {
-            console.error("Error fetching rooms:", error);
+            console.error("Error fetching rooms/matches:", error);
             return res.status(500).json({ success: false, message: "Server Error" });
         }
     }
 
-    // 2️⃣ POST Method - Contact သို့မဟုတ် Registration အချက်အလက်များ Update လုပ်ရန် / Register လုပ်ရန်
+    // 2️⃣ POST Method - Registration, Ready လုပ်ရန် နှင့် Match ဖျက်သိမ်းရန်
     if (req.method === 'POST') {
         try {
             const data = req.body;
-            const deviceId = data.deviceId;
+            const action = data.action;
 
+            // 🌟 Match Ready ပြုလုပ်ခြင်း
+            if (action === 'ready') {
+                const { roomId, deviceId } = data;
+                if (!roomId || !deviceId) {
+                    return res.status(400).json({ success: false, message: "Room ID and Device ID are required" });
+                }
+
+                const matchRef = db.collection('matches').doc(roomId);
+                const matchDoc = await matchRef.get();
+                if (!matchDoc.exists) {
+                    return res.status(404).json({ success: false, message: "Match not found" });
+                }
+
+                const matchData = matchDoc.data();
+                let updateData = {};
+
+                if (matchData.host.deviceId === deviceId) {
+                    updateData['host.confirmed'] = true;
+                } else if (matchData.joiner.deviceId === deviceId) {
+                    updateData['joiner.confirmed'] = true;
+                } else {
+                    return res.status(403).json({ success: false, message: "Unauthorized" });
+                }
+
+                await matchRef.update(updateData);
+                return res.status(200).json({ success: true, message: "Successfully confirmed" });
+            }
+
+            // 🌟 Match ဖျက်သိမ်းခြင်း (Cancel)
+            if (action === 'cancel') {
+                const { roomId } = data;
+                if (!roomId) {
+                    return res.status(400).json({ success: false, message: "Room ID is required" });
+                }
+
+                await db.collection('matches').doc(roomId).delete();
+                return res.status(200).json({ success: true, message: "Match cancelled successfully" });
+            }
+
+            // မူလ Registration / Contact Update လုပ်သည့် Logic
+            const deviceId = data.deviceId;
             if (!deviceId) {
                 return res.status(400).json({ success: false, message: "Device ID is required" });
             }
@@ -74,11 +143,7 @@ module.exports = async function handler(req, res) {
             if (data.heroName) dbData.heroName = data.heroName;
             if (data.playerName) dbData.playerName = data.playerName;
             if (data.entryFee) dbData.entryFee = data.entryFee;
-
-            // 🌟 Contact ပါလာပါက dbData ထဲသို့ ထည့်သွင်းပေးမည့် အပိုင်း
-            if (data.contact) {
-                dbData.contact = data.contact;
-            }
+            if (data.contact) dbData.contact = data.contact;
 
             if (!snapshot.empty) {
                 const docId = snapshot.docs[0].id;
@@ -89,7 +154,7 @@ module.exports = async function handler(req, res) {
 
             return res.status(200).json({ success: true, message: "Successfully updated" });
         } catch (error) {
-            console.error("Error updating registration/contact:", error);
+            console.error("Error in POST handler:", error);
             return res.status(500).json({ success: false, message: "Server Error" });
         }
     }
