@@ -901,18 +901,26 @@ window.closeRoomDetailModal = function() {
     }
 };
 
-// Edit လုပ်ရန် နှိပ်သည့်အခါ
-function enableContactEdit() {
-    const currentContact = document.getElementById('display-contact').innerText;
-    document.getElementById('update-contact-input').value = currentContact !== '-' && currentContact !== 'N/A' ? currentContact : '';
-    document.getElementById('edit-contact-container').style.display = 'block';
-}
+// Contact ကို Edit လုပ်ရန် ခလုတ်နှိပ်သည့်အခါ ပွင့်လာမည့် function
+window.enableContactEdit = function() {
+    const displayContact = document.getElementById('display-contact');
+    const editContainer = document.getElementById('edit-contact-container');
+    const inputField = document.getElementById('update-contact-input');
+    
+    if (displayContact && editContainer && inputField) {
+        const currentContact = displayContact.innerText.trim();
+        inputField.value = (currentContact !== '-' && currentContact !== 'N/A' && currentContact !== '') ? currentContact : '';
+        editContainer.style.display = 'block';
+    }
+};
 
-// Cancel လုပ်သည့်အခါ
-function cancelContactEdit() {
-    document.getElementById('edit-contact-container').style.display = 'none';
-}
-
+// ပြန်ပိတ်ရန် (Cancel) လုပ်သည့် function (လိုအပ်ပါက ထည့်ရန်)
+window.cancelContactEdit = function() {
+    const editContainer = document.getElementById('edit-contact-container');
+    if (editContainer) {
+        editContainer.style.display = 'none';
+    }
+};
 // Save လုပ်သည့်အခါ Database ဆီသို့ ပို့ရန် (Mode ပါ ပို့ပေးရန်)
 async function saveUpdatedContact(matchMode) {
     const newContact = document.getElementById('update-contact-input').value.trim();
