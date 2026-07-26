@@ -171,11 +171,15 @@ window.submitProof = async function() {
         return;
     }
 
-    // 👉 Contact ထည့်ရန် ဖြည့်စွက်ထားသော Validation အပိုင်း
-    const contactValue = is1v1Visible 
-        ? document.getElementById('contact-1vs1')?.value.trim() 
-        : document.getElementById('contact-5vs5')?.value.trim();
+    // 👉 လက်ရှိ Mode အလိုက် သက်ဆိုင်ရာ Contact Input ကို တိကျစွာ ရယူခြင်း
+    let contactValue = '';
+    if (is1v1Visible) {
+        contactValue = document.getElementById('contact-1vs1')?.value.trim() || '';
+    } else {
+        contactValue = document.getElementById('contact-5vs5')?.value.trim() || '';
+    }
 
+    // Contact မဖြည့်ရသေးပါက ရှေ့ဆက်မသွားစေရန် တားမြစ်ခြင်း
     if (!contactValue) {
         alert("ကျေးဇူးပြု၍ Contact (ဖုန်းနံပါတ် သို့ @telegram) ထည့်ပါ။");
         return;
