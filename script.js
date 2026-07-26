@@ -838,7 +838,6 @@ window.openSquadDetail = async function(roomId) {
         let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
-            // 🌟 1vs1 တွင် Phone No ဖြုတ်ပြီးသား
             contentHTML += `
                 <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
                 <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
@@ -862,10 +861,29 @@ window.openSquadDetail = async function(roomId) {
                 `;
             });
 
-            contentHTML += `</div>`; // Close group container
-            
-            // 🌟 5vs5 တွင် Leader Phone ဖြုတ်ပြီးသား (ထပ်မထည့်တော့ပါ)
+            contentHTML += `</div>`; 
         }
+
+        // 🌟 Popup ပွင့်လာတဲ့အခါ Contact နဲ့ Edit Box လေးပါ တွဲပေါ်လာစေရန် HTML ထည့်ခြင်း
+        contentHTML += `
+            <div class="popup-contact-box" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px 16px; border-radius: 12px; border: 0.5px solid rgba(255, 255, 255, 0.15); margin-top: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <div>
+                    <span style="font-size: 0.65rem; color: #8e8e93; display: block; font-weight: 500; letter-spacing: 0.5px; margin-bottom: 2px;">CONTACT INFO</span>
+                    <span id="display-contact" style="color: #fff; font-size: 0.9rem; font-weight: 600; letter-spacing: -0.2px;">${d.contact || '-'}</span>
+                </div>
+                <button onclick="enableContactEdit()" style="background: rgba(201, 166, 107, 0.15); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;" title="Edit Contact">
+                    <span style="font-size: 0.9rem;">✏️</span>
+                </button>
+            </div>
+
+            <div id="edit-contact-container" style="display: none; margin-top: 10px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px); padding: 12px; border-radius: 12px; border: 0.5px solid rgba(201, 166, 107, 0.3);">
+                <input type="text" id="update-contact-input" placeholder="ဖုန်းနံပါတ် သို့ @telegram" style="width: 100%; padding: 10px 12px; background: rgba(255, 255, 255, 0.07); border: 0.5px solid rgba(255, 255, 255, 0.2); color: #fff; border-radius: 8px; font-size: 0.85rem; outline: none; box-sizing: border-box;">
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button onclick="saveUpdatedContact('${d.mode}')" style="flex: 1; background: #c9a66b; color: #000; border: none; padding: 8px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px rgba(201,166,107,0.3);">Save</button>
+                    <button onclick="cancelContactEdit()" style="flex: 1; background: rgba(255, 255, 255, 0.1); color: #fff; border: none; padding: 8px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 500;">Cancel</button>
+                </div>
+            </div>
+        `;
 
         modalBody.innerHTML = contentHTML;
 
@@ -874,10 +892,57 @@ window.openSquadDetail = async function(roomId) {
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
 };
-// Modal ကို ပိတ်ရန် function အသစ်
+
+// Modal ကို ပိတ်ရန် function
 window.closeRoomDetailModal = function() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
         modal.style.display = 'none';
     }
 };
+
+// Edit လုပ်ရန် နှိပ်သည့်အခါ
+function enableContactEdit() {
+    const currentContact = document.getElementById('display-contact').innerText;
+    document.getElementById('update-contact-input').value = currentContact !== '-' && currentContact !== 'N/A' ? currentContact : '';
+    document.getElementById('edit-contact-container').style.display = 'block';
+}
+
+// Cancel လုပ်သည့်အခါ
+function cancelContactEdit() {
+    document.getElementById('edit-contact-container').style.display = 'none';
+}
+
+// Save လုပ်သည့်အခါ Database ဆီသို့ ပို့ရန် (Mode ပါ ပို့ပေးရန်)
+async function saveUpdatedContact(matchMode) {
+    const newContact = document.getElementById('update-contact-input').value.trim();
+    if (!newContact) {
+        alert("ကျေးဇူးပြု၍ Contact ထည့်ပါ။");
+        return;
+    }
+
+    const deviceId = localStorage.getItem('aura_device_id');
+    
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                deviceId: deviceId,
+                contact: newContact,
+                mode: matchMode 
+            })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            document.getElementById('display-contact').innerText = newContact;
+            document.getElementById('edit-contact-container').style.display = 'none';
+            alert("Contact အချက်အလက် အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ။");
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        alert("Error updating contact: " + error.message);
+    }
+}
