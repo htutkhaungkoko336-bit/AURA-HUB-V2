@@ -866,12 +866,11 @@ window.openSquadDetail = async function(roomId) {
 
         // 🌟 Edit ခလုတ်မပါတော့ဘဲ Contact Info ကို ဒီတိုင်းဖတ်ရှုနိုင်ရန် ပုံစံထုတ်ပေးခြင်း
         contentHTML += `
-            <div class="popup-contact-box" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px 16px; border-radius: 12px; border: 0.5px solid rgba(255, 255, 255, 0.15); margin-top: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-                <span style="font-size: 0.65rem; color: #8e8e93; display: block; font-weight: 500; letter-spacing: 0.5px; margin-bottom: 2px;">CONTACT INFO</span>
-                <span id="display-contact" style="color: #fff; font-size: 0.9rem; font-weight: 600; letter-spacing: -0.2px;">${d.contact || '-'}</span>
+            <div class="popup-contact-box" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px 16px; border-radius: 12px; border: 0.5px solid rgba(255, 255, 255, 0.15); margin-top: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <span style="font-size: 0.7rem; color: #8e8e93; font-weight: 600; letter-spacing: 0.5px;">CONTACT INFO</span>
+                <span id="display-contact" style="color: #fff; font-size: 0.85rem; font-weight: 600; letter-spacing: -0.2px;">${d.contact || '-'}</span>
             </div>
         `;
-
         modalBody.innerHTML = contentHTML;
 
     } catch (err) {
