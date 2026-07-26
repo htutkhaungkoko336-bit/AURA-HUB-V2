@@ -63,13 +63,19 @@ export async function joinMatchRoom(roomDocId, roomData) {
     }
 
     try {
+        // 1vs1 ဖြစ်လျှင် squadName ကို playerName အဖြစ် သတ်မှတ်ပေးရန်
+        const formattedJoinerData = {
+            ...registrationData,
+            playerName: registrationData.playerName || registrationData.squadName || ""
+        };
+
         const response = await fetch('/api/join-room', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 deviceId: deviceId,
                 roomId: roomDocId,
-                joinerData: registrationData
+                joinerData: formattedJoinerData
             })
         });
 
@@ -78,7 +84,7 @@ export async function joinMatchRoom(roomDocId, roomData) {
             alert("🎉 Match ဝင်ရောက်အောင်မြင်ပါပြီ!");
             handlePostJoinUI();
         } else {
-            throw new Error(result.error);
+            throw new Error(result.error || result.message);
         }
     } catch (error) {
         alert("Join လုပ်၍ မရပါ: " + error.message);
