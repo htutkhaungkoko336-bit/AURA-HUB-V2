@@ -1,5 +1,21 @@
 // matchmaking.js
 
+// HTML က ခေါ်နေတဲ့ joinOrViewRoom ကို window object ထဲ ချိတ်ပေးခြင်း
+window.joinOrViewRoom = function(roomDocId, roomDataStr) {
+    let roomData = roomDataStr;
+    // အကယ်၍ string ပုံစံရောက်လာရင် object ပြန်ပြောင်းရန်
+    if (typeof roomDataStr === 'string') {
+        try {
+            roomData = JSON.parse(decodeURIComponent(roomDataStr));
+        } catch (e) {
+            console.error("Room data parse error:", e);
+        }
+    }
+    
+    // အထက်ပါ Mode နဲ့ Fee စစ်ဆေးပြီး join တဲ့ function ကို ဆက်သွားမည်
+    window.joinMatchRoom(roomDocId, roomData);
+};
+
 // ၁။ Room ဝင်ရောက်ခြင်း (Join Room) - Mode နှင့် Fee တူမှသာ ဝင်ခွင့်ပြုမည်
 window.joinMatchRoom = async function(roomDocId, roomData) {
     const deviceId = localStorage.getItem('aura_device_id');
@@ -8,14 +24,13 @@ window.joinMatchRoom = async function(roomDocId, roomData) {
         return;
     }
 
-    // ကိုယ့်ရဲ့ Register လုပ်ထားတဲ့ Data ကို ယူမည်
     const registrationData = JSON.parse(localStorage.getItem('aura_last_registration'));
     if (!registrationData) {
         alert("ကျေးဇူးပြု၍ ပထမဦးစွာ Registration လုပ်ပေးပါ။");
         return;
     }
 
-    // Mode တူမတူ စစ်ဆေးခြင်း (ဥပမာ - 5vs5 နှင့် 5vs5)
+    // Mode တူမတူ စစ်ဆေးခြင်း
     if (registrationData.mode !== roomData.mode) {
         alert(`❌ Mode မကိုက်ညီပါ။ ဤ Room သည် ${roomData.mode} Mode ဖြစ်ပါသည်။`);
         return;
@@ -34,7 +49,6 @@ window.joinMatchRoom = async function(roomDocId, roomData) {
     }
 
     try {
-        // Backend API (သို့မဟုတ် Firebase Firestore Logic) သို့ ပို့ရန်
         const response = await fetch('/api/join-room', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -48,8 +62,6 @@ window.joinMatchRoom = async function(roomDocId, roomData) {
         const result = await response.json();
         if (result.success) {
             alert("🎉 Match ဝင်ရောက်အောင်မြင်ပါပြီ!");
-            
-            // Join ပြီးပါက Host ၏ Create Room ခလုတ်ဖျောက်ရန်နှင့် Refund ပေါ်လာစေရန် UI လုပ်ဆောင်ချက်
             handlePostJoinUI();
         } else {
             throw new Error(result.error);
@@ -59,17 +71,13 @@ window.joinMatchRoom = async function(roomDocId, roomData) {
     }
 };
 
-// ၂။ Join ပြီးနောက် UI ပြောင်းလဲမှုများ (Create Room ခလုတ်ပျောက်ပြီး Refund ပေါ်လာစေရန်)
 function handlePostJoinUI() {
-    // ဥပမာ - Create New Room ခလုတ်ကို ဖျောက်ခြင်း
     const createBtn = document.getElementById('create-room-btn');
     if (createBtn) createBtn.style.display = 'none';
 
-    // Refund ခလုတ် သို့မဟုတ် စာသားကို ပေါ်လာစေခြင်း
     const refundSection = document.getElementById('refund-section');
     if (refundSection) refundSection.style.display = 'block';
 
-    // Playing Tab သို့ အလိုအလျောက် ရွှေ့ပြောင်းခြင်း (ရှိပါက)
     if (typeof switchToPlayingTab === 'function') {
         switchToPlayingTab();
     }
