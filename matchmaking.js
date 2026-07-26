@@ -96,36 +96,81 @@ function handlePostJoinUI() {
     }
 }
 
-// --- Backend API မှတဆင့် Match များကို ဆွဲထုတ်ခြင်း ---
+// --- 1. Waiting Tab အတွက် Room များ ဆွဲထုတ်ခြင်း ---
+export async function fetchWaitingRooms() {
+    const container = document.getElementById('room-cards-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    try {
+        const response = await fetch('/api/active-rooms?type=waiting');
+        const data = await response.json();
+
+        if (data.success && data.rooms && data.rooms.length > 0) {
+            data.rooms.forEach(room => {
+                renderWaitingRoomCard(room.roomId, room, container);
+            });
+        } else {
+            container.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">စောင့်ဆိုင်းနေသော Room များ မရှိသေးပါ။</div>`;
+        }
+    } catch (error) {
+        console.error("Error fetching waiting rooms:", error);
+    }
+}
+
+// --- 2. Playing Tab အတွက် Match များကို ဆွဲထုတ်ခြင်း ---
 export async function fetchUserMatches() {
     const deviceId = localStorage.getItem('aura_device_id');
+    const container = document.getElementById('room-cards-container');
+    if (!container) return;
+    container.innerHTML = '';
+
     if (!deviceId) return;
 
     try {
         const response = await fetch(`/api/active-rooms?type=matches&deviceId=${deviceId}`);
         const data = await response.json();
-        
-        const container = document.getElementById('room-cards-container');
-        if (!container) return;
-        container.innerHTML = '';
 
         if (data.success && data.rooms && data.rooms.length > 0) {
             data.rooms.forEach(match => {
                 renderRoomCard(match.roomId, match, container);
             });
         } else {
-            container.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">လက်တလော Active ဖြစ်နေသော Room များ မရှိသေးပါ။</div>`;
+            container.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">လက်တလော ကစားနေသော Match များ မရှိသေးပါ။</div>`;
         }
     } catch (error) {
         console.error("Error fetching matches:", error);
     }
 }
 
-// --- Room Card တည်ဆောက်ခြင်း ---
+// --- Waiting Room Card တည်ဆောက်ရန် ---
+function renderWaitingRoomCard(roomId, room, container) {
+    const card = document.createElement('div');
+    card.className = 'room-card';
+    card.style.cssText = 'background: rgba(201,166,107,0.05); border: 1px solid #333; border-radius: 12px; padding: 15px; cursor: pointer; margin-bottom: 10px; transition: 0.2s;';
+    
+    card.onclick = () => {
+        const roomStr = encodeURIComponent(JSON.stringify(room));
+        joinOrViewRoom(roomId, roomStr);
+    };
+
+    card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="color: #f1e4b9; font-size: 0.9rem; font-weight: bold;">${room.squadName || room.teamName || 'Team'}</div>
+            <div style="display: flex; gap: 8px;">
+                <span style="background: #222; color: #c9a66b; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; border: 1px solid #444;">${room.entryFee || 'Free'}</span>
+                <span style="background: #222; color: #c9a66b; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; border: 1px solid #444;">${room.mode || '1vs1'}</span>
+            </div>
+        </div>
+    `;
+    container.appendChild(card);
+}
+
+// --- Active Match Card တည်ဆောက်ရန် ---
 export function renderRoomCard(matchId, match, container) {
     const card = document.createElement('div');
     card.className = 'room-card';
-    card.style.cssText = 'background: rgba(201,166,107,0.05); border: 1px solid #333; border-radius: 12px; padding: 15px; cursor: pointer; position: relative; transition: 0.2s;';
+    card.style.cssText = 'background: rgba(201,166,107,0.05); border: 1px solid #333; border-radius: 12px; padding: 15px; cursor: pointer; position: relative; margin-bottom: 10px; transition: 0.2s;';
     
     card.onmouseover = () => card.style.borderColor = '#c9a66b';
     card.onmouseout = () => card.style.borderColor = '#333';
@@ -207,35 +252,36 @@ export async function cancelMatchFromPopup() {
     }
 }
 
-// --- Tab Switching & Active State (အရောင်ပြောင်းလဲမှု ထည့်သွင်းထားသည်) ---
+// --- Tab Switching & Active State (အရောင်ပြောင်းလဲမှုဖြင့်) ---
 export function switchToWaitingTab() {
     setActiveTab('waiting');
-    // လိုအပ်သော Waiting Tab content ထည့်ရန်
+    fetchWaitingRooms(); // Waiting Tab နှိပ်လျှင် Waiting Room များပေါ်မည်
 }
 
 export function switchToPlayingTab() {
     setActiveTab('playing');
-    fetchUserMatches(); // နှိပ်လိုက်တာနဲ့ Data တန်းပေါ်မည်
+    fetchUserMatches(); // Playing Tab နှိပ်လျှင် Match ဝင်ထားသည်များပေါ်မည်
 }
 
 export function switchToResultTab() {
     setActiveTab('result');
-    // လိုအပ်သော Result Tab content ထည့်ရန်
+    const container = document.getElementById('room-cards-container');
+    if (container) {
+        container.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">ရလဒ်များ မရှိသေးပါ။</div>`;
+    }
 }
 
-// ဘယ် Tab ကို နှိပ်ထားမှန်းသိရန် အရောင်ပြောင်းပေးသည့် ပုံစံ (Active Tab Styling)
+// ဘယ် Tab ကို နှိပ်ထားမှန်းသိရန် အရောင်ပြောင်းပေးသည့် ပုံစံ
 function setActiveTab(tabName) {
     const tabs = ['waiting', 'playing', 'result'];
     tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         if (btn) {
             if (t === tabName) {
-                // ရွေးချယ်ထားသော Tab အတွက် အရောင် (လက်ရှိဒီဇိုင်းအရ ပေါ်လွင်စေရန်)
                 btn.classList.add('active');
                 btn.style.color = '#c9a66b';
                 btn.style.borderBottom = '2px solid #c9a66b';
             } else {
-                // မရွေးချယ်ရသေးသော Tab များအတွက် အရောင်
                 btn.classList.remove('active');
                 btn.style.color = '#888';
                 btn.style.borderBottom = 'none';
