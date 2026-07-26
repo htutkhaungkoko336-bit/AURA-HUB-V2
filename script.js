@@ -833,13 +833,12 @@ window.openSquadDetail = async function(roomId) {
         let contentHTML = `<img src="${d.logo}" class="ios-modal-logo" alt="Logo">`;
 
         if (d.mode === '1vs1') {
+            // 🌟 1vs1 တွင် Phone No ဖြုတ်ပြီးသား
             contentHTML += `
                 <div class="ios-detail-row"><span class="label">In-Game Name</span><span class="value" style="color: #FFD700;">${d.playerName}</span></div>
                 <div class="ios-detail-row"><span class="label">Hero Pick</span><span class="value">${d.heroName}</span></div>
-                <div class="ios-detail-row"><span class="label">Phone No</span><span class="value">${d.leaderPhone}</span></div>
             `;
         } else {
-            // 🌟 SQ Name ကို Title အနေနဲ့ အပေါ်ဆုံးမှာ ထည့်သွင်းပြီး အလယ်ပို့ခြင်း
             const squadNameText = d.squadName || d.sqName || 'SQUAD NAME';
             
             contentHTML += `
@@ -859,11 +858,8 @@ window.openSquadDetail = async function(roomId) {
             });
 
             contentHTML += `</div>`; // Close group container
-
-            // Leader Phone No
-            contentHTML += `
-                <div class="ios-detail-row"><span class="label">Leader Phone</span><span class="value">${d.leaderPhone}</span></div>
-            `;
+            
+            // 🌟 5vs5 တွင် Leader Phone ဖြုတ်ပြီးသား (ထပ်မထည့်တော့ပါ)
         }
 
         modalBody.innerHTML = contentHTML;
