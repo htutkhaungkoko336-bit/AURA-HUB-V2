@@ -165,9 +165,19 @@ window.submitProof = async function() {
     const logoInput = document.getElementById(logoInputId);
     const ssInput = document.getElementById('ssFile-proof');
 
-    // Validation
+    // Validation (Logo နှင့် Screenshot ရှိမရှိ စစ်ဆေးခြင်း)
     if (!logoInput || logoInput.files.length === 0 || !ssInput || ssInput.files.length === 0) {
         alert("Logo နှင့် Payment Screenshot တင်ပေးပါ။");
+        return;
+    }
+
+    // 👉 Contact ထည့်ရန် ဖြည့်စွက်ထားသော Validation အပိုင်း
+    const contactValue = is1v1Visible 
+        ? document.getElementById('contact-1vs1')?.value.trim() 
+        : document.getElementById('contact-5vs5')?.value.trim();
+
+    if (!contactValue) {
+        alert("ကျေးဇူးပြု၍ Contact (ဖုန်းနံပါတ် သို့ @telegram) ထည့်ပါ။");
         return;
     }
 
@@ -180,7 +190,7 @@ window.submitProof = async function() {
         
         const deviceId = localStorage.getItem('aura_device_id') || 'unknown';
         
-    // Payload တည်ဆောက်ခြင်း
+        // Payload တည်ဆောက်ခြင်း
         let payload = {
             deviceId: deviceId,
             logo: logoUrl,
@@ -197,17 +207,13 @@ window.submitProof = async function() {
             payload.kpayNo = document.getElementById('kpay-no-solo')?.value || 'N/A';
             payload.entryFee = document.getElementById('fee-1vs1')?.innerText || '0 Ks';
             payload.mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
-            
-            // 👉 1vs1 အတွက် Contact ထည့်ရန်
-            payload.contact = document.getElementById('contact-1vs1')?.value || 'N/A';
+            payload.contact = contactValue;
         } else {
             payload.squadName = document.getElementById('squad-name')?.value || 'N/A';
             payload.entryFee = document.getElementById('fee-5vs5')?.innerText || '0 Ks';
             payload.kpayName = document.getElementById('kpay-name')?.value || 'N/A';
             payload.kpayNo = document.getElementById('kpay-no')?.value || 'N/A';
-            
-            // 👉 5vs5 အတွက် Contact ထည့်ရန်
-            payload.contact = document.getElementById('contact-5vs5')?.value || 'N/A';
+            payload.contact = contactValue;
             
             const playerRows = document.querySelectorAll('#page-5vs5 .player-row');
             playerRows.forEach((row, index) => {
@@ -218,7 +224,7 @@ window.submitProof = async function() {
                 };
             });
         }
-        // အရင်က /api/update-registration ကို ခေါ်နေတာကို ဒီလိုပြင်ပါ
+
         const response = await fetch('/api/register', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
