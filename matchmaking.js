@@ -207,31 +207,39 @@ export async function cancelMatchFromPopup() {
     }
 }
 
-// --- Tab Switching (အရောင်အပြောင်းအလဲမရှိ၊ နှိပ်လျှင် Data တန်းပေါ်မည်) ---
+// --- Tab Switching & Active State (အရောင်ပြောင်းလဲမှု ထည့်သွင်းထားသည်) ---
 export function switchToWaitingTab() {
-    const contentContainer = document.getElementById('match-content');
-    if (contentContainer) {
-        contentContainer.innerHTML = `<!-- Waiting Room UI Content -->`;
-    }
+    setActiveTab('waiting');
+    // လိုအပ်သော Waiting Tab content ထည့်ရန်
 }
 
 export function switchToPlayingTab() {
-    const contentContainer = document.getElementById('match-content');
-    if (contentContainer) {
-        // ခေါင်းစီးစာသား (ONGOING MATCHES) များကို ဖြုတ်ထားပြီး Container ကို တန်းပြထားသည်
-        contentContainer.innerHTML = `
-            <div id="room-cards-container" style="display: flex; flex-direction: column; gap: 15px; padding-top: 10px; padding-bottom: 50px;">
-                <!-- Dynamic ဖြင့် ဝင်လာမည့် Room Cards များ -->
-            </div>
-        `;
-    }
-    
-    fetchUserMatches();
+    setActiveTab('playing');
+    fetchUserMatches(); // နှိပ်လိုက်တာနဲ့ Data တန်းပေါ်မည်
 }
 
 export function switchToResultTab() {
-    const contentContainer = document.getElementById('match-content');
-    if (contentContainer) {
-        contentContainer.innerHTML = `<!-- Result UI Content -->`;
-    }
+    setActiveTab('result');
+    // လိုအပ်သော Result Tab content ထည့်ရန်
+}
+
+// ဘယ် Tab ကို နှိပ်ထားမှန်းသိရန် အရောင်ပြောင်းပေးသည့် ပုံစံ (Active Tab Styling)
+function setActiveTab(tabName) {
+    const tabs = ['waiting', 'playing', 'result'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (btn) {
+            if (t === tabName) {
+                // ရွေးချယ်ထားသော Tab အတွက် အရောင် (လက်ရှိဒီဇိုင်းအရ ပေါ်လွင်စေရန်)
+                btn.classList.add('active');
+                btn.style.color = '#c9a66b';
+                btn.style.borderBottom = '2px solid #c9a66b';
+            } else {
+                // မရွေးချယ်ရသေးသော Tab များအတွက် အရောင်
+                btn.classList.remove('active');
+                btn.style.color = '#888';
+                btn.style.borderBottom = 'none';
+            }
+        }
+    });
 }
