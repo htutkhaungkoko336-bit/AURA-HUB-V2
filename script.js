@@ -9,6 +9,7 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
+import './matchmaking.js';
 
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
