@@ -9,27 +9,38 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-// main.js
-import { joinOrViewRoom, joinMatchRoom, switchTab,loadActiveRooms } from './matchmaking.js';
+import { switchTab, joinOrViewRoom, joinMatchRoom } from './matchmaking.js';
 
-// Global functions များအဖြစ် window object သို့ ချိတ်ဆက်ခြင်း
+window.switchTab = switchTab;
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
-window.switchTab = switchTab;
-window.loadActiveRooms = loadActiveRooms;
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const tabWaiting = document.getElementById('tab-waiting');
     const tabPlaying = document.getElementById('tab-playing');
     const tabResult = document.getElementById('tab-result');
 
-    if (tabWaiting) tabWaiting.addEventListener('click', () => switchTab('waiting'));
-    if (tabPlaying) tabPlaying.addEventListener('click', () => switchTab('playing'));
-    if (tabResult) tabResult.addEventListener('click', () => switchTab('result'));
+    if (tabWaiting) {
+        tabWaiting.addEventListener('click', () => {
+            switchTab('waiting');
+            loadActiveRooms(); // 👈 main.js ထဲမှာရှိတဲ့ loadActiveRooms ကို ဒီမှာ ခေါ်သုံးပါ
+        });
+    }
 
-    // ပထမဆုံး အစမှာ Waiting Tab ကို Default အနေနဲ့ စတင်ပြသရန်
-    switchTab('waiting');
+    if (tabPlaying) {
+        tabPlaying.addEventListener('click', () => {
+            switchTab('playing');
+        });
+    }
+
+    if (tabResult) {
+        tabResult.addEventListener('click', () => {
+            switchTab('result');
+        });
+    }
+
+    // အစစချင်း Waiting Tab ကို ပြရန်
+    if (tabWaiting) tabWaiting.click();
 });
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
