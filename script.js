@@ -697,17 +697,8 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // 🌟 3. UI ပေါ်သို့ User ဖြည့်ထားတဲ့ အချက်အလက်အတိုင်း Room Card ထည့်ပေးခြင်း
-            appendRoomCardToUI({
-                roomId: result.roomId,
-                deviceId: deviceId,
-                teamName: roomData.teamName,
-                logo: roomData.logo,
-                mode: roomData.mode,
-                entryFee: roomData.entryFee,
-                status: 'in-use',
-                createdAt: 'Just now'
-            });
+            // 🌟 3. Room အသစ်ကို ချက်ချင်း ဆွဲထုတ်ပေးပြီး Data တွေ အမှန်အတိုင်း ရောက်အောင် လုပ်မယ်
+            loadActiveRooms();
 
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
