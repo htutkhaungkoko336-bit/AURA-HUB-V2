@@ -14,6 +14,37 @@ import { joinOrViewRoom, joinMatchRoom,switchTab } from './matchmaking.js';
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
 window.switchTab = switchTab;
+
+import { loadPlayingMatches } from './playing.js';
+
+// ဥပမာ - LocalStorage ထဲမှ (သို့မဟုတ် app ထဲက) ရရှိထားသော deviceId
+const userDeviceId = localStorage.getItem('deviceId') || 'dev_zzy4sn1nx'; 
+
+// Tab ပြောင်းသည့် function (switchTab ထဲတွင် ထည့်သွင်းနိုင်သည်)
+window.switchTab = function(tabName) {
+    // Tab contents များကို ဖုံးရန်/ပြရန် logic များ...
+    document.querySelectorAll('.tab-content-pane').forEach(pane => {
+        pane.style.display = 'none';
+    });
+    
+    document.querySelectorAll('.tab-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // ရွေးလိုက်သော Tab ကိုပြရန်
+    document.getElementById(`content-${tabName}`).style.display = 'block';
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+
+    // 🌟 အကယ်၍ Playing Tab ကို နှိပ်လိုက်ပါက matches များကို လှမ်းခေါ်မည် 🌟
+    if (tabName === 'playing') {
+        loadPlayingMatches(userDeviceId);
+    }
+}
+
+// Page စတင် load ချိန်မှာလည်း လိုအပ်ပါက ခေါ်နိုင်ပါသည်
+document.addEventListener('DOMContentLoaded', () => {
+    // ပုံမှန်လုပ်စရာရှိတာတွေ လုပ်ရန်
+});
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;
