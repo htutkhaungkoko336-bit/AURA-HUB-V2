@@ -1,8 +1,14 @@
 // playing.js
-
 export async function loadPlayingMatches(deviceId) {
     try {
+        // သင့်ရဲ့ API endpoint ဖိုင်နာမည်အတိုင်း /api/activeroom သို့မဟုတ် /api/room-detail ကို သုံးပါ
         const response = await fetch(`/api/activeroom?type=matches&deviceId=${deviceId}`);
+        
+        // အကယ်၍ Server က 404 တက်နေရင် HTML error စာမျက်နှာ ပြန်တတ်ပါသည်
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
 
         if (!result.success) return;
