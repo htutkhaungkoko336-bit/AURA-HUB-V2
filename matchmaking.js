@@ -102,42 +102,41 @@ function handlePostJoinUI() {
         switchToPlayingTab();
     }
 }
-export function initMatchTabs() {
-    const tabWaiting = document.getElementById('tab-waiting');
-    const tabPlaying = document.getElementById('tab-playing');
-    const tabResult = document.getElementById('tab-result');
-    const matchContent = document.getElementById('match-content');
-
-    // Tab တစ်ခုချင်းစီကို နှိပ်တဲ့အခါ လုပ်ဆောင်မယ့် Function
-    function switchTab(activeBtn, tabName) {
-        // ၁။ Active class တွေကို အကုန်ဖယ်ရှားပါ
-        tabWaiting.classList.remove('active');
-        tabPlaying.classList.remove('active');
-        tabResult.classList.remove('active');
-
-        // ၂. နှိပ်လိုက်တဲ့ Button မှာ active class ထည့်ပါ
-        activeBtn.classList.add('active');
-
-        // ၃။ Tab အလိုက် match-content ထဲမှာ ပေါ်လာမယ့် အချက်အလက်များ (Data ကို လိုသလို ပြောင်းလဲနိုင်ပါတယ်)
-        if (tabName === 'waiting') {
-            matchContent.innerHTML = `<p style="color: #fff;">ပွဲစောင့်ဆိုင်းနေဆဲ အချက်အလက်များ...</p>`;
-        } else if (tabName === 'playing') {
-            matchContent.innerHTML = `<p style="color: #fff;">လက်ရှိ ယှဉ်ပြိုင်နေဆဲ ပွဲစဉ်များ...</p>`;
-        } else if (tabName === 'result') {
-            matchContent.innerHTML = `<p style="color: #fff;">ပြီးဆုံးသွားသော ပွဲစဉ် ရလဒ်များ...</p>`;
+export async function switchTab(tabName) {
+    // 1. Tab Design များကို Active / Inactive ပြောင်းခြင်း
+    const tabs = ['waiting', 'playing', 'result'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (btn) {
+            if (t === tabName) {
+                btn.classList.add('active');
+                btn.style.color = '#FFD700';
+                btn.style.borderBottom = '2px solid #FFD700';
+            } else {
+                btn.classList.remove('active');
+                btn.style.color = '#888';
+                btn.style.borderBottom = 'none';
+            }
         }
-    }
+    });
 
-    // Event Listeners များ သတ်မှတ်ခြင်း
-    if (tabWaiting && tabPlaying && tabResult && matchContent) {
-        tabWaiting.addEventListener('click', () => switchTab(tabWaiting, 'waiting'));
-        tabPlaying.addEventListener('click', () => switchTab(tabPlaying, 'playing'));
-        tabResult.addEventListener('click', () => switchTab(tabResult, 'result'));
+    // 2. Tab အလိုက် ဒေတာများ ဆွဲထုတ်ခြင်း (Waiting Tab မှာသာ Room များကို ပြရန်)
+    const matchContent = document.getElementById('match-content');
+    if (!matchContent) return;
 
-        // ပထမဆုံး အစမှာ 'Waiting' tab ကို Default အနေနဲ့ ပြပေးရန်
-        switchTab(tabWaiting, 'waiting');
+    matchContent.innerHTML = `<div style="text-align: center; color: #FFD700; margin-top: 40px; font-size: 0.85rem;">Loading...</div>`;
+
+    if (tabName === 'waiting') {
+        // Waiting Room များ (Room Cards များ) ကို ဒီနေရာမှာသာ ဖော်ပြမည်
+        await loadActiveRooms();
+    } 
+    else if (tabName === 'playing') {
+        // Playing Tab အတွက် (လက်တလော ကစားနေသော Match များ)
+        matchContent.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">လက်တလော ယှဉ်ပြိုင်နေဆဲ ပွဲစဉ်များ မရှိသေးပါ။</div>`;
+        // လိုအပ်ပါက loadPlayingMatches(); ကို ဒီနေရာမှာ ထည့်ခေါ်နိုင်ပါတယ်
+    } 
+    else if (tabName === 'result') {
+        // Result Tab အတွက်
+        matchContent.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">ပြီးဆုံးသွားသော ပွဲစဉ် ရလဒ်များ မရှိသေးပါ။</div>`;
     }
 }
-
-// window object ထဲသို့ ထည့်သွင်းခြင်း (main.js မှ လွယ်ကူစွာ ခေါ်သုံးနိုင်ရန်)
-window.initMatchTabs = initMatchTabs;
