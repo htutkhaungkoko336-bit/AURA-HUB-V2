@@ -9,10 +9,11 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-import { joinOrViewRoom, joinMatchRoom } from './matchmaking.js';
+import { joinOrViewRoom, joinMatchRoom,switchTab } from './matchmaking.js';
 
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
+window.switchTab = switchTab;
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;

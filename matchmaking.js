@@ -102,3 +102,39 @@ function handlePostJoinUI() {
         switchToPlayingTab();
     }
 }
+export async function switchTab(tabName) {
+    const tabs = ['waiting', 'playing', 'result'];
+    
+    // Tab Button တွေရဲ့ Design ကို ပြောင်းရန်
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (btn) {
+            if (t === tabName) {
+                btn.classList.add('active');
+                btn.style.color = '#FFD700';
+                btn.style.borderBottom = '2px solid #FFD700';
+            } else {
+                btn.classList.remove('active');
+                btn.style.color = '#888';
+                btn.style.borderBottom = 'none';
+            }
+        }
+
+        // Tab Content Pane များကို ဖွင့်/ပိတ် လုပ်ရန်
+        const pane = document.getElementById(`content-${t}`);
+        if (pane) {
+            if (t === tabName) {
+                pane.style.display = 'block';
+            } else {
+                pane.style.display = 'none';
+            }
+        }
+    });
+
+    // အကယ်၍ Waiting Tab ကို နှိပ်မှသာ Active Room များကို ဖတ္ယူရန်
+    if (tabName === 'waiting') {
+        if (typeof loadActiveRooms === 'function') {
+            await loadActiveRooms();
+        }
+    }
+}
