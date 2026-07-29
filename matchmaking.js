@@ -102,3 +102,68 @@ function handlePostJoinUI() {
         switchToPlayingTab();
     }
 }
+// --- Tab Switching & Data Fetching Logic ---
+
+export async function switchTab(tabName) {
+    // 1. Tab Design များကို Active / Inactive ပြောင်းခြင်း
+    const tabs = ['waiting', 'playing', 'result'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (btn) {
+            if (t === tabName) {
+                btn.classList.add('active');
+                btn.style.color = '#FFD700';
+                btn.style.borderBottom = '2px solid #FFD700';
+            } else {
+                btn.classList.remove('active');
+                btn.style.color = '#888';
+                btn.style.borderBottom = 'none';
+            }
+        }
+    });
+
+    // 2. Tab အလိုက် ဒေတာများ ဆွဲထုတ်ခြင်း
+    const container = document.getElementById('match-content') || document.getElementById('room-cards-container');
+    if (!container) return;
+
+    container.innerHTML = `<div style="text-align: center; color: #FFD700; margin-top: 40px; font-size: 0.85rem;">Loading...</div>`;
+
+    if (tabName === 'waiting') {
+        // Waiting Room များ ဆွဲထုတ်ရန်
+        await loadActiveRooms();
+    } 
+    else if (tabName === 'playing') {
+        // Playing Tab အတွက် ကိုယ်ကစားနေသော Match များ ဆွဲထုတ်ရန်
+        await loadPlayingMatches();
+    } 
+    else if (tabName === 'result') {
+        // Result Tab အတွက်
+        container.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">ရလဒ်များ မရှိသေးပါ။</div>`;
+    }
+}
+
+// Playing နေသော Match များကို Server မှ ဆွဲထုတ်သည့် Function
+async function loadPlayingMatches() {
+    const deviceId = localStorage.getItem('aura_device_id');
+    const container = document.getElementById('match-content') || document.getElementById('room-cards-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!deviceId) return;
+
+    try {
+        const response = await fetch(`/api/active-rooms?type=matches&deviceId=${deviceId}`);
+        const data = await response.json();
+
+        if (data.success && data.rooms && data.rooms.length > 0) {
+            data.rooms.forEach(match => {
+                appendRoomCardToUI(match);
+            });
+        } else {
+            container.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">လက်တလော ကစားနေသော Match များ မရှိသေးပါ။</div>`;
+        }
+    } catch (error) {
+        console.error("Error fetching matches:", error);
+        container.innerHTML = `<div style="text-align: center; color: #eb3838; margin-top: 40px; font-size: 0.85rem;">ဒေတာရယူရာတွင် အမှားအယွင်းရှိသည်။</div>`;
+    }
+}

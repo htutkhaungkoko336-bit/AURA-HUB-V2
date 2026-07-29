@@ -9,10 +9,59 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-import { joinOrViewRoom, joinMatchRoom } from './matchmaking.js';
+// matchmaking.js မှ လိုအပ်သော function အားလုံးကို import လုပ်ခြင်း
+import { 
+    createNewRoom, 
+    appendRoomCardToUI,
+    loadActiveRooms, 
+    cancelMyRoom, 
+    openSquadDetail, 
+    closeRoomDetailModal,
+    joinOrViewRoom,
+    joinMatchRoom,
+    switchTab 
+} from './matchmaking.js';
 
+// HTML က onclick တွေနဲ့ တိုက်ရိုက်ခေါ်လို့ရအောင် window အောက်သို့ ချိတ်ဆက်ပေးခြင်း
+window.createNewRoom = createNewRoom;
+window.cancelMyRoom = cancelMyRoom;
+window.openSquadDetail = openSquadDetail;
+window.closeRoomDetailModal = closeRoomDetailModal;
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
+window.switchTab = switchTab;
+
+// Global variable သတ်မှတ်ချက်
+window.currentMode = '5vs5';
+
+// စာမျက်နှာ စတင်ဖွင့်လှစ်ချိန် (DOM Load ဖြစ်ချိန်) တွင် လုပ်ဆောင်ရန်များ
+document.addEventListener('DOMContentLoaded', () => {
+    // ပထမဆုံး Waiting Room များကို အလိုအလျောက် ဆွဲထုတ်ပြသရန်
+    loadActiveRooms();
+
+    // Tab များကို နှိပ်လိုက်လျှင် switchTab အလုပ်လုပ်စေရန် Event Listeners များ
+    const tabWaiting = document.getElementById('tab-waiting');
+    const tabPlaying = document.getElementById('tab-playing');
+    const tabResult = document.getElementById('tab-result');
+
+    if (tabWaiting) tabWaiting.addEventListener('click', () => switchTab('waiting'));
+    if (tabPlaying) tabPlaying.addEventListener('click', () => switchTab('playing'));
+    if (tabResult) tabResult.addEventListener('click', () => switchTab('result'));
+});
+
+// ၃ စက္ကန့်တစ်ကြိမ် Match Center ဖွင့်ထားစဉ် Room များကို အလိုအလျောက် Update လုပ်ရန်
+setInterval(() => {
+    const matchCenter = document.getElementById('page-match-center');
+    if (matchCenter && matchCenter.style.display !== 'none') {
+        const activeTab = document.querySelector('.match-tabs .tab-btn.active');
+        // လက်ရှိဖွင့်ထားတဲ့ Tab ပေါ်မူတည်ပြီး Data လှမ်းဆွဲမည်
+        if (activeTab && activeTab.id === 'tab-playing') {
+            switchTab('playing');
+        } else {
+            loadActiveRooms();
+        }
+    }
+}, 3000);
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;
