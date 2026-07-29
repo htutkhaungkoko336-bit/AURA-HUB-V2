@@ -17,6 +17,8 @@ window.switchTab = switchTab;
 
 import { loadPlayingMatches } from './playing.js';
 
+// Playing Tab ကို နှိပ်လိုက်သည့်အချိန် (သို့မဟုတ် Page Load ဖြစ်ချိန်) တွင် ခေါ်သုံးရန်
+loadPlayingMatches();
 // ဥပမာ - LocalStorage ထဲမှ (သို့မဟုတ် app ထဲက) ရရှိထားသော deviceId
 const userDeviceId = localStorage.getItem('deviceId') || 'dev_zzy4sn1nx'; 
 
