@@ -9,31 +9,30 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-// matchmaking.js မှ လိုအပ်သော function အားလုံးကို import လုပ်ခြင်း
-import { 
-    joinOrViewRoom,
-    joinMatchRoom,
-    switchTab 
-} from './matchmaking.js';
+// main.js
+import { joinOrViewRoom, joinMatchRoom, initMatchTabs } from './matchmaking.js';
 
-// HTML ကနေ onclick နဲ့ ခေါ်လို့ရအောင် window သို့ ချိတ်ဆက်ခြင်း
+// Global functions များအဖြစ် window object သို့ ချိတ်ဆက်ခြင်း
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
-window.switchTab = switchTab;
+window.initMatchTabs = initMatchTabs;
 
-// Global variables သတ်မှတ်ခြင်း
-window.currentMode = '5vs5'; 
-
-// Tab များကို နှိပ်လိုက်လျှင် switchTab အလုပ်လုပ်စေရန် Event Listeners များ
+// DOM အကုန် Load ဖြစ်သွားတဲ့အခါ Tab များကို စတင်အလုပ်လုပ်စေရန်
 document.addEventListener('DOMContentLoaded', () => {
-    const tabWaiting = document.getElementById('tab-waiting');
-    const tabPlaying = document.getElementById('tab-playing');
-    const tabResult = document.getElementById('tab-result');
-
-    if (tabWaiting) tabWaiting.addEventListener('click', () => switchTab('waiting'));
-    if (tabPlaying) tabPlaying.addEventListener('click', () => switchTab('playing'));
-    if (tabResult) tabResult.addEventListener('click', () => switchTab('result'));
+    // Match Tabs များကို စတင် initialization လုပ်ခြင်း
+    if (typeof initMatchTabs === 'function') {
+        initMatchTabs();
+    }
 });
+
+// handlePostJoinUI ထဲက သုံးထားတဲ့ switchToPlayingTab ကိုပါ global (သို့) ဒီထဲမှာ ထည့်ချင်اရင် 
+// (matchmaking.js ထဲက handlePostJoinUI ကနေ လှမ်းခေါ်လို့ရအောင် window ထဲ ထည့်ပေးထားနိုင်ပါတယ်)
+window.switchToPlayingTab = function() {
+    const tabPlaying = document.getElementById('tab-playing');
+    if (tabPlaying) {
+        tabPlaying.click(); // Playing tab ကို အလိုအလျောက် နှိပ်ပေးပြီးသားဖြစ်သွားမယ်
+    }
+};
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;
