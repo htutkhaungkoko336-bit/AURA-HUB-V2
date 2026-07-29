@@ -56,8 +56,7 @@ export async function joinMatchRoom(roomDocId, roomData) {
         return;
     }
 
-    // ကိုယ့်အခန်း ကိုယ်ပြန် join တာကို တားမြစ်ခြင်း
-    if (roomData.hostDeviceId === deviceId) {
+    if (roomData.host?.deviceId === deviceId) {
         alert("⚠️ မိမိဖန်တီးထားသော Room ကို မိမိပြန် join ၍ မရပါ။");
         return;
     }
