@@ -96,9 +96,10 @@ function handlePostJoinUI() {
     }
 }
 
-// 🌟 Tab Design ကိုသာ ပြောင်းပေးမည့် function (loadActiveRooms ကို ဖြုတ်လိုက်ပါပြီ)
-export function switchTab(tabName) {
+export async function switchTab(tabName) {
     const tabs = ['waiting', 'playing', 'result'];
+    
+    // ၁။ Tab Button လေးတွေရဲ့ Design (Active/Inactive) ကို ပြောင်းရန်
     tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         if (btn) {
@@ -114,14 +115,22 @@ export function switchTab(tabName) {
         }
     });
 
+    // ၂။ ရှိပြီးသား match-content ID ကိုပဲ ဆက်သုံးပြီး Tab အလိုက် Content တွေကို ထည့်ပေးရန်
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
-    if (tabName === 'playing') {
+    if (tabName === 'waiting') {
+        // Waiting Tab ဖြစ်ရင် Room Card တွေကို ပေါ်စေရန် Active Rooms များကို ပြန်ဆွဲထုတ်မည်
+        if (typeof loadActiveRooms === 'function') {
+            await loadActiveRooms();
+        }
+    } 
+    else if (tabName === 'playing') {
+        // Playing Tab ဖြစ်ရင် Room Card တွေ မပါဘဲ ဤစာသားသာ ပေါ်စေရန်
         matchContent.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">လက်တလော ယှဉ်ပြိုင်နေဆဲ ပွဲစဉ်များ မရှိသေးပါ။</div>`;
     } 
     else if (tabName === 'result') {
+        // Result Tab ဖြစ်ရင် Room Card တွေ မပါဘဲ ဤစာသားသာ ပေါ်စေရန်
         matchContent.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">ပြီးဆုံးသွားသော ပွဲစဉ် ရလဒ်များ မရှိသေးပါ။</div>`;
     }
-    // 'waiting' အတွက်မူ main.js ထဲက loadActiveRooms() က အလုပ်လုပ်သွားပါလိမ့်မယ်
 }
