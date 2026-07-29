@@ -9,39 +9,10 @@ import {
     buyNewRoom,
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
-import { switchTab, joinOrViewRoom, joinMatchRoom } from './matchmaking.js';
+import { joinOrViewRoom, joinMatchRoom } from './matchmaking.js';
 
-window.switchTab = switchTab;
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
-
-document.addEventListener('DOMContentLoaded', () => {
-    const tabWaiting = document.getElementById('tab-waiting');
-    const tabPlaying = document.getElementById('tab-playing');
-    const tabResult = document.getElementById('tab-result');
-
-    if (tabWaiting) {
-        tabWaiting.addEventListener('click', () => {
-            switchTab('waiting');
-            loadActiveRooms(); // 👈 main.js ထဲမှာရှိတဲ့ loadActiveRooms ကို ဒီမှာ ခေါ်သုံးပါ
-        });
-    }
-
-    if (tabPlaying) {
-        tabPlaying.addEventListener('click', () => {
-            switchTab('playing');
-        });
-    }
-
-    if (tabResult) {
-        tabResult.addEventListener('click', () => {
-            switchTab('result');
-        });
-    }
-
-    // အစစချင်း Waiting Tab ကို ပြရန်
-    if (tabWaiting) tabWaiting.click();
-});
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;
@@ -706,8 +677,17 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // 🌟 3. Room အသစ်ကို ချက်ချင်း ဆွဲထုတ်ပေးပြီး Data တွေ အမှန်အတိုင်း ရောက်အောင် လုပ်မယ်
-            loadActiveRooms();
+            // 🌟 3. UI ပေါ်သို့ User ဖြည့်ထားတဲ့ အချက်အလက်အတိုင်း Room Card ထည့်ပေးခြင်း
+            appendRoomCardToUI({
+                roomId: result.roomId,
+                deviceId: deviceId,
+                teamName: roomData.teamName,
+                logo: roomData.logo,
+                mode: roomData.mode,
+                entryFee: roomData.entryFee,
+                status: 'in-use',
+                createdAt: 'Just now'
+            });
 
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');

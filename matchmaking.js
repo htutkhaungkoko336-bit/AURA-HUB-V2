@@ -3,6 +3,7 @@
 export function joinOrViewRoom(roomDocId, roomDataStr) {
     let roomData = roomDataStr;
     
+    // အကယ်၍ string ပုံစံရောက်လာရင် object ပြန်ပြောင်းရန်
     if (typeof roomDataStr === 'string') {
         try {
             roomData = JSON.parse(decodeURIComponent(roomDataStr));
@@ -15,6 +16,7 @@ export function joinOrViewRoom(roomDocId, roomDataStr) {
         }
     }
     
+    // Data မမှန်ကန်ပါက သတိပေးပြီး ရပ်တန့်ရန်
     if (!roomData || typeof roomData !== 'object') {
         alert("❌ Room အချက်အလက် မမှန်ကန်ပါ။");
         return;
@@ -36,27 +38,32 @@ export async function joinMatchRoom(roomDocId, roomData) {
         return;
     }
 
+    // roomData သို့မဟုတ် property များ မပါလာပါက အမှားမတက်အောင် စစ်ဆေးခြင်း
     if (!roomData || !roomData.mode || !roomData.entryFee) {
         alert("❌ Room အချက်အလက်များ မပြည့်စုံပါ။");
         return;
     }
 
+    // Mode တူမတူ စစ်ဆေးခြင်း
     if (registrationData.mode !== roomData.mode) {
         alert(`❌ Mode မကိုက်ညီပါ။ ဤ Room သည် ${roomData.mode} Mode ဖြစ်ပါသည်။`);
         return;
     }
 
+    // Entry Fee နှုန်းထား တူမတူ စစ်ဆေးခြင်း
     if (registrationData.entryFee !== roomData.entryFee) {
         alert(`❌ Entry Fee နှုန်းထား မကိုက်ညီပါ။ (${roomData.entryFee} သာ လက်ခံသည်)`);
         return;
     }
 
+    // ကိုယ့်အခန်း ကိုယ်ပြန် join တာကို တားမြစ်ခြင်း
     if (roomData.hostDeviceId === deviceId) {
         alert("⚠️ မိမိဖန်တီးထားသော Room ကို မိမိပြန် join ၍ မရပါ။");
         return;
     }
 
     try {
+        // 1vs1 ဖြစ်လျှင် squadName ကို playerName အဖြစ် သတ်မှတ်ပေးရန်
         const formattedJoinerData = {
             ...registrationData,
             playerName: registrationData.playerName || registrationData.squadName || ""
@@ -93,42 +100,5 @@ function handlePostJoinUI() {
 
     if (typeof switchToPlayingTab === 'function') {
         switchToPlayingTab();
-    }
-}
-
-export async function switchTab(tabName) {
-    const tabs = ['waiting', 'playing', 'result'];
-    
-    // Tab Button တွေရဲ့ Design ကို ပြောင်းရန်
-    tabs.forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        if (btn) {
-            if (t === tabName) {
-                btn.classList.add('active');
-                btn.style.color = '#FFD700';
-                btn.style.borderBottom = '2px solid #FFD700';
-            } else {
-                btn.classList.remove('active');
-                btn.style.color = '#888';
-                btn.style.borderBottom = 'none';
-            }
-        }
-
-        // Tab Content Pane များကို ဖွင့်/ပိတ် လုပ်ရန်
-        const pane = document.getElementById(`content-${t}`);
-        if (pane) {
-            if (t === tabName) {
-                pane.style.display = 'block';
-            } else {
-                pane.style.display = 'none';
-            }
-        }
-    });
-
-    // အကယ်၍ Waiting Tab ကို နှိပ်မှသာ Active Room များကို ဖတ္ယူရန်
-    if (tabName === 'waiting') {
-        if (typeof loadActiveRooms === 'function') {
-            await loadActiveRooms();
-        }
     }
 }
