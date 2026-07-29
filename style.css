@@ -849,3 +849,42 @@ swiper-slide img {
     width: 110px;       /* နာမည်နေရာအတွက် အကျယ်သတ်မှတ်ပေးခြင်း */
     word-break: break-word;
 }
+/* Tab Buttons Container */
+.tab-buttons {
+    display: flex;
+    justify-content: space-around;
+    background-color: #111;
+    border-bottom: 2px solid #222;
+    padding: 0;
+}
+
+/* Tab Button Styles */
+.tab-buttons button {
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    color: #888;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 14px 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+/* Active Tab & Hover Effects */
+.tab-buttons button.active,
+.tab-buttons button:hover {
+    color: #FFD700;
+    background-color: rgba(255, 215, 0, 0.03);
+    border-bottom: 3px solid #FFD700;
+}
+
+/* Tab Content Panes */
+.tab-content-pane {
+    background-color: #000;
+    min-height: 250px;
+    padding: 15px;
+}
