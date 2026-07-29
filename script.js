@@ -10,12 +10,14 @@ import {
     backToWaitingRoom // ui.js မှ import လုပ်ရန်
 } from './ui.js';
 // main.js
-import { joinOrViewRoom, joinMatchRoom, switchTab } from './matchmaking.js';
+import { joinOrViewRoom, joinMatchRoom, switchTab,loadActiveRooms } from './matchmaking.js';
 
 // Global functions များအဖြစ် window object သို့ ချိတ်ဆက်ခြင်း
 window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
 window.switchTab = switchTab;
+window.loadActiveRooms = loadActiveRooms;
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const tabWaiting = document.getElementById('tab-waiting');
@@ -29,14 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ပထမဆုံး အစမှာ Waiting Tab ကို Default အနေနဲ့ စတင်ပြသရန်
     switchTab('waiting');
 });
-// handlePostJoinUI ထဲက သုံးထားတဲ့ switchToPlayingTab ကိုပါ global (သို့) ဒီထဲမှာ ထည့်ချင်اရင် 
-// (matchmaking.js ထဲက handlePostJoinUI ကနေ လှမ်းခေါ်လို့ရအောင် window ထဲ ထည့်ပေးထားနိုင်ပါတယ်)
-window.switchToPlayingTab = function() {
-    const tabPlaying = document.getElementById('tab-playing');
-    if (tabPlaying) {
-        tabPlaying.click(); // Playing tab ကို အလိုအလျောက် နှိပ်ပေးပြီးသားဖြစ်သွားမယ်
-    }
-};
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
 let currentIndex = 0;

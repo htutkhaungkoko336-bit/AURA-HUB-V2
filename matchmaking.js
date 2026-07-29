@@ -102,8 +102,32 @@ function handlePostJoinUI() {
         switchToPlayingTab();
     }
 }
+// matchmaking.js ထဲတွင် loadActiveRooms ကို export လုပ်ထားဖို့လိုပါတယ်
+export async function loadActiveRooms() {
+    try {
+        const response = await fetch('/api/active-rooms');
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            return;
+        }
+
+        const result = await response.json();
+        if (result.success) {
+            const matchContent = document.getElementById('match-content');
+            if (matchContent) {
+                matchContent.innerHTML = ''; 
+                result.rooms.forEach(room => {
+                    appendRoomCardToUI(room); 
+                });
+            }
+        }
+    } catch (error) {
+        console.error("Failed to load rooms:", error);
+    }
+}
+
+// ပြီးမှ switchTab ကို ဒီလိုရေးပါ
 export async function switchTab(tabName) {
-    // 1. Tab Design များကို Active / Inactive ပြောင်းခြင်း
     const tabs = ['waiting', 'playing', 'result'];
     tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
@@ -120,23 +144,19 @@ export async function switchTab(tabName) {
         }
     });
 
-    // 2. Tab အလိုက် ဒေတာများ ဆွဲထုတ်ခြင်း (Waiting Tab မှာသာ Room များကို ပြရန်)
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
     matchContent.innerHTML = `<div style="text-align: center; color: #FFD700; margin-top: 40px; font-size: 0.85rem;">Loading...</div>`;
 
     if (tabName === 'waiting') {
-        // Waiting Room များ (Room Cards များ) ကို ဒီနေရာမှာသာ ဖော်ပြမည်
+        // ဒီနေရာမှာ loadActiveRooms ကို ခေါ်သုံးထားလို့ သူ့ကို matchmaking.js ထဲမှာ export လုပ်ထားပေးရပါမယ်
         await loadActiveRooms();
     } 
     else if (tabName === 'playing') {
-        // Playing Tab အတွက် (လက်တလော ကစားနေသော Match များ)
         matchContent.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">လက်တလော ယှဉ်ပြိုင်နေဆဲ ပွဲစဉ်များ မရှိသေးပါ။</div>`;
-        // လိုအပ်ပါက loadPlayingMatches(); ကို ဒီနေရာမှာ ထည့်ခေါ်နိုင်ပါတယ်
     } 
     else if (tabName === 'result') {
-        // Result Tab အတွက်
         matchContent.innerHTML = `<div style="text-align: center; color: #666; margin-top: 40px; font-size: 0.85rem;">ပြီးဆုံးသွားသော ပွဲစဉ် ရလဒ်များ မရှိသေးပါ။</div>`;
     }
 }
