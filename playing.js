@@ -49,30 +49,42 @@ export async function loadPlayingMatches(deviceId) {
                 const opponentLogo = opponentData?.logo || 'default-logo.png';
                 const opponentTeamTitle = mode === '1vs1' ? (opponentData?.heroName || opponentData?.playerName || 'Waiting...') : (opponentData?.squadName || opponentData?.teamName || 'Waiting...');
 
-                // Waiting Room Card ပုံစံအတိုင်း iOS Design ဖြင့် တည်ဆောက်ခြင်း
+                // Waiting Room Card ပုံစံအတိုင်း Status ကိုဖြုတ်ပြီး Team A vs Team B ကို ရှင်းရှင်းလင်းလင်း ပြသရန်
                 html += `
-                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; color: #fff;">
+                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; color: #fff;">
                         
-                        <!-- ဘယ်ဘက်ခြမ်း (Logo + Badges + Team Name) -->
-                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                            <img src="${myLogo}" style="width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                        <!-- အပေါ်ဆုံး Badges တွေ (Fee, Mode, BO) -->
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">${feeText}</span>
+                            <span style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
+                            <span style="font-size: 11px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${boType}</span>
+                        </div>
+
+                        <!-- အောက်ဘက် Team A vs Team B (Sketch ပုံစံအတိုင်း) -->
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
                             
-                            <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <!-- Badges တွေတစ်န်းတည်း -->
-                                <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-                                    <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">${feeText}</span>
-                                    <span style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
-                                    <span style="font-size: 11px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${boType}</span>
+                            <!-- Team A (Left) -->
+                            <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 700; color: #fff;">${myData?.teamName || myData?.heroName || 'Team A'}</div>
+                                    <div style="font-size: 10px; color: #aaa;">${myData?.playerName || 'Player'}</div>
                                 </div>
-                                <span style="font-size: 14px; font-weight: 700; color: #fff;">${myTeamTitle} vs ${opponentTeamTitle}</span>
                             </div>
-                        </div>
 
-                        <!-- ညာဘက်ခြမ်း (Status သို့မဟုတ် Action Button လိုအပ်ပါက ထည့်ရန်) -->
-                        <div style="font-size: 12px; font-weight: bold; color: #00ff00; background: rgba(0, 255, 0, 0.1); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(0, 255, 0, 0.3);">
-                            ${match.status || 'Matched'}
-                        </div>
+                            <!-- VS Center -->
+                            <div style="font-size: 12px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.1); padding: 5px 8px; border-radius: 50%; border: 1px solid rgba(255, 215, 0, 0.3); margin: 0 8px;">VS</div>
 
+                            <!-- Team B (Right) -->
+                            <div style="display: flex; align-items: center; gap: 10px; flex: 1; flex-direction: row-reverse; text-align: right;">
+                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 700; color: #fff;">${opponentData?.teamName || opponentData?.heroName || 'Waiting...'}</div>
+                                    <div style="font-size: 10px; color: #aaa;">${opponentData?.playerName || 'Waiting...'}</div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 `;
             });
