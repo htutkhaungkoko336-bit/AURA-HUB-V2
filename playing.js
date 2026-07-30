@@ -54,15 +54,15 @@ export async function loadPlayingMatches(deviceId) {
                     : (opponentData?.squadName || opponentData?.teamName || 'Waiting...');
 
                 html += `
-                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; color: #fff;">
+                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
-                        <!-- အပေါ်/အလယ်ပိုင်း: ဘယ်ဘက် Logo + Name - အလယ် Badges - ညာဘက် Logo + Name -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <!-- အဓိက အပိုင်း (Logo, Name နှင့် Badges များကို padding ဖြင့် အလယ်သို့ နည်းနည်းဆွဲကပ်ထားသည်) -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 4px;">
                             
-                            <!-- ဘယ်ဘက် Team A (အပေါ် Logo၊ အောက် Name) -->
-                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <div style="font-size: 12px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myTitle}</div>
+                            <!-- ဘယ်ဘက် Team A (Logo ကြီး၊ Name ကြီး) -->
+                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 3px;">
+                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 52px; height: 52px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <div style="font-size: 13px; font-weight: 700; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myTitle}</div>
                             </div>
 
                             <!-- အလယ်မှာ Fee, Mode, BO အတုံးလေးများ -->
@@ -72,17 +72,17 @@ export async function loadPlayingMatches(deviceId) {
                                 <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
                             </div>
 
-                            <!-- ညာဘက် Team B (အပေါ် Logo၊ အောက် Name) -->
-                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right;">
-                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <div style="font-size: 12px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${opponentTitle}</div>
+                            <!-- ညာဘက် Team B (Logo ကြီး၊ Name ကြီး) -->
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px; text-align: right;">
+                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 52px; height: 52px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <div style="font-size: 13px; font-weight: 700; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${opponentTitle}</div>
                             </div>
 
                         </div>
 
                         <!-- အောက်ဘက်: VS ကို လေးထောင့်တုံးလေးထဲ ထည့်၍ အလယ်တွင်ပြရန် -->
                         <div style="display: flex; justify-content: center; width: 100%;">
-                            <div style="font-size: 11px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 3px 14px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px;">VS</div>
+                            <div style="font-size: 10px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 12px; border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px;">VS</div>
                         </div>
 
                     </div>
