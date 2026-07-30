@@ -1,4 +1,17 @@
-// playing.js (သို့မဟုတ် UI rendering file)
+// // playing.js (သို့မဟုတ် UI rendering file)
+
+// 1️⃣ Fee ကို အတိုကောက်ပြောင်းပေးမည့် Helper Function (ဒီနေရာမှာ ထည့်ပါ)
+function formatFee(feeStr) {
+    if (!feeStr) return '0k';
+    const match = feeStr.toString().match(/\d+/);
+    if (!match) return feeStr;
+    
+    let num = parseInt(match[0], 10);
+    if (num >= 1000) {
+        return (num / 1000) + 'k';
+    }
+    return num.toString();
+}
 
 /**
  * Playing Tab အတွက် API မှ Match များကို လှမ်းခေါ်ပြီး Screen ပေါ်တွင် ပြသရန်
@@ -26,11 +39,14 @@ export async function loadPlayingMatches() {
                 const myData = isHost ? match.host : match.joiner;
                 const opponentData = isHost ? match.joiner : match.host;
 
-            html += `
+                // 2️⃣ Fee ကို အတိုကောက်ပြောင်းရန် function ကို ဒီမှာ ခေါ်သုံးသည် (ဥပမာ: 50k)
+                const shortFee = formatFee(match.entryFee);
+
+                html += `
                 <div class="ios-match-card">
-                    <!-- အပေါ်ဆုံး Badges တွေ (ဥပမာ Sketch ပုံပါအတိုင်း) -->
+                    <!-- အပေါ်ဆုံး Badges တွေ (Sketch ပုံပါအတိုင်း အတုံးလေးများ) -->
                     <div class="card-header-badges">
-                        <span class="ios-badge">${match.entryFee}</span>
+                        <span class="ios-badge">${shortFee}</span>
                         <span class="ios-badge">${match.mode}</span>
                         <span class="ios-badge">BO3</span>
                     </div>
