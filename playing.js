@@ -57,8 +57,8 @@ export async function loadPlayingMatches(deviceId) {
                             </div>
 
                             <!-- အလယ်မှာ Fee, Mode, BO ကို အပေါ်သို့ တင်ထားပြီး VS နှင့် အကွာအဝေး ပိုပေးထားသည် -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px;">
-                                <div style="display: flex; align-items: center; gap: 4px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 20px;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
