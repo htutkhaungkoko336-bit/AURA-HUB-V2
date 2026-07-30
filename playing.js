@@ -46,35 +46,33 @@ export async function loadPlayingMatches(deviceId) {
                 const opponentTitle = rawOpponentTitle.toUpperCase();
 
                 html += `
-                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 8px 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; color: #fff;">
+                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
-                        <!-- အဓိက အပိုင်း (Logo များနှင့် အလယ် Badges များ - အလယ်သို့ ပိုတိုးပေးပြီး အောက်သို့ အနည်းငယ်ချထားသည်) -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 4px 16px 0 16px;">
+                        <!-- အဓိക တစ်န်းတည်း ပုံစံ: Logo A | Badges & VS | Logo B -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                             
-                            <!-- ဘယ်ဘက် Team A -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${myTitle}</span>
+                            <!-- ဘယ်ဘက် Logo A -->
+                            <img src="${myData?.logo || 'default-logo.png'}" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+
+                            <!-- အလယ်မှာ Fee, Mode, BO နဲ့ VS တုံးများ အတန်းလိုက် -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
+                                    <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
+                                    <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
+                                </div>
+                                <div style="font-size: 9px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px;">VS</div>
                             </div>
 
-                            <!-- အလယ် Badges (Fee, Mode, BO) -->
-                            <div style="display: flex; align-items: center; gap: 4px; justify-content: center;">
-                                <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
-                                <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
-                                <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
-                            </div>
-
-                            <!-- ညာဘက် Team B -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${opponentTitle}</span>
-                            </div>
+                            <!-- ညာဘက် Logo B -->
+                            <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
 
                         </div>
 
-                        <!-- အောက်ဘက် VS လေးထောင့်တုံး -->
-                        <div style="display: flex; justify-content: center; width: 100%;">
-                            <div style="font-size: 9px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 12px; border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px;">VS</div>
+                        <!-- အောက်ဘက်တွင် Logo များ၏ အောက်တည့်တည့်၌ နာမည်များပြရန် -->
+                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 0 2px;">
+                            <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;">${myTitle}</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">${opponentTitle}</span>
                         </div>
 
                     </div>
