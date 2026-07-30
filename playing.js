@@ -49,7 +49,7 @@ export async function loadPlayingMatches(deviceId) {
                     <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
                         <!-- Logo များကို ဘေးဘက်သို့ ပြန်ကပ်ရန် padding ကို 8px သို့ လျှော့ချထားသည် -->
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 8px;">
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 20px;">
                             
                             <!-- ဘယ်ဘက် Logo နှင့် နာမည် -->
                             <div style="display: flex; flex-direction: column; align-items: center;">
