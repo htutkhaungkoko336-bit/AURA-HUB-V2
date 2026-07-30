@@ -26,28 +26,40 @@ export async function loadPlayingMatches() {
                 const myData = isHost ? match.host : match.joiner;
                 const opponentData = isHost ? match.joiner : match.host;
 
-                html += `
-                    <div class="match-card" style="background: #1a1a1a; border: 1px solid #FFD700; padding: 15px; margin-bottom: 15px; border-radius: 8px; color: #fff;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span style="color: #FFD700; font-weight: bold;">Mode: ${match.mode}</span>
-                            <span style="color: #00ff00;">Status: ${match.status}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <p><strong>My Team:</strong> ${myData?.teamName || 'N/A'}</p>
-                                <p><strong>Player:</strong> ${myData?.playerName || 'N/A'}</p>
+            html += `
+                <div class="ios-match-card">
+                    <!-- အပေါ်ဆုံး Badges တွေ (ဥပမာ Sketch ပုံပါအတိုင်း) -->
+                    <div class="card-header-badges">
+                        <span class="ios-badge">${match.entryFee}</span>
+                        <span class="ios-badge">${match.mode}</span>
+                        <span class="ios-badge">BO3</span>
+                    </div>
+
+                    <!-- အောက်ဘက် Team A vs Team B ပုံစံ -->
+                    <div class="match-body-content">
+                        <!-- Team A (Left) -->
+                        <div class="team-side">
+                            <img src="${myData?.logo || 'default-logo.png'}" class="team-logo-img" alt="Logo">
+                            <div class="team-info">
+                                <div class="team-name">${myData?.teamName || 'Team A'}</div>
+                                <div class="player-sub">${myData?.playerName || 'Player'}</div>
                             </div>
-                            <div style="font-weight: bold; color: #FFD700;">VS</div>
-                            <div>
-                                <p><strong>Opponent:</strong> ${opponentData?.teamName || 'Waiting...'}</p>
-                                <p><strong>Player:</strong> ${opponentData?.playerName || 'Waiting...'}</p>
-                            </div>
                         </div>
-                        <div style="margin-top: 10px; font-size: 14px; color: #aaa;">
-                            Entry Fee: ${match.entryFee}
+
+                        <!-- VS Center -->
+                        <div class="vs-badge-center">VS</div>
+
+                        <!-- Team B (Right) -->
+                        <div class="team-side right">
+                            <img src="${opponentData?.logo || 'default-logo.png'}" class="team-logo-img" alt="Logo">
+                            <div class="team-info">
+                                <div class="team-name">${opponentData?.teamName || 'Team B'}</div>
+                                <div class="player-sub">${opponentData?.playerName || 'Waiting...'}</div>
+                            </div>
                         </div>
                     </div>
-                `;
+                </div>
+            `;
             });
 
             container.innerHTML = html;

@@ -896,3 +896,84 @@ swiper-slide img {
     min-height: 250px;
     padding: 15px;
 }
+
+
+.ios-match-card {
+    background: rgba(26, 26, 26, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 16px;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card-header-badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.ios-badge {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #FFD700;
+    letter-spacing: 0.5px;
+}
+
+.match-body-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.team-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.team-side.right {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+.team-logo-img {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1.5px solid rgba(255, 215, 0, 0.4);
+    background: #2a2a2a;
+}
+
+.team-info .team-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.team-info .player-sub {
+    font-size: 11px;
+    color: #aaa;
+}
+
+.vs-badge-center {
+    font-size: 13px;
+    font-weight: 800;
+    color: #FFD700;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 6px 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
