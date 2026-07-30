@@ -1,30 +1,26 @@
-// // playing.js (သို့မဟုတ် UI rendering file)
+// // playing.js
 
-// 1️⃣ Fee ကို အတိုကောက်ပြောင်းပေးမည့် Helper Function (ဒီနေရာမှာ ထည့်ပါ)
+/**
+ * Waiting Room ပုံစံအတိုင်း Fee စာသား သန့်စင်ခြင်း နှင့် 5000 -> 5K ပုံစံပြောင်းခြင်း
+ */
 function formatFee(feeStr) {
-    if (!feeStr) return '0k';
-    const match = feeStr.toString().match(/\d+/);
-    if (!match) return feeStr;
-    
-    let num = parseInt(match[0], 10);
-    if (num >= 1000) {
-        return (num / 1000) + 'k';
-    }
-    return num.toString();
+    if (!feeStr) return '0K';
+    let rawFee = feeStr.toString();
+    let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '').trim();
+    let numericFee = parseInt(cleanFee.replace(/[^0-9]/g, '')) || 0;
+    return numericFee >= 1000 ? (numericFee / 1000) + 'K' : cleanFee;
 }
 
 /**
  * Playing Tab အတွက် API မှ Match များကို လှမ်းခေါ်ပြီး Screen ပေါ်တွင် ပြသရန်
  */
-export async function loadPlayingMatches() {
-    const deviceId = localStorage.getItem('aura_device_id');
+export async function loadPlayingMatches(deviceId) {
     if (!deviceId) {
-        console.error("Device ID မတွေ့ရှိပါ။");
-        return;
+        deviceId = localStorage.getItem('aura_device_id');
+        if (!deviceId) return;
     }
 
     try {
-        // active-rooms API ကို type=matches ဖြင့် လှမ်းခေါ်ခြင်း
         const response = await fetch(`/api/active-rooms?type=matches&deviceId=${deviceId}`);
         const result = await response.json();
 
@@ -39,43 +35,46 @@ export async function loadPlayingMatches() {
                 const myData = isHost ? match.host : match.joiner;
                 const opponentData = isHost ? match.joiner : match.host;
 
-                // 2️⃣ Fee ကို အတိုကောက်ပြောင်းရန် function ကို ဒီမှာ ခေါ်သုံးသည် (ဥပမာ: 50k)
-                const shortFee = formatFee(match.entryFee);
+                // Fee ကို 5K, 50K ပုံစံပြောင်းရန်
+                const feeText = formatFee(match.entryFee);
+                
+                // Numeric fee ကို ယူပြီး BO3 လား BO1 လား ဆုံးဖြတ်ရန်
+                let numericFee = parseInt(match.entryFee?.toString().replace(/[^0-9]/g, '')) || 0;
+                let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
 
+                const mode = match.mode || '5vs5';
+                const myLogo = myData?.logo || 'default-logo.png';
+                const myTeamTitle = mode === '1vs1' ? (myData?.heroName || myData?.playerName || 'Hero Name') : (myData?.squadName || myData?.teamName || 'Squad Name');
+                
+                const opponentLogo = opponentData?.logo || 'default-logo.png';
+                const opponentTeamTitle = mode === '1vs1' ? (opponentData?.heroName || opponentData?.playerName || 'Waiting...') : (opponentData?.squadName || opponentData?.teamName || 'Waiting...');
+
+                // Waiting Room Card ပုံစံအတိုင်း iOS Design ဖြင့် တည်ဆောက်ခြင်း
                 html += `
-                <div class="ios-match-card">
-                    <!-- အပေါ်ဆုံး Badges တွေ (Sketch ပုံပါအတိုင်း အတုံးလေးများ) -->
-                    <div class="card-header-badges">
-                        <span class="ios-badge">${shortFee}</span>
-                        <span class="ios-badge">${match.mode}</span>
-                        <span class="ios-badge">BO3</span>
-                    </div>
-
-                    <!-- အောက်ဘက် Team A vs Team B ပုံစံ -->
-                    <div class="match-body-content">
-                        <!-- Team A (Left) -->
-                        <div class="team-side">
-                            <img src="${myData?.logo || 'default-logo.png'}" class="team-logo-img" alt="Logo">
-                            <div class="team-info">
-                                <div class="team-name">${myData?.teamName || 'Team A'}</div>
-                                <div class="player-sub">${myData?.playerName || 'Player'}</div>
+                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; color: #fff;">
+                        
+                        <!-- ဘယ်ဘက်ခြမ်း (Logo + Badges + Team Name) -->
+                        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                            <img src="${myLogo}" style="width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <!-- Badges တွေတစ်န်းတည်း -->
+                                <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                                    <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">${feeText}</span>
+                                    <span style="font-size: 11px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 6px; border-radius: 4px;">${mode}</span>
+                                    <span style="font-size: 11px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${boType}</span>
+                                </div>
+                                <span style="font-size: 14px; font-weight: 700; color: #fff;">${myTeamTitle} vs ${opponentTeamTitle}</span>
                             </div>
                         </div>
 
-                        <!-- VS Center -->
-                        <div class="vs-badge-center">VS</div>
-
-                        <!-- Team B (Right) -->
-                        <div class="team-side right">
-                            <img src="${opponentData?.logo || 'default-logo.png'}" class="team-logo-img" alt="Logo">
-                            <div class="team-info">
-                                <div class="team-name">${opponentData?.teamName || 'Team B'}</div>
-                                <div class="player-sub">${opponentData?.playerName || 'Waiting...'}</div>
-                            </div>
+                        <!-- ညာဘက်ခြမ်း (Status သို့မဟုတ် Action Button လိုအပ်ပါက ထည့်ရန်) -->
+                        <div style="font-size: 12px; font-weight: bold; color: #00ff00; background: rgba(0, 255, 0, 0.1); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(0, 255, 0, 0.3);">
+                            ${match.status || 'Matched'}
                         </div>
+
                     </div>
-                </div>
-            `;
+                `;
             });
 
             container.innerHTML = html;
