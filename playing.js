@@ -57,13 +57,13 @@ export async function loadPlayingMatches(deviceId) {
                             </div>
 
                             <!-- အလယ်အုပ်စု: အပေါ်မှာ Fee/Mode/BO ကို မူလအတိုင်းထားပြီး၊ VS တစ်ခုတည်းကိုသာ margin-top ဖြင့် အောက်သို့ သီးသန့်ချထားသည် -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;margin-top: 16px;">
                                 <div style="display: flex; align-items: center; gap: 7px; margin-top: 2px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
                                 </div>
-                                <div style="font-size: 9px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px; margin-top: 14px;">VS</div>
+                                <div style="font-size: 9px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px; margin-top: 10px;">VS</div>
                             </div>
 
                             <!-- ညာဘက် Logo နှင့် အောက်တည့်တည့်၌ နာမည် -->
