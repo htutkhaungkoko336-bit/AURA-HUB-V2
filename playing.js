@@ -35,28 +35,27 @@ export async function loadPlayingMatches(deviceId) {
 
                 const mode = match.mode || '5vs5';
 
-                const myTitle = mode === '1vs1' 
+                // 5vs5 ဆိုရင် Squad Name၊ 1vs1 ဆိုရင် Hero Name ကို ယူပြီး စာလုံးအကြီး (Uppercase) ပြောင်းရန်
+                const rawMyTitle = mode === '1vs1' 
                     ? (myData?.heroName || myData?.playerName || 'Hero Name') 
                     : (myData?.squadName || myData?.teamName || 'Squad Name');
+                const myTitle = rawMyTitle.toUpperCase();
 
-                const opponentTitle = mode === '1vs1' 
+                const rawOpponentTitle = mode === '1vs1' 
                     ? (opponentData?.heroName || opponentData?.playerName || 'Waiting...') 
                     : (opponentData?.squadName || opponentData?.teamName || 'Waiting...');
+                const opponentTitle = rawOpponentTitle.toUpperCase();
 
-                // ခင်ဗျားလိုချင်တဲ့ ပုံစံအတိုင်း ကျစ်ကျစ်လစ်လစ်နှင့် နေရာလပ်ဆံ့သော Playing Card ပုံစံ
                 html += `
-                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
+                    <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 16px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; color: #fff;">
                         
-                        <!-- အဓိက အပိုင်း (ဘယ်ဘက် Logo+Name - အလယ် Badges - ညာဘက် Logo+Name) -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <!-- အဓိက အပိုင်း (Logo များနှင့် အလယ် Badges များ - padding ဖြင့် အလယ်သို့ တိုးပေးထားသည်) -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px;">
                             
-                            <!-- ဘယ်ဘက် Team A -->
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 42px; height: 42px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <div style="display: flex; flex-direction: column; gap: 2px;">
-                                    <span style="font-size: 12px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myTitle}</span>
-                                    <span style="font-size: 10px; color: #aaa;">${myData?.playerName || 'Player'}</span>
-                                </div>
+                            <!-- ဘယ်ဘက် Team A (Logo အပေါ်၊ နာမည်အောက်တည့်တည့်) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${myTitle}</span>
                             </div>
 
                             <!-- အလယ် Badges (Fee, Mode, BO) -->
@@ -66,20 +65,17 @@ export async function loadPlayingMatches(deviceId) {
                                 <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
                             </div>
 
-                            <!-- ညာဘက် Team B -->
-                            <div style="display: flex; align-items: center; gap: 8px; flex-direction: row-reverse; text-align: right;">
-                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 42px; height: 42px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <div style="display: flex; flex-direction: column; gap: 2px;">
-                                    <span style="font-size: 12px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${opponentTitle}</span>
-                                    <span style="font-size: 10px; color: #aaa;">${opponentData?.playerName || 'Waiting...'}</span>
-                                </div>
+                            <!-- ညာဘက် Team B (Logo အပေါ်၊ နာမည်အောက်တည့်တည့်) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${opponentTitle}</span>
                             </div>
 
                         </div>
 
                         <!-- အောက်ဘက် VS လေးထောင့်တုံး -->
                         <div style="display: flex; justify-content: center; width: 100%;">
-                            <div style="font-size: 10px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 12px; border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px;">VS</div>
+                            <div style="font-size: 10px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 14px; border-radius: 5px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px;">VS</div>
                         </div>
 
                     </div>
