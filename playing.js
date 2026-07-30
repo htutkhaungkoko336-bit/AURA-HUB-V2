@@ -56,13 +56,13 @@ export async function loadPlayingMatches(deviceId) {
                 html += `
                     <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 10px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
-                        <!-- အဓိက အပိုင်း (Logo, Name နှင့် Badges များကို padding ဖြင့် အလယ်သို့ နည်းနည်းဆွဲကပ်ထားသည်) -->
+                        <!-- အပေါ်/အလယ်ပိုင်း: ဘယ်ဘက် Logo + Name - အလယ် Badges - ညာဘက် Logo + Name -->
                         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 4px;">
                             
-                            <!-- ဘယ်ဘက် Team A (Logo ကြီး၊ Name ကြီး) -->
+                            <!-- ဘယ်ဘက် Team A (အပေါ် Logo၊ အောက် Name) -->
                             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 3px;">
-                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 52px; height: 52px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <div style="font-size: 13px; font-weight: 700; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myTitle}</div>
+                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <div style="font-size: 12px; font-weight: 700; color: #fff; max-width: 95px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${myTitle}</div>
                             </div>
 
                             <!-- အလယ်မှာ Fee, Mode, BO အတုံးလေးများ -->
@@ -72,10 +72,10 @@ export async function loadPlayingMatches(deviceId) {
                                 <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
                             </div>
 
-                            <!-- ညာဘက် Team B (Logo ကြီး၊ Name ကြီး) -->
+                            <!-- ညာဘက် Team B (အပေါ် Logo၊ အောက် Name) -->
                             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px; text-align: right;">
-                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 52px; height: 52px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
-                                <div style="font-size: 13px; font-weight: 700; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${opponentTitle}</div>
+                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
+                                <div style="font-size: 12px; font-weight: 700; color: #fff; max-width: 95px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${opponentTitle}</div>
                             </div>
 
                         </div>
