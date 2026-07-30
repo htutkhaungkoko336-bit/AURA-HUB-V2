@@ -58,7 +58,7 @@ export async function loadPlayingMatches(deviceId) {
                             </div>
 
                             <!-- အလယ်မှာ Fee, Mode, BO နဲ့ VS တုံးများ (အလယ်ဗဟိုတည့်တည့်သို့ ရောက်စေရန် margin-top ထည့်ထားသည်) -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 6px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 25px;">
                                 <div style="display: flex; align-items: center; gap: 4px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
