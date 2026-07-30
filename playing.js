@@ -48,26 +48,26 @@ export async function loadPlayingMatches(deviceId) {
                 html += `
                     <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
-                        <!-- Logo များကို ပိုကြီးပေးပြီး padding-inline ဖြင့် အလယ်သို့ ပိုတိုးကပ်ထားသည် -->
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 28px;">
+                        <!-- Logo များကို ဘေးဘက်သို့ ပြန်ကပ်ရန် padding ကို 8px သို့ လျှော့ချထားသည် -->
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 8px;">
                             
-                            <!-- ဘယ်ဘက် Logo (အရွယ်အစားကြီးထားသည်) နှင့် နာမည် -->
+                            <!-- ဘယ်ဘက် Logo နှင့် နာမည် -->
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
-                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး) -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 16px;">
+                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး - VS တုံးနှင့် စာလုံးကို ပိုကြီးအောင် ပြုလုပ်ထားသည်) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px;">
                                 <div style="display: flex; align-items: center; gap: 7px; margin-top: 2px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 5px; border-radius: 4px;">${boType}</span>
                                 </div>
-                                <div style="font-size: 9px; font-weight: 800; color: #FFD700; background: rgba(255, 215, 0, 0.08); padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(255, 215, 0, 0.25); letter-spacing: 1px; margin-top: 10px;">VS</div>
+                                <div style="font-size: 11px; font-weight: 900; color: #FFD700; background: rgba(255, 215, 0, 0.12); padding: 4px 14px; border-radius: 6px; border: 1.5px solid rgba(255, 215, 0, 0.35); letter-spacing: 1.5px; margin-top: 10px;">VS</div>
                             </div>
 
-                            <!-- ညာဘက် Logo (အရွယ်အစားကြီးထားသည်) နှင့် နာမည် -->
+                            <!-- ညာဘက် Logo နှင့် နာမည် -->
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${opponentTitle}</span>
