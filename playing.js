@@ -48,8 +48,8 @@ export async function loadPlayingMatches(deviceId) {
                 html += `
                     <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
-                        <!-- Logo များကို ဘေးဘက်သို့ ပြန်ကပ်ရန် padding ကို 8px သို့ လျှော့ချထားသည် -->
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 30px;">
+                        <!-- Logo များကို အလယ်နှင့် ပိုခွာ၍ ဘေးဘက်စွန်းသို့ ရောက်စေရန် padding ကို 0 2px သို့ ပြင်ဆင်ထားသည် -->
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 2px;">
                             
                             <!-- ဘယ်ဘက် Logo နှင့် နာမည် -->
                             <div style="display: flex; flex-direction: column; align-items: center;">
@@ -57,7 +57,7 @@ export async function loadPlayingMatches(deviceId) {
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
-                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး - VS တုံးနှင့် စာလုံးကို ပိုကြီးအောင် ပြုလုပ်ထားသည်) -->
+                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး) -->
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px;">
                                 <div style="display: flex; align-items: center; gap: 7px; margin-top: 2px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
