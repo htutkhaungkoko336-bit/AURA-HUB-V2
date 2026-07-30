@@ -48,7 +48,6 @@ export async function loadPlayingMatches(deviceId) {
                 html += `
                     <div class="room-card-ios" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff;">
                         
-                        <!-- တစ်န်းတည်း ပုံစံ: Logo များအပေါ်၊ အလယ် Badges များကို margin-top ဖြင့် အလယ်တည့်တည့်သို့ ချထားသည် -->
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
                             
                             <!-- ဘယ်ဘက် Logo နှင့် အောက်တည့်တည့်၌ နာမည် -->
@@ -57,8 +56,8 @@ export async function loadPlayingMatches(deviceId) {
                                 <span style="font-size: 11px; font-weight: 700; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${myTitle}</span>
                             </div>
 
-                            <!-- အလယ်မှာ Fee, Mode, BO နဲ့ VS တုံးများ (အလယ်ဗဟိုတည့်တည့်သို့ ရောက်စေရန် margin-top ထည့်ထားသည်) -->
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 25px;">
+                            <!-- အလယ်မှာ Fee, Mode, BO ကို အပေါ်သို့ တင်ထားပြီး VS နှင့် အကွာအဝေး ပိုပေးထားသည် -->
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px;">
                                 <div style="display: flex; align-items: center; gap: 4px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
                                     <span style="font-size: 10px; font-weight: bold; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 2px 5px; border-radius: 4px;">${mode}</span>
