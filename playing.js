@@ -104,3 +104,9 @@ export async function openPlayingMatchDetail(roomId) {
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
 }
+export function closeRoomDetailModal() {
+    const modal = document.getElementById('room-detail-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
