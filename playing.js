@@ -128,15 +128,10 @@ export async function openPlayingMatchDetail(roomId) {
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
-                    <!-- Host (Team A) Info -->
+                    <!-- Host (Team A) Logo & Squad Name (for 5vs5) -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
                         <img src="${hostLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
-                        ${mode === '1vs1' ? `
-                            <span style="font-size: 11px; font-weight: bold; margin-top: 6px; color: #FFD700; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.playerName || 'N/A'}</span>
-                            <span style="font-size: 10px; color: #aaa; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${host.heroName || 'N/A'})</span>
-                        ` : `
-                            <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>
-                        `}
+                        ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
                     <!-- Center Badges & VS Box -->
@@ -146,24 +141,30 @@ export async function openPlayingMatchDetail(roomId) {
                             <span style="background: #FFD700; color: #000; font-size: 9px; font-weight: bold; padding: 2px 4px; border-radius: 4px;">${mode}</span>
                             <span style="background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 9px; padding: 2px 4px; border-radius: 4px;">${boType}</span>
                         </div>
-                        ${mode === '1vs1' ? '<span style="font-size: 11px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3); margin-top: 4px; text-transform: uppercase;">VS</span>' : ''}
                     </div>
 
-                    <!-- Joiner (Team B) Info -->
+                    <!-- Joiner (Team B) Logo & Squad Name (for 5vs5) -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
                         <img src="${joinerLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
-                        ${mode === '1vs1' ? `
-                            <span style="font-size: 11px; font-weight: bold; margin-top: 6px; color: #FFD700; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.playerName || 'Waiting...'}</span>
-                            <span style="font-size: 10px; color: #aaa; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joiner.heroName || 'Waiting...'})</span>
-                        ` : `
-                            <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>
-                        `}
+                        ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                     </div>
                 </div>
         `;
 
-        // 🌟 5vs5 အတွက်သာ Player စာရင်းပြပေးမည် (1vs1 ဆိုလျှင် ဤအပိုင်းကို ကျော်သွားမည်)
-        if (mode !== '1vs1') {
+        // 🌟 1vs1 အတွက်: Name (Hero Name) VS Name (Hero Name) ပုံစံကို အလယ်မှာ ဘောင်ခတ်ပြီး စာလုံးကြီးကြီးနဲ့ပြပေးခြင်း
+        if (mode === '1vs1') {
+            let hostNameText = `${host.playerName || 'N/A'} (${host.heroName || 'N/A'})`;
+            let joinerNameText = `${joiner.playerName || 'Waiting...'} (${joiner.heroName || 'Waiting...'})`;
+
+            contentHTML += `
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); text-align: center;">
+                    <span style="font-size: 12px; font-weight: bold; color: #FFD700; flex: 1; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostNameText}</span>
+                    <span style="font-size: 11px; font-weight: bold; color: #000; background: #FFD700; padding: 3px 8px; border-radius: 4px; margin: 0 6px; flex-shrink: 0;">VS</span>
+                    <span style="font-size: 12px; font-weight: bold; color: #FFD700; flex: 1; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerNameText}</span>
+                </div>
+            `;
+        } else {
+            // 5vs5 အတွက် Player စာရင်းပြပေးခြင်း
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
 
@@ -190,16 +191,16 @@ export async function openPlayingMatchDetail(roomId) {
         let hostContact = host.contact || '-';
         let joinerContact = joiner.contact || '-';
 
-        // 🌟 Contact စာသားကို အပေါ်မှာထားပြီး contact no ကို အောက်တည့်တည့်မှာ ထည့်ပေးမည့် ပုံစံ
+        // 🌟 Contact စာသားအောက်မှာ contact no တွေကို ဘောင်ခတ်ပြီး ပြသပေးခြင်း
         contentHTML += `
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 8px; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1);">
                 <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1;">
                     <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                    <span style="font-size: 11px; color: #fff; margin-top: 2px;">${hostContact}</span>
+                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px;">${hostContact}</span>
                 </div>
                 <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1;">
                     <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                    <span style="font-size: 11px; color: #fff; margin-top: 2px;">${joinerContact}</span>
+                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px;">${joinerContact}</span>
                 </div>
             </div>
 
@@ -217,7 +218,8 @@ export async function openPlayingMatchDetail(roomId) {
         console.error(err);
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
-}export function closeRoomDetailModal() {
+}
+export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
         modal.style.display = 'none';
