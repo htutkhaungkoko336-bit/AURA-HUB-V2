@@ -128,7 +128,7 @@ export async function openPlayingMatchDetail(roomId) {
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
-                    <!-- Host (Team A) Logo (ပုံစံအနည်းငယ် ကြီးထားသည်) -->
+                    <!-- Host (Team A) Logo & Squad Name -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
                         <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
@@ -143,7 +143,7 @@ export async function openPlayingMatchDetail(roomId) {
                         </div>
                     </div>
 
-                    <!-- Joiner (Team B) Logo (ပုံစံအနည်းငယ် ကြီးထားသည်) -->
+                    <!-- Joiner (Team B) Logo & Squad Name -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
                         <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
@@ -199,32 +199,58 @@ export async function openPlayingMatchDetail(roomId) {
                 </div>
             `;
         } else {
+            // 🌟 5vs5 အတွက် 1vs1 ပုံစံတူ ကစားသမားနာမည်များကို ဘေးချင်းယှဉ် အောက်ဘက်သို့ အစဉ်လိုက် ထပ်ပြပေးခြင်း
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
 
+            let hostPlayersHTML = '';
+            let joinerPlayersHTML = '';
+
             for (let i = 0; i < 5; i++) {
-                let pNum = i + 1;
                 let hp = hostPlayers[i] || '-';
-                let jp = joinerPlayers[i] || '-';
+                let jp = joinerPlayers[i] || 'Waiting...';
 
-                let middleElement = `<span style="font-size: 10px; color: #888;">-</span>`;
-                if (pNum === 3) {
-                    middleElement = `<span style="font-size: 10px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">VS</span>`;
+                hostPlayersHTML += `<span style="font-size: 11px; font-weight: bold; color: #fff; display: block; padding: 3px 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hp}</span>`;
+                joinerPlayersHTML += `<span style="font-size: 11px; font-weight: bold; color: #fff; display: block; padding: 3px 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${jp}</span>`;
+                
+                if (i < 4) {
+                    hostPlayersHTML += `<div style="border-top: 1px solid rgba(255,255,255,0.08); width: 100%;"></div>`;
+                    joinerPlayersHTML += `<div style="border-top: 1px solid rgba(255,255,255,0.08); width: 100%;"></div>`;
                 }
-
-                contentHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-                        <div style="font-size: 11px; color: #fff; flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">P${pNum}: ${hp}</div>
-                        <div style="padding: 0 8px; flex-shrink: 0;">${middleElement}</div>
-                        <div style="font-size: 11px; color: #fff; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${jp} :P${pNum}</div>
-                    </div>
-                `;
             }
 
             contentHTML += `
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
-                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                    
+                    <div style="display: flex; position: relative; align-items: stretch; gap: 14px;">
+                        
+                        <!-- ဘယ်ဘက်ခြမ်း: Host (Team A) ကစားသမားများ အကွက် -->
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1; justify-content: center;">
+                            <span style="font-size: 9px; color: #FFD700; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Team A Players</span>
+                            <div style="border-top: 1px solid rgba(255,215,0,0.2); margin-bottom: 6px; width: 100%;"></div>
+                            ${hostPlayersHTML}
+                        </div>
+
+                        <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် -->
+                        <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;">
+                            <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
+                        </div>
+
+                        <!-- ညာဘက်ခြမ်း: Joiner (Team B) ကစားသမားများ အကွက် -->
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1; justify-content: center;">
+                            <span style="font-size: 9px; color: #FFD700; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Team B Players</span>
+                            <div style="border-top: 1px solid rgba(255,215,0,0.2); margin-bottom: 6px; width: 100%;"></div>
+                            ${joinerPlayersHTML}
+                        </div>
+
+                    </div>
+
+                    <!-- Confirm နှင့် Cancel ခလုတ်များကို ဘေးတိုက် (Horizontal) ထားရှိခြင်း -->
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
+                        <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
+                    </div>
+
                 </div>
             `;
         }
