@@ -134,7 +134,7 @@ export async function openPlayingMatchDetail(roomId) {
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
-                    <!-- Center Badges & VS Box -->
+                    <!-- Center Badges -->
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; padding: 0 6px;">
                         <div style="display: flex; gap: 4px;">
                             <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 9px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">${feeText}</span>
@@ -151,16 +151,34 @@ export async function openPlayingMatchDetail(roomId) {
                 </div>
         `;
 
-        // 🌟 1vs1 အတွက်: Name (Hero Name) VS Name (Hero Name) ပုံစံကို အလယ်မှာ ဘောင်ခတ်ပြီး စာလုံးကြီးကြီးနဲ့ပြပေးခြင်း
+        // 🌟 1vs1 အတွက်: ပုံပါအတိုင်း Name နဲ့ Hero Name ကို အပေါ်အောက်ထားပြီး VS ကို အလယ်တည့်တည့်မှာ ဘောင်ခတ်ပြသခြင်း
         if (mode === '1vs1') {
-            let hostNameText = `${host.playerName || 'N/A'} (${host.heroName || 'N/A'})`;
-            let joinerNameText = `${joiner.playerName || 'Waiting...'} (${joiner.heroName || 'Waiting...'})`;
+            let hostPlayer = host.playerName || 'N/A';
+            let hostHero = host.heroName || 'N/A';
+            
+            let joinerPlayer = joiner.playerName || 'Waiting...';
+            let joinerHero = joiner.heroName || 'Waiting...';
 
             contentHTML += `
-                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); text-align: center;">
-                    <span style="font-size: 12px; font-weight: bold; color: #FFD700; flex: 1; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostNameText}</span>
-                    <span style="font-size: 11px; font-weight: bold; color: #000; background: #FFD700; padding: 3px 8px; border-radius: 4px; margin: 0 6px; flex-shrink: 0;">VS</span>
-                    <span style="font-size: 12px; font-weight: bold; color: #FFD700; flex: 1; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerNameText}</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
+                    
+                    <!-- Host Info (အပေါ်အောက်) -->
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden;">
+                        <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
+                        <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
+                    </div>
+
+                    <!-- Center VS Box -->
+                    <div style="padding: 0 8px; flex-shrink: 0;">
+                        <span style="font-size: 11px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; display: inline-block;">VS</span>
+                    </div>
+
+                    <!-- Joiner Info (အပေါ်အောက်) -->
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; overflow: hidden; text-align: right;">
+                        <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
+                        <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
+                    </div>
+
                 </div>
             `;
         } else {
