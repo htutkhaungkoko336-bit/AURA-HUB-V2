@@ -112,7 +112,9 @@ export async function openPlayingMatchDetail(roomId) {
 
         const match = result.data;
         const mode = match.mode || '5vs5';
-        modalTitle.innerText = mode === '1vs1' ? '1vs1 Match Details' : 'Match VS Details';
+        
+        // 🌟 1vs1 နှင့် 5vs5 နှစ်ခုစလုံးအတွက် Match Details ဟုသာ ပြသရန်
+        modalTitle.innerText = 'Match Details';
 
         const host = match.host || {};
         const joiner = match.joiner || {};
