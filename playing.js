@@ -91,6 +91,7 @@ export async function loadPlayingMatches(deviceId) {
         console.error("Error loading playing matches:", error);
     }
 }
+
 export async function openPlayingMatchDetail(roomId) {
     const modal = document.getElementById('room-detail-modal');
     const modalBody = document.getElementById('modal-body-content');
@@ -113,7 +114,7 @@ export async function openPlayingMatchDetail(roomId) {
         const match = result.data;
         const mode = match.mode || '5vs5';
         
-        // 🌟 1vs1 နှင့် 5vs5 နှစ်ခုစလုံးအတွက် Match Details ဟုသာ ပြသရန်
+        // နှစ်ခုစလုံးအတွက် Match Details ဟု သတ်မှတ်ခြင်း
         modalTitle.innerText = 'Match Details';
 
         const host = match.host || {};
@@ -125,6 +126,21 @@ export async function openPlayingMatchDetail(roomId) {
 
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
+
+        // 🌟 Host သို့မဟုတ် Joiner ဟုတ်မဟုတ် စစ်ဆေးခြင်း
+        let currentDeviceId = localStorage.getItem('aura_device_id') || '';
+        let isHostOrJoiner = (currentDeviceId === host.deviceId || currentDeviceId === joiner.deviceId);
+
+        // Host သို့မဟုတ် Joiner ဖြစ်မှသာ ပြသမည့် Confirm နှင့် Cancel ခလုတ်များ
+        let actionButtonsHTML = '';
+        if (isHostOrJoiner) {
+            actionButtonsHTML = `
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
+                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
+                </div>
+            `;
+        }
 
         let contentHTML = `
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
@@ -192,16 +208,11 @@ export async function openPlayingMatchDetail(roomId) {
 
                     </div>
 
-                    <!-- Confirm နှင့် Cancel ခလုတ်များကို ဘေးတိုက် (Horizontal) ထားရှိခြင်း -->
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
-                        <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
-                    </div>
+                    ${actionButtonsHTML}
 
                 </div>
             `;
         } else {
-            // 🌟 5vs5 အတွက် 1vs1 ပုံစံတူ ကစားသမားနာမည်များကို ဘေးချင်းယှဉ် အောက်ဘက်သို့ အစဉ်လိုက် ထပ်ပြပေးခြင်း
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
 
@@ -247,11 +258,7 @@ export async function openPlayingMatchDetail(roomId) {
 
                     </div>
 
-                    <!-- Confirm နှင့် Cancel ခလုတ်များကို ဘေးတိုက် (Horizontal) ထားရှိခြင်း -->
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
-                        <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
-                    </div>
+                    ${actionButtonsHTML}
 
                 </div>
             `;
@@ -265,6 +272,7 @@ export async function openPlayingMatchDetail(roomId) {
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
 }
+
 export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
