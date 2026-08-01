@@ -151,7 +151,7 @@ export async function openPlayingMatchDetail(roomId) {
                 </div>
         `;
 
-        // 🌟 1vs1 အတွက်: Name နဲ့ Hero Name ကို VS နားပိုတိုးပေးထားပြီး ပုံစံတကျပြသခြင်း
+        // 🌟 1vs1 အတွက်: ဘယ်နှင့်ညာ နှစ်ဖက်လုံးမှ အတွင်းဘက်သို့ ပိုတိုးပေးထားသော Name/Hero Name ဘောင်
         if (mode === '1vs1') {
             let hostPlayer = host.playerName || 'N/A';
             let hostHero = host.heroName || 'N/A';
@@ -160,21 +160,21 @@ export async function openPlayingMatchDetail(roomId) {
             let joinerHero = joiner.heroName || 'Waiting...';
 
             contentHTML += `
-                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 12px 18px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); margin: 0 4px;">
                     
-                    <!-- Host Info (VS နားပိုကပ်ရန် padding/margin ညှိထားသည်) -->
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden; padding-right: 4px;">
+                    <!-- Host Info (အတွင်းဘက်သို့ ပိုတိုးထားသည်) -->
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden; padding-left: 6px;">
                         <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
                         <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
                     </div>
 
                     <!-- Center VS Box -->
-                    <div style="padding: 0 4px; flex-shrink: 0;">
-                        <span style="font-size: 11px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; display: inline-block;">VS</span>
+                    <div style="padding: 0 10px; flex-shrink: 0;">
+                        <span style="font-size: 11px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 10px; border-radius: 4px; display: inline-block;">VS</span>
                     </div>
 
-                    <!-- Joiner Info (VS နားပိုကပ်ရန် padding/margin ညှိထားသည်) -->
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden; padding-left: 12px;">
+                    <!-- Joiner Info (အတွင်းဘက်သို့ ပိုတိုးထားသည်) -->
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden; padding-left: 14px;">
                         <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
                         <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
                     </div>
@@ -209,14 +209,14 @@ export async function openPlayingMatchDetail(roomId) {
         let hostContact = host.contact || '-';
         let joinerContact = joiner.contact || '-';
 
-        // 🌟 Contact အတွင်းဘက်ကို တိုးပေးပြီး ညာဘက်နံပါတ်ကိုပါ ဘယ်ဘက်ကစတင်ပြသစေရန် (align-items: flex-start) ပြင်ဆင်ထားခြင်း
+        // 🌟 Contact ဘောင်ကိုလည်း အတွင်းဘက်သို့ ပိုတိုးပေးပြီး ဘယ်ဘက်မှစတင်ပြသစေခြင်း
         contentHTML += `
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 8px 16px; border-radius: 8px; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding-right: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 10px 18px; border-radius: 8px; margin: 4px 4px 0 4px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding-left: 6px;">
                     <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
                     <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding-left: 12px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding-left: 14px;">
                     <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
                     <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerContact}</span>
                 </div>
