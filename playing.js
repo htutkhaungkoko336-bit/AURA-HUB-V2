@@ -102,7 +102,6 @@ export async function openPlayingMatchDetail(roomId) {
     modal.style.display = 'flex';
 
     try {
-        // 🌟 ဖိုင်အသစ်ခွဲထားသော API လမ်းကြောင်းသို့ ချိတ်ဆက်ခြင်း
         const response = await fetch('/api/room-detail-playing?roomId=' + encodeURIComponent(roomId));
         const result = await response.json();
 
@@ -112,7 +111,8 @@ export async function openPlayingMatchDetail(roomId) {
         }
 
         const match = result.data;
-        modalTitle.innerText = match.mode === '1vs1' ? '1vs1 Match Details' : 'Match VS Details';
+        const mode = match.mode || '5vs5';
+        modalTitle.innerText = mode === '1vs1' ? '1vs1 Match Details' : 'Match VS Details';
 
         const host = match.host || {};
         const joiner = match.joiner || {};
@@ -120,13 +120,12 @@ export async function openPlayingMatchDetail(roomId) {
         let feeText = formatFee(match.entryFee);
         let numericFee = parseInt(match.entryFee?.toString().replace(/[^0-9]/g, '')) || 0;
         let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
-        let mode = match.mode || '5vs5';
 
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
 
-        let hostTitle = (mode === '1vs1' ? (host.heroName || host.playerName) : (host.squadName || host.teamName)) || 'Team A';
-        let joinerTitle = (mode === '1vs1' ? (joiner.heroName || joiner.playerName) : (joiner.squadName || joiner.teamName)) || 'Team B';
+        let hostTitle = (mode === '1vs1' ? (host.heroName || host.playerName) : host.squadName) || 'Team A';
+        let joinerTitle = (mode === '1vs1' ? (joiner.heroName || joiner.playerName) : joiner.squadName) || 'Team B';
 
         let contentHTML = `
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
@@ -150,30 +149,46 @@ export async function openPlayingMatchDetail(roomId) {
                 </div>
         `;
 
-        let hostPlayers = Array.isArray(host.players) ? host.players : [];
-        let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
-
-        for (let i = 0; i < 5; i++) {
-            let pNum = i + 1;
-            let hp = hostPlayers[i] || '-';
-            let jp = joinerPlayers[i] || '-';
-
-            let middleElement = `<span style="font-size: 10px; color: #888;">-</span>`;
-            if (pNum === 3) {
-                middleElement = `<span style="font-size: 10px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">VS</span>`;
-            }
-
+        // 🌟 1vs1 အတွက် Player Name နဲ့ Hero Name တို့ကို တွဲပြပေးခြင်း
+        if (mode === '1vs1') {
             contentHTML += `
-                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 11px; color: #fff; flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">P${pNum}: ${hp}</div>
-                    <div style="padding: 0 8px; flex-shrink: 0;">${middleElement}</div>
-                    <div style="font-size: 11px; color: #fff; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${jp} :P${pNum}</div>
+                <div style="display: flex; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.04); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                        <span style="color: #888;">Player Name:</span>
+                        <span style="color: #fff; font-weight: bold;">${host.playerName || 'N/A'} vs ${joiner.playerName || 'Waiting...'}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                        <span style="color: #888;">Hero Name:</span>
+                        <span style="color: #FFD700; font-weight: bold;">${host.heroName || 'N/A'} vs ${joiner.heroName || 'Waiting...'}</span>
+                    </div>
                 </div>
             `;
+        } else {
+            let hostPlayers = Array.isArray(host.players) ? host.players : [];
+            let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
+
+            for (let i = 0; i < 5; i++) {
+                let pNum = i + 1;
+                let hp = hostPlayers[i] || '-';
+                let jp = joinerPlayers[i] || '-';
+
+                let middleElement = `<span style="font-size: 10px; color: #888;">-</span>`;
+                if (pNum === 3) {
+                    middleElement = `<span style="font-size: 10px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">VS</span>`;
+                }
+
+                contentHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                        <div style="font-size: 11px; color: #fff; flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">P${pNum}: ${hp}</div>
+                        <div style="padding: 0 8px; flex-shrink: 0;">${middleElement}</div>
+                        <div style="font-size: 11px; color: #fff; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${jp} :P${pNum}</div>
+                    </div>
+                `;
+            }
         }
 
-        let hostContact = host.contact || host.leaderPhone || '-';
-        let joinerContact = joiner.contact || joiner.leaderPhone || '-';
+        let hostContact = host.contact || '-';
+        let joinerContact = joiner.contact || '-';
 
         contentHTML += `
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 8px 10px; border-radius: 8px; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1);">

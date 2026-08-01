@@ -1,3 +1,4 @@
+// Server side: /api/room-detail-playing handler
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 
@@ -36,7 +37,6 @@ module.exports = async function handler(req, res) {
             if (!joinerSnap.empty) joinerRegData = joinerSnap.docs[0].data();
         }
 
-        // Player ၁ ယောက်ချင်းစီကို .name (သို့မဟုတ်) string အတိုင်း သပ်ရပ်စွာ ထုတ်ယူပေးမည့် helper function
         function extractPlayers(regSource, roomSource) {
             let list = [];
             for (let i = 1; i <= 5; i++) {
@@ -51,7 +51,6 @@ module.exports = async function handler(req, res) {
             return list;
         }
 
-        // Team A (Host) အချက်အလက်စုစည်းမှု
         let hostInfo = {
             logo: hostRegData.logo || roomData.host?.logo || roomData.logo || 'default-logo.png',
             contact: hostRegData.kpayNo || hostRegData.leaderPhone || hostRegData.contact || roomData.host?.leaderPhone || roomData.leaderPhone || '-',
@@ -60,12 +59,11 @@ module.exports = async function handler(req, res) {
 
         if (mode === '1vs1') {
             hostInfo.playerName = hostRegData.playerName || roomData.host?.playerName || roomData.playerName || 'N/A';
-            hostInfo.heroName = hostRegData.heroName || roomData.host?.heroName || roomData.heroName || 'N/A';
+            hostInfo.heroName = hostRegData.heroName || roomData.host?.heroName || roomData.host?.heroName || 'N/A';
         } else {
-            hostInfo.squadName = hostRegData.squadName || roomData.host?.squadName || roomData.squadName || 'Team A';
+            hostInfo.squadName = hostRegData.squadName || roomData.host?.squadName || roomData.host?.squadName || 'Team A';
         }
 
-        // Team B (Joiner) အချက်အလက်စုစည်းမှု
         let joinerInfo = {
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
             contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || '-',
