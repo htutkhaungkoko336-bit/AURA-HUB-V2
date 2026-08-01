@@ -128,9 +128,9 @@ export async function openPlayingMatchDetail(roomId) {
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
-                    <!-- Host (Team A) Logo & Squad Name (for 5vs5) -->
+                    <!-- Host (Team A) Logo (ပုံစံအနည်းငယ် ကြီးထားသည်) -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${hostLogo}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
+                        <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
@@ -143,15 +143,14 @@ export async function openPlayingMatchDetail(roomId) {
                         </div>
                     </div>
 
-                    <!-- Joiner (Team B) Logo & Squad Name (for 5vs5) -->
+                    <!-- Joiner (Team B) Logo (ပုံစံအနည်းငယ် ကြီးထားသည်) -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${joinerLogo}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
+                        <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                     </div>
                 </div>
         `;
 
-        // 🌟 1vs1 အတွက်: VS ကို ဘောက်စ်နှစ်ခုကြား လွတ်လွတ်လပ်လပ်ထားရှိပြီး ခလုတ်များကို ဘေးတိုက် (Horizontal) ပြသခြင်း
         if (mode === '1vs1') {
             let hostPlayer = host.playerName || 'N/A';
             let hostHero = host.heroName || 'N/A';
@@ -175,7 +174,7 @@ export async function openPlayingMatchDetail(roomId) {
                             <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
                         </div>
 
-                        <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် (ကဒ်နှစ်ခုကြား လွတ်လပ်စွာပေါ်ရန်) -->
+                        <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် -->
                         <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;">
                             <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                         </div>
@@ -200,7 +199,6 @@ export async function openPlayingMatchDetail(roomId) {
                 </div>
             `;
         } else {
-            // 5vs5 အတွက် Player စာရင်းပြပေးခြင်း
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
 
