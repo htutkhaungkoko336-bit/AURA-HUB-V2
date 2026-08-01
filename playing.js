@@ -124,37 +124,45 @@ export async function openPlayingMatchDetail(roomId) {
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
 
-        let hostTitle = (mode === '1vs1' ? (host.heroName ? `${host.playerName || 'N/A'} (${host.heroName})` : (host.playerName || 'N/A')) : host.squadName) || 'Team A';
-        let joinerTitle = (mode === '1vs1' ? (joiner.heroName ? `${joiner.playerName || 'Waiting...' } (${joiner.heroName})` : (joiner.playerName || 'Waiting...')) : joiner.squadName) || 'Team B';
-
         let contentHTML = `
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                    <!-- Host (Team A) Info -->
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
                         <img src="${hostLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
-                        <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.playerName || 'N/A'}</span>
-                        <span style="font-size: 10px; color: #aaa; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${host.heroName || 'N/A'})</span>
+                        ${mode === '1vs1' ? `
+                            <span style="font-size: 11px; font-weight: bold; margin-top: 6px; color: #FFD700; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.playerName || 'N/A'}</span>
+                            <span style="font-size: 10px; color: #aaa; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${host.heroName || 'N/A'})</span>
+                        ` : `
+                            <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>
+                        `}
                     </div>
 
+                    <!-- Center Badges & VS Box -->
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; padding: 0 6px;">
                         <div style="display: flex; gap: 4px;">
                             <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 9px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">${feeText}</span>
                             <span style="background: #FFD700; color: #000; font-size: 9px; font-weight: bold; padding: 2px 4px; border-radius: 4px;">${mode}</span>
                             <span style="background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 9px; padding: 2px 4px; border-radius: 4px;">${boType}</span>
                         </div>
-                        ${mode === '1vs1' ? '<span style="font-size: 11px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3); margin-top: 4px;">VS</span>' : ''}
+                        ${mode === '1vs1' ? '<span style="font-size: 11px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3); margin-top: 4px; text-transform: uppercase;">VS</span>' : ''}
                     </div>
 
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                    <!-- Joiner (Team B) Info -->
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
                         <img src="${joinerLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
-                        <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.playerName || 'Waiting...'}</span>
-                        <span style="font-size: 10px; color: #aaa; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joiner.heroName || 'Waiting...'})</span>
+                        ${mode === '1vs1' ? `
+                            <span style="font-size: 11px; font-weight: bold; margin-top: 6px; color: #FFD700; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.playerName || 'Waiting...'}</span>
+                            <span style="font-size: 10px; color: #aaa; text-transform: uppercase; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joiner.heroName || 'Waiting...'})</span>
+                        ` : `
+                            <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>
+                        `}
                     </div>
                 </div>
         `;
 
-        // 🌟 5vs5 အတွက်သာ Player စာရင်းပြပေးမည် (1vs1 ဆိုလျှင် ဤအကွက်ကို ကျော်သွားမည်)
+        // 🌟 5vs5 အတွက်သာ Player စာရင်းပြပေးမည် (1vs1 ဆိုလျှင် ဤအပိုင်းကို ကျော်သွားမည်)
         if (mode !== '1vs1') {
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
@@ -182,10 +190,17 @@ export async function openPlayingMatchDetail(roomId) {
         let hostContact = host.contact || '-';
         let joinerContact = joiner.contact || '-';
 
+        // 🌟 Contact စာသားကို အပေါ်မှာထားပြီး contact no ကို အောက်တည့်တည့်မှာ ထည့်ပေးမည့် ပုံစံ
         contentHTML += `
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 8px 10px; border-radius: 8px; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="font-size: 10px; color: #ccc;">Contact: ${hostContact}</div>
-                <div style="font-size: 10px; color: #ccc;">Contact: ${joinerContact}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 8px; margin-top: 4px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1;">
+                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                    <span style="font-size: 11px; color: #fff; margin-top: 2px;">${hostContact}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1;">
+                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                    <span style="font-size: 11px; color: #fff; margin-top: 2px;">${joinerContact}</span>
+                </div>
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 8px;">
@@ -202,8 +217,7 @@ export async function openPlayingMatchDetail(roomId) {
         console.error(err);
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
     }
-}
-export function closeRoomDetailModal() {
+}export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
         modal.style.display = 'none';
