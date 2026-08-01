@@ -21,6 +21,11 @@ export async function loadPlayingMatches(deviceId) {
         const container = document.getElementById('content-playing');
         if (!container) return;
 
+        // Container တွင် card များများလာပါက scroll လုပ်နိုင်ရန် CSS စနစ် ထည့်သွင်းခြင်း
+        container.style.maxHeight = '65vh';
+        container.style.overflowY = 'auto';
+        container.style.paddingRight = '4px';
+
         if (result.success && result.rooms && result.rooms.length > 0) {
             let html = '';
             
@@ -50,13 +55,13 @@ export async function loadPlayingMatches(deviceId) {
                         
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 4px;">
                             
-                            <!-- ဘယ်ဘက်အခြမ်း (flex: 1 ဖြင့် အကျယ်တူတူ သတ်မှတ်ပေးထား၍ ဘယ်/ညာ ညီစေသည်) -->
+                            <!-- ဘယ်ဘက်အခြမ်း -->
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
                                 <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
-                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး - အလယ်တွင် တည်ငြိမ်စေရန် flex-shrink: 0 ထားသည်) -->
+                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး) -->
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; flex-shrink: 0; padding: 0 8px;">
                                 <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
@@ -66,7 +71,7 @@ export async function loadPlayingMatches(deviceId) {
                                 <div style="font-size: 11px; font-weight: 900; color: #FFD700; background: rgba(255, 215, 0, 0.12); padding: 4px 14px; border-radius: 6px; border: 1.5px solid rgba(255, 215, 0, 0.35); letter-spacing: 1.5px; margin-top: 10px;">VS</div>
                             </div>
 
-                            <!-- ညာဘက်အခြမ်း (flex: 1 ဖြင့် အကျယ်တူတူ သတ်မှတ်ပေးထား၍ ဘယ်/ညာ ညီစေသည်) -->
+                            <!-- ညာဘက်အခြမ်း -->
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
                                 <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${opponentTitle}</span>

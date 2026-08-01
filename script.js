@@ -744,6 +744,11 @@ function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
+    // Room card များများလာပါက scroll လုပ်နိုင်ရန် CSS စနစ် ထည့်သွင်းခြင်း
+    matchContent.style.maxHeight = '65vh';
+    matchContent.style.overflowY = 'auto';
+    matchContent.style.paddingRight = '4px';
+
     const currentDeviceId = localStorage.getItem('aura_device_id');
     const isOwner = String(room.deviceId) === String(currentDeviceId);
 
@@ -765,12 +770,13 @@ function appendRoomCardToUI(room) {
     } else {
         mainTitle = room.squadName || room.teamName || 'Squad Name';
     }
-// room object တစ်ခုလုံးကို encode လုပ်ပြီး string အနေနဲ့ ထည့်ပေးခြင်း
-const roomString = encodeURIComponent(JSON.stringify(room));
+    // room object တစ်ခုလုံးကို encode လုပ်ပြီး string အနေနဲ့ ထည့်ပေးခြင်း
+    const roomString = encodeURIComponent(JSON.stringify(room));
 
-const actionButtonHTML = isOwner 
-    ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
-    : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}', '${roomString}')">+</button>`;
+    const actionButtonHTML = isOwner 
+        ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
+        : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}', '${roomString}')">+</button>`;
+    
     // 🌟 FEE, MODE, BO သုံးခုစလုံးကို ရိုးရှင်းသပ်ရပ်စွာ တစ်န်းတည်းပြမည့် ပုံစံ
     const cardHTML = `
         <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
