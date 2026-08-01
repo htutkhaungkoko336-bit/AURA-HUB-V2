@@ -130,7 +130,7 @@ export async function openPlayingMatchDetail(roomId) {
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
                     <!-- Host (Team A) Logo & Squad Name (for 5vs5) -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${hostLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
+                        <img src="${hostLogo}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
@@ -145,38 +145,59 @@ export async function openPlayingMatchDetail(roomId) {
 
                     <!-- Joiner (Team B) Logo & Squad Name (for 5vs5) -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${joinerLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
+                        <img src="${joinerLogo}" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                     </div>
                 </div>
         `;
 
-        // 🌟 1vs1 အတွက်: ဘယ်နှင့်ညာ နှစ်ဖက်လုံးမှ အတွင်းဘက်သို့ ပိုတိုးပေးထားသော Name/Hero Name ဘောင်
+        // 🌟 1vs1 အတွက်: ပုံပါအတိုင်း ဘယ်/ညာ သီးသန့်ဘောင်နှစ်ခုခွဲ၍ အလယ်တွင် VS ထားရှိပြီး ဘယ်ဘက်တွင် ခလုတ်များထည့်ခြင်း
         if (mode === '1vs1') {
             let hostPlayer = host.playerName || 'N/A';
             let hostHero = host.heroName || 'N/A';
+            let hostContact = host.contact || '-';
             
             let joinerPlayer = joiner.playerName || 'Waiting...';
             let joinerHero = joiner.heroName || 'Waiting...';
+            let joinerContact = joiner.contact || '-';
 
             contentHTML += `
-                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 12px 18px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); margin: 0 4px;">
+                <div style="display: flex; position: relative; align-items: stretch; gap: 8px; margin-top: 5px;">
                     
-                    <!-- Host Info (အတွင်းဘက်သို့ ပိုတိုးထားသည်) -->
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden; padding-left: 6px;">
-                        <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
-                        <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
+                    <!-- ဘယ်ဘက်ခြမ်း: Confirm/Cancel ခလုတ်များ နှင့် Host အကွက် -->
+                    <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                        
+                        <!-- Host Card Box -->
+                        <div style="display: flex; flex-direction: column; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
+                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
+                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
+                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0;"></div>
+                            <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
+                        </div>
+
+                        <!-- Confirm Button -->
+                        <button onclick="closeRoomDetailModal()" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; width: 100%;">Confirm</button>
+                        
+                        <!-- Cancel Button -->
+                        <button onclick="closeRoomDetailModal()" style="background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; width: 100%;">Cancel</button>
+
                     </div>
 
-                    <!-- Center VS Box -->
-                    <div style="padding: 0 10px; flex-shrink: 0;">
-                        <span style="font-size: 11px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 10px; border-radius: 4px; display: inline-block;">VS</span>
+                    <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် -->
+                    <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 2;">
+                        <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                     </div>
 
-                    <!-- Joiner Info (အတွင်းဘက်သို့ ပိုတိုးထားသည်) -->
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; overflow: hidden; padding-left: 14px;">
-                        <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
-                        <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
+                    <!-- ညာဘက်ခြမ်း: Joiner အကွက် -->
+                    <div style="display: flex; flex-direction: column; flex: 1;">
+                        <div style="display: flex; flex-direction: column; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); height: 100%;">
+                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
+                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
+                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0;"></div>
+                            <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerContact}</span>
+                        </div>
                     </div>
 
                 </div>
@@ -204,32 +225,16 @@ export async function openPlayingMatchDetail(roomId) {
                     </div>
                 `;
             }
+
+            contentHTML += `
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
+                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
+                </div>
+            `;
         }
 
-        let hostContact = host.contact || '-';
-        let joinerContact = joiner.contact || '-';
-
-        // 🌟 Contact ဘောင်ကိုလည်း အတွင်းဘက်သို့ ပိုတိုးပေးပြီး ဘယ်ဘက်မှစတင်ပြသစေခြင်း
-        contentHTML += `
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 10px 18px; border-radius: 8px; margin: 4px 4px 0 4px; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding-left: 6px;">
-                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: flex-start; flex: 1; padding-left: 14px;">
-                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerContact}</span>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 8px;">
-                <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
-                <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
-            </div>
-
-        </div>
-        `;
-
+        contentHTML += `</div>`;
         modalBody.innerHTML = contentHTML;
 
     } catch (err) {
