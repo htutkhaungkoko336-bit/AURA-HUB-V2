@@ -151,7 +151,7 @@ export async function openPlayingMatchDetail(roomId) {
                 </div>
         `;
 
-        // 🌟 1vs1 အတွက်: ပုံပါအတိုင်း ဘယ်/ညာ သီးသန့်ဘောင်နှစ်ခုခွဲ၍ အလယ်တွင် VS ထားရှိပြီး ဘယ်ဘက်တွင် ခလုတ်များထည့်ခြင်း
+        // 🌟 1vs1 အတွက်: VS ကို ကဒ်နှစ်ခုကြား တည့်တည့်တွင် ထားရှိပြီး စာသားများကို အလယ်တည့်တည့် (Center) သို့ ပြောင်းလဲခြင်း
         if (mode === '1vs1') {
             let hostPlayer = host.playerName || 'N/A';
             let hostHero = host.heroName || 'N/A';
@@ -162,18 +162,18 @@ export async function openPlayingMatchDetail(roomId) {
             let joinerContact = joiner.contact || '-';
 
             contentHTML += `
-                <div style="display: flex; position: relative; align-items: stretch; gap: 8px; margin-top: 5px;">
+                <div style="display: flex; position: relative; align-items: stretch; gap: 16px; margin-top: 5px;">
                     
-                    <!-- ဘယ်ဘက်ခြမ်း: Confirm/Cancel ခလုတ်များ နှင့် Host အကွက် -->
+                    <!-- ဘယ်ဘက်ခြမ်း: Host အကွက် နှင့် ခလုတ်များ -->
                     <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
                         
-                        <!-- Host Card Box -->
-                        <div style="display: flex; flex-direction: column; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
-                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
-                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
-                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0;"></div>
+                        <!-- Host Card Box (Text Center) -->
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
+                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
+                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
+                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
                             <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
+                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
                         </div>
 
                         <!-- Confirm Button -->
@@ -184,19 +184,19 @@ export async function openPlayingMatchDetail(roomId) {
 
                     </div>
 
-                    <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် -->
-                    <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 2;">
+                    <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် (ကဒ်နှစ်ခုကြား အလယ်ဗဟိုသို့ ချိန်ညှိထားသည်) -->
+                    <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 2;">
                         <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                     </div>
 
                     <!-- ညာဘက်ခြမ်း: Joiner အကွက် -->
                     <div style="display: flex; flex-direction: column; flex: 1;">
-                        <div style="display: flex; flex-direction: column; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); height: 100%;">
-                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
-                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
-                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0;"></div>
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); height: 100%;">
+                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
+                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
+                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
                             <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerContact}</span>
+                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerContact}</span>
                         </div>
                     </div>
 
