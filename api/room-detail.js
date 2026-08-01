@@ -31,11 +31,10 @@ module.exports = async function handler(req, res) {
 
         const mode = roomData.mode || '5vs5';
         let responseData = {
-                    mode: mode,
-                    logo: regData.logo || roomData.logo || 'default-logo.png',
-                    leaderPhone: regData.kpayNo || regData.leaderPhone || roomData.leaderPhone || 'မပါရှိပါ။',
-                    contact: regData.contact || roomData.contact || '' // 🌟 ဒီနေရာလေး ထည့်ပေးပါ
-                };
+                mode: mode,
+                logo: regData.logo || roomData.logo || 'default-logo.png',
+                leaderPhone: regData.kpayNo || regData.leaderPhone || roomData.leaderPhone || 'မပါရှိပါ။'
+            };
 
         if (mode === '1vs1') {
             responseData.playerName = regData.playerName || roomData.playerName || 'N/A';
@@ -43,7 +42,7 @@ module.exports = async function handler(req, res) {
         } else {
             responseData.squadName = regData.squadName || roomData.squadName || 'N/A';
             
-            // 🌟 ေဒတာဘေ့စ်ထဲက Object ပုံစံ player များကို .name ဖြင့် သပ်ရပ်စွာ ထုတ်ယူခြင်း
+            // 🌟 ဒေတာဘေ့စ်ထဲက Object ပုံစံ player များကို .name ဖြင့် သပ်ရပ်စွာ ထုတ်ယူခြင်း
             let extractedPlayers = [];
             for (let i = 1; i <= 5; i++) {
                 let p = regData[`player${i}`] || roomData[`player${i}`];
