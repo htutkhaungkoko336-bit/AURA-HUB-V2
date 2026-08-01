@@ -124,8 +124,8 @@ export async function openPlayingMatchDetail(roomId) {
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
 
-        let hostTitle = (mode === '1vs1' ? (host.heroName || host.playerName) : host.squadName) || 'Team A';
-        let joinerTitle = (mode === '1vs1' ? (joiner.heroName || joiner.playerName) : joiner.squadName) || 'Team B';
+        let hostTitle = (mode === '1vs1' ? (host.heroName ? `${host.playerName || 'N/A'} (${host.heroName})` : (host.playerName || 'N/A')) : host.squadName) || 'Team A';
+        let joinerTitle = (mode === '1vs1' ? (joiner.heroName ? `${joiner.playerName || 'Waiting...' } (${joiner.heroName})` : (joiner.playerName || 'Waiting...')) : joiner.squadName) || 'Team B';
 
         let contentHTML = `
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
@@ -133,37 +133,29 @@ export async function openPlayingMatchDetail(roomId) {
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
                         <img src="${hostLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
-                        <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; text-align: center; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostTitle}</span>
+                        <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.playerName || 'N/A'}</span>
+                        <span style="font-size: 10px; color: #aaa; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${host.heroName || 'N/A'})</span>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
-                        <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 9px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">${feeText}</span>
-                        <span style="background: #FFD700; color: #000; font-size: 9px; font-weight: bold; padding: 2px 4px; border-radius: 4px;">${mode}</span>
-                        <span style="background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 9px; padding: 2px 4px; border-radius: 4px;">${boType}</span>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; padding: 0 6px;">
+                        <div style="display: flex; gap: 4px;">
+                            <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 9px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">${feeText}</span>
+                            <span style="background: #FFD700; color: #000; font-size: 9px; font-weight: bold; padding: 2px 4px; border-radius: 4px;">${mode}</span>
+                            <span style="background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 9px; padding: 2px 4px; border-radius: 4px;">${boType}</span>
+                        </div>
+                        ${mode === '1vs1' ? '<span style="font-size: 11px; font-weight: bold; color: #FFD700; background: rgba(255,215,0,0.15); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3); margin-top: 4px;">VS</span>' : ''}
                     </div>
 
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
                         <img src="${joinerLogo}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
-                        <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; text-align: center; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerTitle}</span>
+                        <span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.playerName || 'Waiting...'}</span>
+                        <span style="font-size: 10px; color: #aaa; text-align: center; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joiner.heroName || 'Waiting...'})</span>
                     </div>
                 </div>
         `;
 
-        // 🌟 1vs1 အတွက် Player Name နဲ့ Hero Name တို့ကို တွဲပြပေးခြင်း
-        if (mode === '1vs1') {
-            contentHTML += `
-                <div style="display: flex; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.04); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                        <span style="color: #888;">Player Name:</span>
-                        <span style="color: #fff; font-weight: bold;">${host.playerName || 'N/A'} vs ${joiner.playerName || 'Waiting...'}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                        <span style="color: #888;">Hero Name:</span>
-                        <span style="color: #FFD700; font-weight: bold;">${host.heroName || 'N/A'} vs ${joiner.heroName || 'Waiting...'}</span>
-                    </div>
-                </div>
-            `;
-        } else {
+        // 🌟 5vs5 အတွက်သာ Player စာရင်းပြပေးမည် (1vs1 ဆိုလျှင် ဤအကွက်ကို ကျော်သွားမည်)
+        if (mode !== '1vs1') {
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
 
