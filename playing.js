@@ -49,20 +49,13 @@ export async function loadPlayingMatches(deviceId) {
                     : (opponentData?.squadName || opponentData?.teamName || 'Waiting...');
                 const opponentTitle = rawOpponentTitle.toUpperCase();
 
-                // တစ်ဖက်လူ Ready ဖြစ်မဖြစ် စစ်ဆေးရန် (Backend က isReady ပို့ပေးသည်ကို သုံးမည်)
-                const isOpponentReady = isHost ? match.joiner?.isReady : match.host?.isReady;
-
                 html += `
                     <div class="room-card-ios" onclick="openPlayingMatchDetail('${match.roomId}')" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff; cursor: pointer;">
                         
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 4px;">
                             
-                            <!-- ကိုယ့်အသင်း Logo နှင့် Status -->
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
-                                <div style="position: relative; display: inline-block;">
-                                    <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
-                                    ${myData?.isReady ? `<span style="position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; background-color: #28a745; border: 2px solid #000; border-radius: 50%;"></span>` : ''}
-                                </div>
+                                <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
@@ -75,12 +68,8 @@ export async function loadPlayingMatches(deviceId) {
                                 <div style="font-size: 11px; font-weight: 900; color: #FFD700; background: rgba(255, 215, 0, 0.12); padding: 4px 14px; border-radius: 6px; border: 1.5px solid rgba(255, 215, 0, 0.35); letter-spacing: 1.5px; margin-top: 10px;">VS</div>
                             </div>
 
-                            <!-- တစ်ဖက်အသင်း Logo နှင့် Ready Indicator (အစိမ်းရောင်မီးစိမ်း) -->
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
-                                <div style="position: relative; display: inline-block;">
-                                    <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
-                                    ${isOpponentReady ? `<span style="position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; background-color: #28a745; border: 2px solid #000; border-radius: 50%;"></span>` : ''}
-                                </div>
+                                <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${opponentTitle}</span>
                             </div>
 
@@ -133,24 +122,17 @@ export async function openPlayingMatchDetail(roomId) {
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
 
+        // 🌟 Host သို့မဟုတ် Joiner ဟုတ်မဟုတ် စစ်ဆေးခြင်း
         let currentDeviceId = localStorage.getItem('aura_device_id') || '';
-        let isHost = currentDeviceId === host.deviceId;
-        let isJoiner = currentDeviceId === joiner.deviceId;
-        let isHostOrJoiner = isHost || isJoiner;
+        let isHostOrJoiner = (currentDeviceId === host.deviceId || currentDeviceId === joiner.deviceId);
 
-        // ကိုယ်ဘက်က လက်ရှိ Ready ပြီးသားလား စစ်ဆေးရန်
-        let myIsReady = isHost ? host.isReady : joiner.isReady;
-
+        // Host သို့မဟုတ် Joiner ဖြစ်မှသာ Confirm/Cancel ခလုတ်နှင့် Contact အချက်အလက်များကို ပြသရန်
         let actionButtonsHTML = '';
         if (isHostOrJoiner) {
             actionButtonsHTML = `
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button id="ready-action-btn" onclick="toggleReadyState('${roomId}')" style="flex: 1; background: ${myIsReady ? '#28a745' : 'linear-gradient(135deg, #FFD700, #FFA500)'}; color: ${myIsReady ? '#fff' : '#000'}; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">
-                        ${myIsReady ? 'Unready' : 'Ready'}
-                    </button>
-                    <button id="cancel-match-btn" onclick="cancelMatch('${roomId}')" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; opacity: ${myIsReady ? '0.4' : '1'}; pointer-events: ${myIsReady ? 'none' : 'auto'};">
-                        CANCEL MATCH
-                    </button>
+                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
+                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
                 </div>
             `;
         }
@@ -160,10 +142,7 @@ export async function openPlayingMatchDetail(roomId) {
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <div style="position: relative; display: inline-block;">
-                            <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
-                            ${host.isReady ? `<span style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background-color: #28a745; border: 2px solid #000; border-radius: 50%;"></span>` : ''}
-                        </div>
+                        <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
@@ -176,10 +155,7 @@ export async function openPlayingMatchDetail(roomId) {
                     </div>
 
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <div style="position: relative; display: inline-block;">
-                            <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
-                            ${joiner.isReady ? `<span style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background-color: #28a745; border: 2px solid #000; border-radius: 50%;"></span>` : ''}
-                        </div>
+                        <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                     </div>
                 </div>
@@ -191,47 +167,106 @@ export async function openPlayingMatchDetail(roomId) {
             let joinerPlayer = joiner.playerName || 'Waiting...';
             let joinerHero = joiner.heroName || 'Waiting...';
 
+            // Contact အချက်အလက်ကို Host သို့မဟုတ် Joiner ဖြစ်မှသာ ပြသရန်
+            let contactHTML = '';
+            if (isHostOrJoiner) {
+                let hostContact = host.contact || '-';
+                let joinerContact = joiner.contact || '-';
+                contactHTML = `
+                    <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
+                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">host: ${hostContact} / joiner: ${joinerContact}</span>
+                `;
+            }
+
             contentHTML += `
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                    
                     <div style="display: flex; position: relative; align-items: center; gap: 14px;">
+                        
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
-                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase;">${hostPlayer}</span>
-                            <span style="font-size: 11px; color: #aaa; margin-top: 2px;">(${hostHero})</span>
+                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
+                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
+                            ${isHostOrJoiner ? `
+                                <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                                <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.contact || '-'}</span>
+                            ` : ''}
                         </div>
+
                         <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;">
-                            <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px;">VS</span>
+                            <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                         </div>
+
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
-                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase;">${joinerPlayer}</span>
-                            <span style="font-size: 11px; color: #aaa; margin-top: 2px;">(${joinerHero})</span>
+                            <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
+                            <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
+                            ${isHostOrJoiner ? `
+                                <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                                <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.contact || '-'}</span>
+                            ` : ''}
                         </div>
+
                     </div>
+
                     ${actionButtonsHTML}
+
                 </div>
             `;
         } else {
             let hostPlayers = Array.isArray(host.players) ? host.players : [];
             let joinerPlayers = Array.isArray(joiner.players) ? joiner.players : [];
 
-            let hostPlayersHTML = hostPlayers.map(p => `<span style="font-size: 11px; font-weight: bold; color: #fff; display: block; padding: 3px 0;">${p}</span>`).join('');
-            let joinerPlayersHTML = joinerPlayers.map(p => `<span style="font-size: 11px; font-weight: bold; color: #fff; display: block; padding: 3px 0;">${p}</span>`).join('');
+            let hostPlayersHTML = '';
+            let joinerPlayersHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                let hp = hostPlayers[i] || '-';
+                let jp = joinerPlayers[i] || 'Waiting...';
+
+                hostPlayersHTML += `<span style="font-size: 11px; font-weight: bold; color: #fff; display: block; padding: 3px 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hp}</span>`;
+                joinerPlayersHTML += `<span style="font-size: 11px; font-weight: bold; color: #fff; display: block; padding: 3px 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${jp}</span>`;
+                
+                if (i < 4) {
+                    hostPlayersHTML += `<div style="border-top: 1px solid rgba(255,255,255,0.08); width: 100%;"></div>`;
+                    joinerPlayersHTML += `<div style="border-top: 1px solid rgba(255,255,255,0.08); width: 100%;"></div>`;
+                }
+            }
 
             contentHTML += `
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                    
                     <div style="display: flex; position: relative; align-items: stretch; gap: 14px;">
-                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
-                            <span style="font-size: 9px; color: #FFD700; font-weight: bold;">Team A Players</span>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1; justify-content: center;">
+                            <span style="font-size: 9px; color: #FFD700; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Team A Players</span>
+                            <div style="border-top: 1px solid rgba(255,215,0,0.2); margin-bottom: 6px; width: 100%;"></div>
                             ${hostPlayersHTML}
+                            ${isHostOrJoiner && host.contact ? `
+                                <div style="border-top: 1px solid rgba(255,215,0,0.2); margin: 6px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888;">Contact: ${host.contact}</span>
+                            ` : ''}
                         </div>
+
                         <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;">
-                            <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px;">VS</span>
+                            <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
-                            <span style="font-size: 9px; color: #FFD700; font-weight: bold;">Team B Players</span>
+
+                        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1; justify-content: center;">
+                            <span style="font-size: 9px; color: #FFD700; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Team B Players</span>
+                            <div style="border-top: 1px solid rgba(255,215,0,0.2); margin-bottom: 6px; width: 100%;"></div>
                             ${joinerPlayersHTML}
+                            ${isHostOrJoiner && joiner.contact ? `
+                                <div style="border-top: 1px solid rgba(255,215,0,0.2); margin: 6px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888;">Contact: ${joiner.contact}</span>
+                            ` : ''}
                         </div>
+
                     </div>
+
                     ${actionButtonsHTML}
+
                 </div>
             `;
         }
@@ -245,47 +280,6 @@ export async function openPlayingMatchDetail(roomId) {
     }
 }
 
-// Global functions များ (Window တွင် တွဲပေးရန်)
-window.toggleReadyState = async function(roomId) {
-    let deviceId = localStorage.getItem('aura_device_id');
-    try {
-        // /api/room-ready အစား ပေါင်းထားသော /api/room-detail-playing ကို ခေါ်ပါမည်
-        const res = await fetch('/api/room-detail-playing', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId }) 
-        });
-                const data = await res.json();
-        if (data.success) {
-            openPlayingMatchDetail(roomId); // Modal ကို Refresh လုပ်မည်
-            loadPlayingMatches(deviceId);   // Main List ကိုပါ Update လုပ်မည်
-        }
-    } catch (e) {
-        console.error("Ready toggle error:", e);
-    }
-}
-
-window.cancelMatch = async function(roomId) {
-    if (!confirm("ဒီပွဲစဉ်ကို ဖျက်သိမ်းမှာ သေချာပါသလား?")) return;
-    let deviceId = localStorage.getItem('aura_device_id');
-    try {
-        // /api/room-cancel အစား ပေါင်းထားသော /api/room-detail-playing ကို ခေါ်မည်ဖြစ်ပြီး action: 'cancel' ထည့်ပေးပါမည်
-        const res = await fetch('/api/room-detail-playing', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId, action: 'cancel' })
-        });
-        const data = await res.json();
-        if (data.success) {
-            closeRoomDetailModal();
-            loadPlayingMatches(deviceId);
-        } else {
-            alert(data.message || "မအောင်မြင်ပါ။");
-        }
-    } catch (e) {
-        console.error("Cancel match error:", e);
-    }
-}
 export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {

@@ -15,18 +15,18 @@ window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
 window.switchTab = switchTab;
 
-import { loadPlayingMatches, openPlayingMatchDetail, closeRoomDetailModal } from './playing.js';
-
-// Global ခေါ်သုံးနိုင်ရန် Window တွင် ချိတ်ဆက်ခြင်း
+import { loadPlayingMatches,openPlayingMatchDetail,closeRoomDetailModal } from './playing.js';
 window.openPlayingMatchDetail = openPlayingMatchDetail;
 window.closeRoomDetailModal = closeRoomDetailModal;
 
-// Device ID ရယူရန် (LocalStorage တွင် သိမ်းထားသော သော့ချက်အပေါ်မူတည်၍ စစ်ဆေးပေးသည်)
-const userDeviceId = localStorage.getItem('aura_device_id') || localStorage.getItem('deviceId') || 'dev_zzy4sn1nx';
+// Playing Tab ကို နှိပ်လိုက်သည့်အချိန် (သို့မဟုတ် Page Load ဖြစ်ချိန်) တွင် ခေါ်သုံးရန်
+loadPlayingMatches();
+// ဥပမာ - LocalStorage ထဲမှ (သို့မဟုတ် app ထဲက) ရရှိထားသော deviceId
+const userDeviceId = localStorage.getItem('deviceId') || 'dev_zzy4sn1nx'; 
 
-// Tab ပြောင်းသည့် function
+// Tab ပြောင်းသည့် function (switchTab ထဲတွင် ထည့်သွင်းနိုင်သည်)
 window.switchTab = function(tabName) {
-    // Tab contents များကို ဖုံးရန်
+    // Tab contents များကို ဖုံးရန်/ပြရန် logic များ...
     document.querySelectorAll('.tab-content-pane').forEach(pane => {
         pane.style.display = 'none';
     });
@@ -36,22 +36,18 @@ window.switchTab = function(tabName) {
     });
 
     // ရွေးလိုက်သော Tab ကိုပြရန်
-    const targetContent = document.getElementById(`content-${tabName}`);
-    const targetTabBtn = document.getElementById(`tab-${tabName}`);
+    document.getElementById(`content-${tabName}`).style.display = 'block';
+    document.getElementById(`tab-${tabName}`).classList.add('active');
 
-    if (targetContent) targetContent.style.display = 'block';
-    if (targetTabBtn) targetTabBtn.classList.add('active');
-
-    // Playing Tab ကို နှိပ်လိုက်ပါက matches များကို လှမ်းခေါ်မည်
+    // 🌟 အကယ်၍ Playing Tab ကို နှိပ်လိုက်ပါက matches များကို လှမ်းခေါ်မည် 🌟
     if (tabName === 'playing') {
         loadPlayingMatches(userDeviceId);
     }
 }
 
-// Page စတင် load ချိန်
+// Page စတင် load ချိန်မှာလည်း လိုအပ်ပါက ခေါ်နိုင်ပါသည်
 document.addEventListener('DOMContentLoaded', () => {
-    // အကယ်၍ ပထမရောက်ရှိတဲ့ Page က Playing Tab ဖြစ်နေပါက တခါတည်း ဝင်ဆွဲရန်
-    loadPlayingMatches(userDeviceId);
+    // ပုံမှန်လုပ်စရာရှိတာတွေ လုပ်ရန်
 });
 // Global variables
 window.currentMode = '5vs5'; // အစပိုင်းမှာ 5vs5
