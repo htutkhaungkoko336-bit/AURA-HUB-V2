@@ -54,6 +54,7 @@ module.exports = async function handler(req, res) {
         // 🌟 DeviceId ပါလာစေရန် Response ထဲသို့ တပါတည်း ထည့်ပေးခြင်း (Frontend က စစ်ဆေးရန်အတွက် အလွန်အရေးကြီးသည်)
         let hostInfo = {
             deviceId: hostDeviceId || roomData.host?.deviceId || '',
+            isReady: roomData.host?.isReady || false, // 🌟 ထည့်သွင်းရန်
             logo: hostRegData.logo || roomData.host?.logo || roomData.logo || 'default-logo.png',
             contact: hostRegData.kpayNo || hostRegData.leaderPhone || hostRegData.contact || roomData.host?.leaderPhone || roomData.host?.contact || roomData.leaderPhone || '-',
             players: extractPlayers(hostRegData, roomData.host || {})
@@ -68,6 +69,7 @@ module.exports = async function handler(req, res) {
 
         let joinerInfo = {
             deviceId: joinerDeviceId || roomData.joiner?.deviceId || '',
+            isReady: roomData.joiner?.isReady || false, // 🌟 ထည့်သွင်းရန်
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
             contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || roomData.joiner?.contact || '-',
             players: extractPlayers(joinerRegData, roomData.joiner || {})
