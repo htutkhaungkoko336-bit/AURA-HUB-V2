@@ -253,9 +253,9 @@ window.toggleReadyState = async function(roomId) {
         const res = await fetch('/api/room-detail-playing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId }) // action မထည့်လျှင် Backend က default အနေဖြင့် Ready ကို လုပ်ဆောင်ပေးပါမည်
+            body: JSON.stringify({ roomId, deviceId }) 
         });
-        const data = await res.json();
+                const data = await res.json();
         if (data.success) {
             openPlayingMatchDetail(roomId); // Modal ကို Refresh လုပ်မည်
             loadPlayingMatches(deviceId);   // Main List ကိုပါ Update လုပ်မည်
