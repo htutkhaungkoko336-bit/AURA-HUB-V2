@@ -21,7 +21,6 @@ export async function loadPlayingMatches(deviceId) {
         const container = document.getElementById('content-playing');
         if (!container) return;
 
-        // Container တွင် card များများလာပါက scroll လုပ်နိုင်ရန်
         container.style.maxHeight = '65vh';
         container.style.overflowY = 'auto';
         container.style.paddingRight = '4px';
@@ -55,13 +54,11 @@ export async function loadPlayingMatches(deviceId) {
                         
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 4px;">
                             
-                            <!-- ဘယ်ဘက်အခြမ်း -->
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
                                 <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
-                            <!-- အလယ်အုပ်စု (Fee, Mode, BO နဲ့ VS တုံး) -->
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; flex-shrink: 0; padding: 0 8px;">
                                 <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
                                     <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.4); font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px;">${feeText}</span>
@@ -71,7 +68,6 @@ export async function loadPlayingMatches(deviceId) {
                                 <div style="font-size: 11px; font-weight: 900; color: #FFD700; background: rgba(255, 215, 0, 0.12); padding: 4px 14px; border-radius: 6px; border: 1.5px solid rgba(255, 215, 0, 0.35); letter-spacing: 1.5px; margin-top: 10px;">VS</div>
                             </div>
 
-                            <!-- ညာဘက်အခြမ်း -->
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
                                 <img src="${opponentData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
                                 <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${opponentTitle}</span>
@@ -114,7 +110,6 @@ export async function openPlayingMatchDetail(roomId) {
         const match = result.data;
         const mode = match.mode || '5vs5';
         
-        // နှစ်ခုစလုံးအတွက် Match Details ဟု သတ်မှတ်ခြင်း
         modalTitle.innerText = 'Match Details';
 
         const host = match.host || {};
@@ -131,11 +126,11 @@ export async function openPlayingMatchDetail(roomId) {
         let currentDeviceId = localStorage.getItem('aura_device_id') || '';
         let isHostOrJoiner = (currentDeviceId === host.deviceId || currentDeviceId === joiner.deviceId);
 
-        // Host သို့မဟုတ် Joiner ဖြစ်မှသာ ပြသမည့် Confirm နှင့် Cancel ခလုတ်များ
+        // Host သို့မဟုတ် Joiner ဖြစ်မှသာ Confirm/Cancel ခလုတ်နှင့် Contact အချက်အလက်များကို ပြသရန်
         let actionButtonsHTML = '';
         if (isHostOrJoiner) {
             actionButtonsHTML = `
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
                     <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
                 </div>
@@ -146,13 +141,11 @@ export async function openPlayingMatchDetail(roomId) {
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
-                    <!-- Host (Team A) Logo & Squad Name -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
+                        <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
-                    <!-- Center Badges -->
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; padding: 0 6px;">
                         <div style="display: flex; gap: 4px;">
                             <span style="background: rgba(255, 215, 0, 0.15); color: #FFD700; font-size: 9px; padding: 2px 4px; border-radius: 4px; border: 1px solid rgba(255,215,0,0.3);">${feeText}</span>
@@ -161,9 +154,8 @@ export async function openPlayingMatchDetail(roomId) {
                         </div>
                     </div>
 
-                    <!-- Joiner (Team B) Logo & Squad Name -->
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #FFD700;" alt="Logo">
+                        <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
                         ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                     </div>
                 </div>
@@ -172,38 +164,48 @@ export async function openPlayingMatchDetail(roomId) {
         if (mode === '1vs1') {
             let hostPlayer = host.playerName || 'N/A';
             let hostHero = host.heroName || 'N/A';
-            let hostContact = host.contact || '-';
-            
             let joinerPlayer = joiner.playerName || 'Waiting...';
             let joinerHero = joiner.heroName || 'Waiting...';
-            let joinerContact = joiner.contact || '-';
+
+            // Contact အချက်အလက်ကို Host သို့မဟုတ် Joiner ဖြစ်မှသာ ပြသရန်
+            let contactHTML = '';
+            if (isHostOrJoiner) {
+                let hostContact = host.contact || '-';
+                let joinerContact = joiner.contact || '-';
+                contactHTML = `
+                    <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
+                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">host: ${hostContact} / joiner: ${joinerContact}</span>
+                `;
+            }
 
             contentHTML += `
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
                     
                     <div style="display: flex; position: relative; align-items: center; gap: 14px;">
                         
-                        <!-- ဘယ်ဘက်ခြမ်း: Host အကွက် -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
                             <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostPlayer}</span>
                             <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${hostHero})</span>
-                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
-                            <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${hostContact}</span>
+                            ${isHostOrJoiner ? `
+                                <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                                <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.contact || '-'}</span>
+                            ` : ''}
                         </div>
 
-                        <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် -->
                         <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;">
                             <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                         </div>
 
-                        <!-- ညာဘက်ခြမ်း: Joiner အကွက် -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1;">
                             <span style="font-size: 12px; font-weight: bold; color: #FFD700; text-transform: uppercase; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerPlayer}</span>
                             <span style="font-size: 11px; color: #aaa; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">(${joinerHero})</span>
-                            <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
-                            <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                            <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joinerContact}</span>
+                            ${isHostOrJoiner ? `
+                                <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
+                                <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.contact || '-'}</span>
+                            ` : ''}
                         </div>
 
                     </div>
@@ -237,23 +239,28 @@ export async function openPlayingMatchDetail(roomId) {
                     
                     <div style="display: flex; position: relative; align-items: stretch; gap: 14px;">
                         
-                        <!-- ဘယ်ဘက်ခြမ်း: Host (Team A) ကစားသမားများ အကွက် -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1; justify-content: center;">
                             <span style="font-size: 9px; color: #FFD700; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Team A Players</span>
                             <div style="border-top: 1px solid rgba(255,215,0,0.2); margin-bottom: 6px; width: 100%;"></div>
                             ${hostPlayersHTML}
+                            ${isHostOrJoiner && host.contact ? `
+                                <div style="border-top: 1px solid rgba(255,215,0,0.2); margin: 6px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888;">Contact: ${host.contact}</span>
+                            ` : ''}
                         </div>
 
-                        <!-- အလယ်တည့်တည့်ရှိ VS ဘောင် -->
                         <div style="display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;">
                             <span style="font-size: 10px; font-weight: bold; color: #000; background: #FFD700; padding: 4px 8px; border-radius: 4px; border: 1px solid #fff;">VS</span>
                         </div>
 
-                        <!-- ညာဘက်ခြမ်း: Joiner (Team B) ကစားသမားများ အကွက် -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,215,0,0.3); flex: 1; justify-content: center;">
                             <span style="font-size: 9px; color: #FFD700; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Team B Players</span>
                             <div style="border-top: 1px solid rgba(255,215,0,0.2); margin-bottom: 6px; width: 100%;"></div>
                             ${joinerPlayersHTML}
+                            ${isHostOrJoiner && joiner.contact ? `
+                                <div style="border-top: 1px solid rgba(255,215,0,0.2); margin: 6px 0; width: 100%;"></div>
+                                <span style="font-size: 9px; color: #888;">Contact: ${joiner.contact}</span>
+                            ` : ''}
                         </div>
 
                     </div>
