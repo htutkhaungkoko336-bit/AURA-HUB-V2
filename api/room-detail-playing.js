@@ -15,7 +15,8 @@ module.exports = async function handler(req, res) {
             const { roomId } = req.query;
             if (!roomId) return res.status(400).json({ success: false, message: "Room ID လိုအပ်ပါသည်။" });
 
-            const roomDoc = await db.collection('rooms').doc(roomId).get();
+            // 'rooms' အစား 'matches' collection ကို သုံးရန်
+            const roomDoc = await db.collection('matches').doc(roomId).get();
             if (!roomDoc.exists) return res.status(404).json({ success: false, message: "Room မတွေ့ရှိပါ။" });
 
             const roomData = roomDoc.data();
@@ -89,14 +90,15 @@ module.exports = async function handler(req, res) {
             return res.status(200).json({ success: true, data: responseData });
         }
 
-        // 2. POST Request: Ready လုပ်ခြင်း (သို့မဟုတ်) Cancel လုပ်ခြင်း (Query ထဲက action ပေါ်မူတည်၍ ခွဲမည်)
+        // 2. POST Request: Ready လုပ်ခြင်း (သို့မဟုတ်) Cancel လုပ်ခြင်း
         if (req.method === 'POST') {
             const { roomId, deviceId, action } = req.body;
             if (!roomId || !deviceId) {
                 return res.status(400).json({ success: false, message: "Room ID နှင့် Device ID လိုအပ်ပါသည်။" });
             }
 
-            const roomRef = db.collection('rooms').doc(roomId);
+            // 'rooms' အစား 'matches' collection ကို သုံးရန်
+            const roomRef = db.collection('matches').doc(roomId);
             const roomDoc = await roomRef.get();
             if (!roomDoc.exists) return res.status(404).json({ success: false, message: "Room not found" });
 
@@ -113,7 +115,7 @@ module.exports = async function handler(req, res) {
                 return res.status(200).json({ success: true, message: "Room cancelled successfully" });
             }
 
-            // မဟုတ်ပါက Default အနေဖြင့် Ready Status ကို ပြောင်းလဲပေးမည် (room-ready)
+            // မဟုတ်ပါက Default အနေဖြင့် Ready Status ကို ပြောင်းလဲပေးမည်
             let updateData = {};
             if (roomData.host?.deviceId === deviceId) {
                 let currentReady = roomData.host?.isReady || false;
