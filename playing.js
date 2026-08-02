@@ -249,10 +249,11 @@ export async function openPlayingMatchDetail(roomId) {
 window.toggleReadyState = async function(roomId) {
     let deviceId = localStorage.getItem('aura_device_id');
     try {
-        const res = await fetch('/api/room-ready', {
+        // /api/room-ready အစား ပေါင်းထားသော /api/room-detail-playing ကို ခေါ်ပါမည်
+        const res = await fetch('/api/room-detail-playing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId })
+            body: JSON.stringify({ roomId, deviceId }) // action မထည့်လျှင် Backend က default အနေဖြင့် Ready ကို လုပ်ဆောင်ပေးပါမည်
         });
         const data = await res.json();
         if (data.success) {
@@ -268,10 +269,11 @@ window.cancelMatch = async function(roomId) {
     if (!confirm("ဒီပွဲစဉ်ကို ဖျက်သိမ်းမှာ သေချာပါသလား?")) return;
     let deviceId = localStorage.getItem('aura_device_id');
     try {
-        const res = await fetch('/api/room-cancel', {
+        // /api/room-cancel အစား ပေါင်းထားသော /api/room-detail-playing ကို ခေါ်မည်ဖြစ်ပြီး action: 'cancel' ထည့်ပေးပါမည်
+        const res = await fetch('/api/room-detail-playing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId })
+            body: JSON.stringify({ roomId, deviceId, action: 'cancel' })
         });
         const data = await res.json();
         if (data.success) {
@@ -284,7 +286,6 @@ window.cancelMatch = async function(roomId) {
         console.error("Cancel match error:", e);
     }
 }
-
 export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
