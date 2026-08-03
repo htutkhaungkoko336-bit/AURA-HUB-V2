@@ -13,14 +13,12 @@ module.exports = async function handler(req, res) {
 
         if (!roomId) return res.status(400).json({ success: false, message: "Room ID လိုအပ်ပါသည်။" });
 
-        // rooms လို့ သိမ်းထားရင် rooms, matches လို့ သိမ်းထားရင် matches ကို ညှိပေးရန် (ဒီမှာ matches ကို ဦးစားပေးစစ်ဆေးသည်)
-        let matchRef = db.collection('matches').doc(roomId);
+        // rooms collection တစ်ခုတည်းကိုသာ တိုက်ရိုက်စစ်ဆေးသည်
+        let matchRef = db.collection('rooms').doc(roomId);
         let matchDoc = await matchRef.get();
         
         if (!matchDoc.exists) {
-            matchRef = db.collection('rooms').doc(roomId);
-            matchDoc = await matchRef.get();
-            if (!matchDoc.exists) return res.status(404).json({ success: false, message: "Room မတွေ့ရှိပါ။" });
+            return res.status(404).json({ success: false, message: "Room မတွေ့ရှိပါ။" });
         }
 
         const roomData = matchDoc.data();
@@ -57,6 +55,7 @@ module.exports = async function handler(req, res) {
 
             return res.status(400).json({ success: false, message: "Invalid action" });
         }
+
         // 🌟 GET Method (Detail အချက်အလက်များ ဆွဲထုတ်သည့်အခါ)
         const mode = roomData.mode || '5vs5';
 
