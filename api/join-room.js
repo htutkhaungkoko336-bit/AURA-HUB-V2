@@ -56,43 +56,34 @@ module.exports = async function handler(req, res) {
             const hostRegQuery = await db.collection('registrations').where('deviceId', '==', roomData.hostDeviceId).get();
             const hostRegData = !hostRegQuery.empty ? hostRegQuery.docs[0].data() : {};
 
-            // ၆. `matches` collection ထဲသို့ Mode ပေါ်မူတည်ပြီး အချက်အလက်များ တိကျမှန်ကန်စွာ သိမ်းဆည်းခြင်း
-            const matchRef = await db.collection('matches').add({
-                roomId: roomId,
-                mode: roomData.mode,
-                entryFee: roomData.entryFee || hostRegData.entryFee || "0",
-                
-                // Host Team info (1vs1 ဆိုရင် playerName ကို ယူမယ်၊ 5vs5 ဆိုရင် squadName ကို ယူမယ်)
-                host: {
-                    deviceId: roomData.hostDeviceId,
-                    teamName: roomData.teamName || hostRegData.squadName || hostRegData.playerName || "Host",
-                    playerName: roomData.playerName || hostRegData.playerName || "",
-                    mlbbId: roomData.mlbbId || hostRegData.mlbbId || "",
-                    logo: roomData.logo || hostRegData.logo || "",
-                    heroName: hostRegData.heroName || "", // 1vs1 အတွက်
-                    confirmed: false
-                },
+            // ၆. `matches` collection အစား `rooms` ထဲတွင်သာ Joiner အချက်အလက်များကို တိုက်ရိုက်သိမ်းဆည်းခြင်း
+            const joinerInfo = {
+                deviceId: deviceId,
+                teamName: joinerData.teamName || joinerData.squadName || joinerData.playerName || joinerData.name || "Joiner",
+                playerName: joinerData.playerName || joinerData.name || joinerData.player || "",
+                mlbbId: joinerData.mlbbId || "",
+                logo: joinerData.logo || "",
+                heroName: joinerData.heroName || "",
+                confirmed: false
+            };
 
-                // Joiner Team info (Frontend က ပို့လာတဲ့ joinerData ကို Mode အလိုက် အပြည့်အစုံဖမ်းမယ်)
-                joiner: {
-                    deviceId: deviceId,
-                    teamName: joinerData.teamName || joinerData.squadName || joinerData.playerName || joinerData.name || "Joiner",
-                    playerName: joinerData.playerName || joinerData.name || joinerData.player || "",
-                    mlbbId: joinerData.mlbbId || "",
-                    logo: joinerData.logo || "",
-                    heroName: joinerData.heroName || "",
-                    confirmed: false
-                },
+            const hostInfo = {
+                deviceId: roomData.hostDeviceId,
+                teamName: roomData.teamName || hostRegData.squadName || hostRegData.playerName || "Host",
+                playerName: roomData.playerName || hostRegData.playerName || "",
+                mlbbId: roomData.mlbbId || hostRegData.mlbbId || "",
+                logo: roomData.logo || hostRegData.logo || "",
+                heroName: hostRegData.heroName || "",
+                confirmed: false
+            };
 
-                status: 'pending_confirmation',
-                createdAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
-            });
-
-            // ၇. မူလ Room ၏ status ကို 'matched' သို့ ပြောင်းလဲခြင်း
+            // ၇. မူလ Room ၏ status ကို 'matched' သို့ပြောင်းလဲပြီး Host နှင့် Joiner အချက်အလက်များကို rooms ထဲတိုက်ရိုက်ထည့်ခြင်း
             await roomRef.update({
                 status: 'matched',
                 joinerDeviceId: deviceId,
-                matchId: matchRef.id
+                host: hostInfo,
+                joiner: joinerInfo,
+                updatedAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
             });
 
             // ၈. Joiner ၏ Key Status ကို 'in-use' သို့ ပြောင်းလဲခြင်း
@@ -104,7 +95,7 @@ module.exports = async function handler(req, res) {
             return res.status(200).json({ 
                 success: true, 
                 message: "Match ဝင်ရောက်ခြင်း အောင်မြင်ပါသည်။",
-                matchId: matchRef.id
+                roomId: roomId 
             });
 
         } catch (error) {
