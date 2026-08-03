@@ -13,12 +13,14 @@ module.exports = async function handler(req, res) {
 
         if (!roomId) return res.status(400).json({ success: false, message: "Room ID လိုအပ်ပါသည်။" });
 
-        // အသစ် (matches ကိုသာ သီးသန့်စစ်ဆေးမည်)
+        // rooms လို့ သိမ်းထားရင် rooms, matches လို့ သိမ်းထားရင် matches ကို ညှိပေးရန် (ဒီမှာ matches ကို ဦးစားပေးစစ်ဆေးသည်)
         let matchRef = db.collection('matches').doc(roomId);
         let matchDoc = await matchRef.get();
-
+        
         if (!matchDoc.exists) {
-            return res.status(404).json({ success: false, message: "Match မတွေ့ရှိပါ။" });
+            matchRef = db.collection('rooms').doc(roomId);
+            matchDoc = await matchRef.get();
+            if (!matchDoc.exists) return res.status(404).json({ success: false, message: "Room မတွေ့ရှိပါ။" });
         }
 
         const roomData = matchDoc.data();
