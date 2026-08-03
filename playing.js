@@ -15,7 +15,8 @@ export async function loadPlayingMatches(deviceId) {
     }
 
     try {
-        const response = await fetch(`/api/active-rooms?type=matches&deviceId=${deviceId}`);
+        // 🔥 type=matches အစား type=rooms နှင့် status=matched ကို သုံးရန် ပြင်ဆင်ခြင်း
+        const response = await fetch(`/api/active-rooms?type=rooms&status=matched&deviceId=${deviceId}`);
         const result = await response.json();
 
         const container = document.getElementById('content-playing');
@@ -50,13 +51,13 @@ export async function loadPlayingMatches(deviceId) {
                 const opponentTitle = rawOpponentTitle.toUpperCase();
 
                 html += `
-                    <div class="room-card-ios" onclick="openPlayingMatchDetail('${match.roomId}')" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff; cursor: pointer;">
+                    <div class="room-card-ios" onclick="openPlayingMatchDetail('${match.roomId || match.id}')" style="background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; color: #fff; cursor: pointer;">
                         
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; padding: 0 4px;">
                             
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
                                 <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
-                                <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
+                                <span style="font-size: ` + `12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; flex-shrink: 0; padding: 0 8px;">
@@ -87,7 +88,6 @@ export async function loadPlayingMatches(deviceId) {
         console.error("Error loading playing matches:", error);
     }
 }
-
 export async function openPlayingMatchDetail(roomId) {
     const modal = document.getElementById('room-detail-modal');
     const modalBody = document.getElementById('modal-body-content');
