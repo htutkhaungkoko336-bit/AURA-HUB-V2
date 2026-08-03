@@ -130,25 +130,25 @@ export async function openPlayingMatchDetail(roomId) {
         // ကိုယ့်ရဲ့ Confirmed အခြေအနေကို စစ်ဆေးခြင်း
         let isConfirmed = isHost ? (host.confirmed === true) : (joiner.confirmed === true);
 
-        // Action Buttons (Ready / Unready နှင့် Cancel Match)
         let actionButtonsHTML = '';
         if (isHostOrJoiner) {
-            if (isConfirmed) {
-                // Ready ဖြစ်နေရင် -> Unready ခလုတ်ပြမယ်၊ Cancel ခလုတ် ပျောက်မယ်
-                actionButtonsHTML = `
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="toggleMatchReady('${roomId}', false)" style="flex: 1; background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Unready</button>
-                    </div>
-                `;
-            } else {
-                // Ready မဖြစ်သေးရင် -> Ready ခလုတ်နဲ့ Cancel ခလုတ် နှစ်ခုလုံးပြမယ်
-                actionButtonsHTML = `
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="toggleMatchReady('${roomId}', true)" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Ready</button>
-                        <button onclick="cancelMatch('${roomId}')" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel Match</button>
-                    </div>
-                `;
-            }
+            // Ready ဖြစ်နေရင် ခလုတ်စာသားက Unready ဖြစ်မယ်၊ မဖြစ်ရင် Ready ဖြစ်မယ်
+            let readyText = isConfirmed ? 'Unready' : 'Ready';
+            // Ready ဖြစ်နေရင် Unready ခလုတ်ကို တစ်မျိုးအရောင်ပြမယ်၊ မဖြစ်ရင် ပုံမှန် Ready အရောင်ပြမယ်
+            let readyBg = isConfirmed 
+                ? 'background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4);' 
+                : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';
+
+            // Cancel Match ခလုတ်အတွက် - ကိုယ်က Ready ပြီးသွားရင် (isConfirmed ဖြစ်နေရင်) မှိန်သွားမယ် (disabled ဖြစ်မယ်)
+            let cancelOpacity = isConfirmed ? '0.4' : '1';
+            let cancelCursor = isConfirmed ? 'not-allowed' : 'pointer';
+
+            actionButtonsHTML = `
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="toggleMatchReady('${roomId}', ${!isConfirmed})" style="flex: 1; ${readyBg} padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">${readyText}</button>
+                    <button onclick="${isConfirmed ? '' : `cancelMatch('${roomId}')`}" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; opacity: ${cancelOpacity}; cursor: ${cancelCursor};">Cancel Match</button>
+                </div>
+            `;
         }
 
         let contentHTML = `
