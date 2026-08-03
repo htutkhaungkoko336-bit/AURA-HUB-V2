@@ -25,16 +25,18 @@ module.exports = async function handler(req, res) {
 
         const roomData = matchDoc.data();
 
-        // 🌟 POST Method (Ready/Unready သို့မဟုတ် Cancel လုပ်သည့်အခါ)
         if (req.method === 'POST') {
             if (action === 'ready') {
+                let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
+                let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
+
                 let updateData = {};
-                if (roomData.host?.deviceId === deviceId) {
+                if (hostDevId === deviceId) {
                     updateData['host.confirmed'] = status;
-                } else if (roomData.joiner?.deviceId === deviceId) {
+                } else if (joinerDevId === deviceId) {
                     updateData['joiner.confirmed'] = status;
                 } else {
-                    return res.status(403).json({ success: false, message: "ခွင့်ပြုချက်မရှိပါ။" });
+                    return res.status(403).json({ success: false, message: "ခွင့်ပြုချက်မရှိပါ။ (Device ID မကိုက်ညီပါ)" });
                 }
 
                 await matchRef.update(updateData);
@@ -42,7 +44,10 @@ module.exports = async function handler(req, res) {
             }
 
             if (action === 'cancel') {
-                if (roomData.host?.deviceId === deviceId || roomData.joiner?.deviceId === deviceId) {
+                let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
+                let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
+
+                if (hostDevId === deviceId || joinerDevId === deviceId) {
                     await matchRef.delete();
                     return res.status(200).json({ success: true, message: "Match cancelled" });
                 } else {
@@ -52,7 +57,6 @@ module.exports = async function handler(req, res) {
 
             return res.status(400).json({ success: false, message: "Invalid action" });
         }
-
         // 🌟 GET Method (Detail အချက်အလက်များ ဆွဲထုတ်သည့်အခါ)
         const mode = roomData.mode || '5vs5';
 
