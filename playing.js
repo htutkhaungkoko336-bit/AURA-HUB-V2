@@ -128,7 +128,6 @@ export async function openPlayingMatchDetail(roomId) {
         let isHostOrJoiner = isHost || isJoiner;
 
         // ကိုယ့်ရဲ့ Confirmed အခြေအနေကို စစ်ဆေးခြင်း
-        let myConfirmed = isвени ? host.confirmed : joiner.confirmed; // အောက်မှာလို အတိအကျသုံးရန်
         let isConfirmed = isHost ? (host.confirmed === true) : (joiner.confirmed === true);
 
         // Action Buttons (Ready / Unready နှင့် Cancel Match)
@@ -296,7 +295,6 @@ export async function toggleMatchReady(roomId, status) {
         });
         const result = await response.json();
         if (result.success) {
-            // အောင်မြင်ပါက Modal ကို ပုံစံအသစ်ဖြင့် ပြန်လည် Refresh လုပ်ပေးမည်
             openPlayingMatchDetail(roomId);
         } else {
             alert(result.message || 'Action failed');
@@ -322,7 +320,7 @@ export async function cancelMatch(roomId) {
         const result = await response.json();
         if (result.success) {
             closeRoomDetailModal();
-            loadPlayingMatches(deviceId); // List ကိုပါ ပုံစံအသစ်ဖြစ်အောင် Update လုပ်မည်
+            loadPlayingMatches(deviceId);
         } else {
             alert(result.message || 'Cancel failed');
         }
