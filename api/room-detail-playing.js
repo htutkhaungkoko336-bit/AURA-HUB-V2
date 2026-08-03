@@ -1,4 +1,3 @@
-// Server side: /api/room-detail-playing handler
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 
@@ -9,19 +8,54 @@ const app = getApps().length === 0 ? initializeApp({
 const db = getFirestore(app);
 
 module.exports = async function handler(req, res) {
-    if (req.method !== 'GET') return res.status(405).end();
-
     try {
-        const { roomId } = req.query;
+        const { roomId, deviceId, action, status } = req.method === 'POST' ? req.body : req.query;
+
         if (!roomId) return res.status(400).json({ success: false, message: "Room ID လိုအပ်ပါသည်။" });
 
-        const roomDoc = await db.collection('rooms').doc(roomId).get();
-        if (!roomDoc.exists) return res.status(404).json({ success: false, message: "Room မတွေ့ရှိပါ။" });
+        // rooms လို့ သိမ်းထားရင် rooms, matches လို့ သိမ်းထားရင် matches ကို ညှိပေးရန် (ဒီမှာ matches ကို ဦးစားပေးစစ်ဆေးသည်)
+        let matchRef = db.collection('matches').doc(roomId);
+        let matchDoc = await matchRef.get();
+        
+        if (!matchDoc.exists) {
+            matchRef = db.collection('rooms').doc(roomId);
+            matchDoc = await matchRef.get();
+            if (!matchDoc.exists) return res.status(404).json({ success: false, message: "Room မတွေ့ရှိပါ။" });
+        }
 
-        const roomData = roomDoc.data();
+        const roomData = matchDoc.data();
+
+        // 🌟 POST Method (Ready/Unready သို့မဟုတ် Cancel လုပ်သည့်အခါ)
+        if (req.method === 'POST') {
+            if (action === 'ready') {
+                let updateData = {};
+                if (roomData.host?.deviceId === deviceId) {
+                    updateData['host.confirmed'] = status;
+                } else if (roomData.joiner?.deviceId === deviceId) {
+                    updateData['joiner.confirmed'] = status;
+                } else {
+                    return res.status(403).json({ success: false, message: "ခွင့်ပြုချက်မရှိပါ။" });
+                }
+
+                await matchRef.update(updateData);
+                return res.status(200).json({ success: true, message: "Updated successfully" });
+            }
+
+            if (action === 'cancel') {
+                if (roomData.host?.deviceId === deviceId || roomData.joiner?.deviceId === deviceId) {
+                    await matchRef.delete();
+                    return res.status(200).json({ success: true, message: "Match cancelled" });
+                } else {
+                    return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
+                }
+            }
+
+            return res.status(400).json({ success: false, message: "Invalid action" });
+        }
+
+        // 🌟 GET Method (Detail အချက်အလက်များ ဆွဲထုတ်သည့်အခါ)
         const mode = roomData.mode || '5vs5';
 
-        // 1. Host (Team A) ဒေတာများကို roomData ထဲမှ (သို့မဟုတ်) registrations မှ ဆွဲထုတ်ခြင်း
         let hostRegData = {};
         const hostDeviceId = roomData.host?.deviceId || roomData.hostDeviceId;
         if (hostDeviceId) {
@@ -29,7 +63,6 @@ module.exports = async function handler(req, res) {
             if (!hostSnap.empty) hostRegData = hostSnap.docs[0].data();
         }
 
-        // 2. Joiner (Team B) ဒေတာများကို roomData ထဲမှ (သို့မဟုတ်) registrations မှ ဆွဲထုတ်ခြင်း
         let joinerRegData = {};
         const joinerDeviceId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
         if (joinerDeviceId) {
@@ -39,8 +72,10 @@ module.exports = async function handler(req, res) {
 
         function extractPlayers(regSource, roomSource) {
             let list = [];
+            let sourcePlayers = roomSource.players || regSource.players;
+            
             for (let i = 1; i <= 5; i++) {
-                let p = regSource[`player${i}`] || roomSource[`player${i}`] || roomSource.players?.[i - 1];
+                let p = regSource[`player${i}`] || roomSource[`player${i}`] || (Array.isArray(sourcePlayers) ? sourcePlayers[i - 1] : null);
                 if (p) {
                     let pName = (typeof p === 'object' && p !== null) ? (p.name || p.playerName || 'N/A') : p;
                     list.push(pName);
@@ -51,11 +86,11 @@ module.exports = async function handler(req, res) {
             return list;
         }
 
-        // 🌟 DeviceId ပါလာစေရန် Response ထဲသို့ တပါတည်း ထည့်ပေးခြင်း (Frontend က စစ်ဆေးရန်အတွက် အလွန်အရေးကြီးသည်)
         let hostInfo = {
             deviceId: hostDeviceId || roomData.host?.deviceId || '',
             logo: hostRegData.logo || roomData.host?.logo || roomData.logo || 'default-logo.png',
             contact: hostRegData.kpayNo || hostRegData.leaderPhone || hostRegData.contact || roomData.host?.leaderPhone || roomData.host?.contact || roomData.leaderPhone || '-',
+            confirmed: roomData.host?.confirmed || false,
             players: extractPlayers(hostRegData, roomData.host || {})
         };
 
@@ -63,13 +98,14 @@ module.exports = async function handler(req, res) {
             hostInfo.playerName = hostRegData.playerName || roomData.host?.playerName || roomData.playerName || 'N/A';
             hostInfo.heroName = hostRegData.heroName || roomData.host?.heroName || 'N/A';
         } else {
-            hostInfo.squadName = hostRegData.squadName || roomData.host?.squadName || 'Team A';
+            hostInfo.squadName = hostRegData.squadName || roomData.host?.squadName || roomData.host?.teamName || 'Team A';
         }
 
         let joinerInfo = {
             deviceId: joinerDeviceId || roomData.joiner?.deviceId || '',
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
             contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || roomData.joiner?.contact || '-',
+            confirmed: roomData.joiner?.confirmed || false,
             players: extractPlayers(joinerRegData, roomData.joiner || {})
         };
 
@@ -77,7 +113,7 @@ module.exports = async function handler(req, res) {
             joinerInfo.playerName = joinerRegData.playerName || roomData.joiner?.playerName || 'Waiting...';
             joinerInfo.heroName = joinerRegData.heroName || roomData.joiner?.heroName || 'Waiting...';
         } else {
-            joinerInfo.squadName = joinerRegData.squadName || roomData.joiner?.squadName || 'Team B';
+            joinerInfo.squadName = joinerRegData.squadName || roomData.joiner?.squadName || roomData.joiner?.teamName || 'Team B';
         }
 
         let responseData = {
