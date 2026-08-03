@@ -127,25 +127,21 @@ export async function openPlayingMatchDetail(roomId) {
         let isJoiner = currentDeviceId === joiner.deviceId;
         let isHostOrJoiner = isHost || isJoiner;
 
-        // ကိုယ့်ရဲ့ Confirmed အခြေအနေကို စစ်ဆေးခြင်း
         let isConfirmed = isHost ? (host.confirmed === true) : (joiner.confirmed === true);
 
         let actionButtonsHTML = '';
         if (isHostOrJoiner) {
-            // Ready ဖြစ်နေရင် ခလုတ်စာသားက Unready ဖြစ်မယ်၊ မဖြစ်ရင် Ready ဖြစ်မယ်
             let readyText = isConfirmed ? 'Unready' : 'Ready';
-            // Ready ဖြစ်နေရင် Unready ခလုတ်ကို တစ်မျိုးအရောင်ပြမယ်၊ မဖြစ်ရင် ပုံမှန် Ready အရောင်ပြမယ်
             let readyBg = isConfirmed 
                 ? 'background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4);' 
                 : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';
 
-            // Cancel Match ခလုတ်အတွက် - ကိုယ်က Ready ပြီးသွားရင် (isConfirmed ဖြစ်နေရင်) မှိန်သွားမယ် (disabled ဖြစ်မယ်)
             let cancelOpacity = isConfirmed ? '0.4' : '1';
             let cancelCursor = isConfirmed ? 'not-allowed' : 'pointer';
 
             actionButtonsHTML = `
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="toggleMatchReady('${roomId}', ${!isConfirmed})" style="flex: 1; ${readyBg} padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">${readyText}</button>
+                    <button onclick="toggleMatchReady('${roomId}', ${!isConfirmed}, this)" style="flex: 1; ${readyBg} padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">${readyText}</button>
                     <button onclick="${isConfirmed ? '' : `cancelMatch('${roomId}')`}" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; opacity: ${cancelOpacity}; cursor: ${cancelCursor};">Cancel Match</button>
                 </div>
             `;
@@ -282,8 +278,7 @@ export async function openPlayingMatchDetail(roomId) {
     }
 }
 
-// Ready / Unready ပြုလုပ်ရန် API ကို လှမ်းခေါ်မည့် function
-export async function toggleMatchReady(roomId, status) {
+export async function toggleMatchReady(roomId, status, btnElement) {
     let deviceId = localStorage.getItem('aura_device_id') || '';
     if (!deviceId) return;
 
@@ -296,38 +291,29 @@ export async function toggleMatchReady(roomId, status) {
         const result = await response.json();
         
         if (result.success) {
-            // Page တစ်ခုလုံး (သို့) Modal တစ်ခုလုံးကို reload လုပ်မည့်အစား 
-            // လိုအပ်သော ခလုတ်နှင့် Cancel button ၏ State ကိုသာ တိုက်ရိုက်ပြောင်းပါ
-            
-            const readyBtn = event.target; // နှိပ်လိုက်သော Ready/Unready ခလုတ်
-            // Cancel Match ခလုတ်ကို ရှာရန် (Modal ထဲရှိ ဒုတိယခလုတ် သို့မဟုတ် class/attributes ဖြင့် ရှာနိုင်သည်)
-            const actionContainer = readyBtn.parentElement;
+            const readyBtn = btnElement; 
+            const actionContainer = readyBtn ? readyBtn.parentElement : null;
             const cancelBtn = actionContainer ? actionContainer.querySelector('button:nth-child(2)') : null;
 
             if (status === true) {
-                // Ready ဖြစ်သွားပြီဆိုလျှင်
                 readyBtn.innerText = 'Unready';
                 readyBtn.style.background = 'rgba(50, 205, 50, 0.2)';
                 readyBtn.style.color = '#32CD32';
                 readyBtn.style.border = '1px solid rgba(50, 205, 50, 0.4)';
-                // status အသစ်သို့ onclick attribute ကို ပြောင်းပေးပါ
-                readyBtn.setAttribute('onclick', `toggleMatchReady('${roomId}', false)`);
+                readyBtn.setAttribute('onclick', `toggleMatchReady('${roomId}', false, this)`);
 
-                // Cancel Match ကို မှိန်မည် (Disabled လုပ်မည်)
                 if (cancelBtn) {
                     cancelBtn.style.opacity = '0.4';
                     cancelBtn.style.cursor = 'not-allowed';
                     cancelBtn.setAttribute('onclick', '');
                 }
             } else {
-                // Unready ဖြစ်သွားပြီဆိုလျှင်
                 readyBtn.innerText = 'Ready';
                 readyBtn.style.background = 'linear-gradient(135deg, #FFD700, #FFA500)';
                 readyBtn.style.color = '#000';
                 readyBtn.style.border = 'none';
-                readyBtn.setAttribute('onclick', `toggleMatchReady('${roomId}', true)`);
+                readyBtn.setAttribute('onclick', `toggleMatchReady('${roomId}', true, this)`);
 
-                // Cancel Match ကို ပုံမှန်အတိုင်း ပြန်ပေါ်မည်
                 if (cancelBtn) {
                     cancelBtn.style.opacity = '1';
                     cancelBtn.style.cursor = 'pointer';
@@ -335,7 +321,6 @@ export async function toggleMatchReady(roomId, status) {
                 }
             }
 
-            // နောက်ကွယ်က active-rooms စာရင်းကိုပါ တစ်ခါတည်း update ဖြစ်သွားအောင် လှမ်းခေါ်ပေးပါ
             loadPlayingMatches(deviceId);
 
         } else {
@@ -345,7 +330,7 @@ export async function toggleMatchReady(roomId, status) {
         console.error("Ready/Unready Error:", error);
     }
 }
-// Match ဖျက်သိမ်းရန် (Cancel) API ကို လှမ်းခေါ်မည့် function
+
 export async function cancelMatch(roomId) {
     let deviceId = localStorage.getItem('aura_device_id') || '';
     if (!deviceId) return;
