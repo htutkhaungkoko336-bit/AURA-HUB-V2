@@ -15,9 +15,11 @@ window.joinOrViewRoom = joinOrViewRoom;
 window.joinMatchRoom = joinMatchRoom;
 window.switchTab = switchTab;
 
-import { loadPlayingMatches,openPlayingMatchDetail,closeRoomDetailModal } from './playing.js';
+import { loadPlayingMatches,openPlayingMatchDetail,closeRoomDetailModal,toggleMatchReady,cancelMatch } from './playing.js';
 window.openPlayingMatchDetail = openPlayingMatchDetail;
 window.closeRoomDetailModal = closeRoomDetailModal;
+window.toggleMatchReady = toggleMatchReady;
+window.cancelMatch = cancelMatch;
 
 // Playing Tab ကို နှိပ်လိုက်သည့်အချိန် (သို့မဟုတ် Page Load ဖြစ်ချိန်) တွင် ခေါ်သုံးရန်
 loadPlayingMatches();

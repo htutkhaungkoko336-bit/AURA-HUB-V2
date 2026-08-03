@@ -122,19 +122,34 @@ export async function openPlayingMatchDetail(roomId) {
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
 
-        // 🌟 Host သို့မဟုတ် Joiner ဟုတ်မဟုတ် စစ်ဆေးခြင်း
         let currentDeviceId = localStorage.getItem('aura_device_id') || '';
-        let isHostOrJoiner = (currentDeviceId === host.deviceId || currentDeviceId === joiner.deviceId);
+        let isHost = currentDeviceId === host.deviceId;
+        let isJoiner = currentDeviceId === joiner.deviceId;
+        let isHostOrJoiner = isHost || isJoiner;
 
-        // Host သို့မဟုတ် Joiner ဖြစ်မှသာ Confirm/Cancel ခလုတ်နှင့် Contact အချက်အလက်များကို ပြသရန်
+        // ကိုယ့်ရဲ့ Confirmed အခြေအနေကို စစ်ဆေးခြင်း
+        let myConfirmed = isвени ? host.confirmed : joiner.confirmed; // အောက်မှာလို အတိအကျသုံးရန်
+        let isConfirmed = isHost ? (host.confirmed === true) : (joiner.confirmed === true);
+
+        // Action Buttons (Ready / Unready နှင့် Cancel Match)
         let actionButtonsHTML = '';
         if (isHostOrJoiner) {
-            actionButtonsHTML = `
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Confirm</button>
-                    <button onclick="closeRoomDetailModal()" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel</button>
-                </div>
-            `;
+            if (isConfirmed) {
+                // Ready ဖြစ်နေရင် -> Unready ခလုတ်ပြမယ်၊ Cancel ခလုတ် ပျောက်မယ်
+                actionButtonsHTML = `
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="toggleMatchReady('${roomId}', false)" style="flex: 1; background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Unready</button>
+                    </div>
+                `;
+            } else {
+                // Ready မဖြစ်သေးရင် -> Ready ခလုတ်နဲ့ Cancel ခလုတ် နှစ်ခုလုံးပြမယ်
+                actionButtonsHTML = `
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="toggleMatchReady('${roomId}', true)" style="flex: 1; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Ready</button>
+                        <button onclick="cancelMatch('${roomId}')" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">Cancel Match</button>
+                    </div>
+                `;
+            }
         }
 
         let contentHTML = `
@@ -166,18 +181,6 @@ export async function openPlayingMatchDetail(roomId) {
             let hostHero = host.heroName || 'N/A';
             let joinerPlayer = joiner.playerName || 'Waiting...';
             let joinerHero = joiner.heroName || 'Waiting...';
-
-            // Contact အချက်အလက်ကို Host သို့မဟုတ် Joiner ဖြစ်မှသာ ပြသရန်
-            let contactHTML = '';
-            if (isHostOrJoiner) {
-                let hostContact = host.contact || '-';
-                let joinerContact = joiner.contact || '-';
-                contactHTML = `
-                    <div style="border-top: 1px solid rgba(255,255,255,0.15); margin: 8px 0; width: 100%;"></div>
-                    <span style="font-size: 9px; color: #888; text-transform: uppercase; font-weight: bold;">Contact</span>
-                    <span style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 2px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">host: ${hostContact} / joiner: ${joinerContact}</span>
-                `;
-            }
 
             contentHTML += `
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
@@ -277,6 +280,54 @@ export async function openPlayingMatchDetail(roomId) {
     } catch (err) {
         console.error(err);
         modalBody.innerHTML = `<p style="color: #eb3838; text-align: center;">Connection Error</p>`;
+    }
+}
+
+// Ready / Unready ပြုလုပ်ရန် API ကို လှမ်းခေါ်မည့် function
+export async function toggleMatchReady(roomId, status) {
+    let deviceId = localStorage.getItem('aura_device_id') || '';
+    if (!deviceId) return;
+
+    try {
+        const response = await fetch('/api/room-detail-playing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ roomId, deviceId, action: 'ready', status })
+        });
+        const result = await response.json();
+        if (result.success) {
+            // အောင်မြင်ပါက Modal ကို ပုံစံအသစ်ဖြင့် ပြန်လည် Refresh လုပ်ပေးမည်
+            openPlayingMatchDetail(roomId);
+        } else {
+            alert(result.message || 'Action failed');
+        }
+    } catch (error) {
+        console.error("Ready/Unready Error:", error);
+    }
+}
+
+// Match ဖျက်သိမ်းရန် (Cancel) API ကို လှမ်းခေါ်မည့် function
+export async function cancelMatch(roomId) {
+    let deviceId = localStorage.getItem('aura_device_id') || '';
+    if (!deviceId) return;
+
+    if (!confirm('ဒီပွဲစဉ်ကို ဖျက်သိမ်းမှာ သေချာပါသလား?')) return;
+
+    try {
+        const response = await fetch('/api/room-detail-playing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ roomId, deviceId, action: 'cancel' })
+        });
+        const result = await response.json();
+        if (result.success) {
+            closeRoomDetailModal();
+            loadPlayingMatches(deviceId); // List ကိုပါ ပုံစံအသစ်ဖြစ်အောင် Update လုပ်မည်
+        } else {
+            alert(result.message || 'Cancel failed');
+        }
+    } catch (error) {
+        console.error("Cancel Error:", error);
     }
 }
 
