@@ -10,29 +10,30 @@ const app = getApps().length === 0
 const db = getFirestore(app);
 
 module.exports = async function handler(req, res) {
-    // 1️⃣ GET Method - Room များကို ဆွဲထုတ်ရန် (သို့မဟုတ် Match များကို ဆွဲထုတ်ရန်)
+    // 1️⃣ GET Method - Room များကို ဆွဲထုတ်ရန် (waiting သို့မဟုတ် matched များကို ဆွဲထုတ်ရန်)
     if (req.method === 'GET') {
         try {
             const { type, deviceId } = req.query;
 
-            // အကယ်၍ Active Matches များကို တောင်းဆိုလျှင် (Playing Tab အတွက်)
-            if (type === 'matches') {
+            // အကယ်၍ Active Matches များကို တောင်းဆိုလျှင် (Playing Tab အတွက်) -> rooms collection ကိုသာ သုံးမည်
+            if (type === 'matches' || type === 'rooms') {
                 if (!deviceId) {
                     return res.status(400).json({ success: false, message: "Device ID is required" });
                 }
 
-                const matchesSnapshot = await db.collection('matches')
+                // 🔥 matches အစား rooms collection ကို တိုက်ရိုက် query ထုတ်မည်
+                const roomsSnapshot = await db.collection('rooms')
                     .where('status', 'in', ['pending_confirmation', 'matched', 'ready'])
                     .get();
 
                 let matchList = [];
-                matchesSnapshot.forEach(doc => {
-                    const matchData = doc.data();
+                roomsSnapshot.forEach(doc => {
+                    const roomData = doc.data();
                     // Host သို့မဟုတ် Joiner တစ်ဦးဦးဖြစ်မှ ထည့်မည်
-                    if (matchData.host?.deviceId === deviceId || matchData.joiner?.deviceId === deviceId) {
+                    if (roomData.host?.deviceId === deviceId || roomData.joiner?.deviceId === deviceId) {
                         matchList.push({
                             roomId: doc.id,
-                            ...matchData
+                            ...roomData
                         });
                     }
                 });
@@ -40,7 +41,7 @@ module.exports = async function handler(req, res) {
                 return res.status(200).json({ success: true, rooms: matchList });
             }
 
-            // မူလ Room များကို ဆွဲထုတ်သည့် Logic
+            // မူလ Room များကို ဆွဲထုတ်သည့် Logic (Waiting Tab အတွက်)
             const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
             let roomList = [];
 
@@ -85,40 +86,45 @@ module.exports = async function handler(req, res) {
 
             // 🌟 Match Ready ပြုလုပ်ခြင်း
             if (action === 'ready') {
-                const { roomId, deviceId } = data;
+                const { roomId, deviceId, status } = data;
                 if (!roomId || !deviceId) {
                     return res.status(400).json({ success: false, message: "Room ID and Device ID are required" });
                 }
 
-                const matchRef = db.collection('matches').doc(roomId);
-                const matchDoc = await matchRef.get();
-                if (!matchDoc.exists) {
-                    return res.status(404).json({ success: false, message: "Match not found" });
+                // 🔥 matches အစား rooms collection ကို သုံးမည်
+                const roomRef = db.collection('rooms').doc(roomId);
+                const roomDoc = await roomRef.get();
+                if (!roomDoc.exists) {
+                    return res.status(404).json({ success: false, message: "Room not found" });
                 }
 
-                const matchData = matchDoc.data();
+                const roomData = roomDoc.data();
                 let updateData = {};
 
-                if (matchData.host.deviceId === deviceId) {
-                    updateData['host.confirmed'] = true;
-                } else if (matchData.joiner.deviceId === deviceId) {
-                    updateData['joiner.confirmed'] = true;
+                let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
+                let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
+
+                if (hostDevId === deviceId) {
+                    updateData['host.confirmed'] = status !== undefined ? status : true;
+                } else if (joinerDevId === deviceId) {
+                    updateData['joiner.confirmed'] = status !== undefined ? status : true;
                 } else {
                     return res.status(403).json({ success: false, message: "Unauthorized" });
                 }
 
-                await matchRef.update(updateData);
+                await roomRef.update(updateData);
                 return res.status(200).json({ success: true, message: "Successfully confirmed" });
             }
 
-            // 🌟 Match ဖျက်သိမ်းခြင်း (Cancel)
+            // 🌟 Match ဖျက်သိမ်းခြင်း (Cancel) -> rooms ထဲက doc ကို ဖျက်မည် (သို့မဟုတ် status ကို waiting ပြန်ပြောင်းမည်၊ သင့်လုပ်ငန်းစဉ်အပေါ်မူတည်သည်)
             if (action === 'cancel') {
                 const { roomId } = data;
                 if (!roomId) {
                     return res.status(400).json({ success: false, message: "Room ID is required" });
                 }
 
-                await db.collection('matches').doc(roomId).delete();
+                // 🔥 matches အစား rooms collection တွင် ရှိသော room ကို ဖြတ်မည်
+                await db.collection('rooms').doc(roomId).delete();
                 return res.status(200).json({ success: true, message: "Match cancelled successfully" });
             }
 
@@ -140,7 +146,7 @@ module.exports = async function handler(req, res) {
             if (data.paymentScreenshot) dbData.paymentScreenshot = data.paymentScreenshot;
             if (data.mode) dbData.mode = data.mode;
             if (data.squadName) dbData.squadName = data.squadName;
-            if (data.heroName) dbData.heroName = data.heroName;
+            if (data.heroName) dbData.heroName  = data.heroName;
             if (data.playerName) dbData.playerName = data.playerName;
             if (data.entryFee) dbData.entryFee = data.entryFee;
             if (data.contact) dbData.contact = data.contact;
