@@ -45,10 +45,11 @@ module.exports = async function handler(req, res) {
                     // Host သို့မဟုတ် Joiner ဘယ်သူပဲ cancel လုပ်လုပ် Room ကို လုံးဝဖျက်ပစ်မည်
                     await matchRef.delete();
 
-                    // Room ထဲမှာ ပါဝင်နေတဲ့ Host နဲ့ Joiner နှစ်ဦးစလုံးရဲ့ Key (registrations) များကို active ပြန်လုပ်ပေးမည်
+                    // Room ထဲမှာ ပါဝင်နေတဲ့ Host နဲ့ Joiner နှစ်ဦးစလုံးရဲ့ Key နဲ့ registrations များကို reset လုပ်မည်
                     const deviceIdsToReset = [hostDevId, joinerDevId].filter(Boolean);
                     
                     for (const devId of deviceIdsToReset) {
+                        // 1. registrations status ကို active ပြန်ပြောင်းရန်
                         const regSnap = await db.collection('registrations').where('deviceId', '==', devId).get();
                         if (!regSnap.empty) {
                             await regSnap.docs[0].ref.update({ 
@@ -56,9 +57,20 @@ module.exports = async function handler(req, res) {
                                 currentRoomId: null 
                             });
                         }
+
+                        // 2. userKeys ထဲက key status ကို active (သို့မဟုတ် available) ပြန်ပြောင်းရန်
+                        const keySnap = await db.collection('userKeys').doc(devId).collection('userKeys').where('roomId', '==', roomId).get();
+                        if (!keySnap.empty) {
+                            for (const keyDoc of keySnap.docs) {
+                                await keyDoc.ref.update({
+                                    status: 'active', // သို့မဟုတ် 'available' (သင်သုံးနေသည့် keyword အတိုင်း)
+                                    roomId: null
+                                });
+                            }
+                        }
                     }
 
-                    return res.status(200).json({ success: true, message: "Match cancelled and room deleted, keys are now active." });
+                    return res.status(200).json({ success: true, message: "Match cancelled, room deleted and keys activated." });
                 } else {
                     return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
                 }
