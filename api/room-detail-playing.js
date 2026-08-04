@@ -22,6 +22,7 @@ module.exports = async function handler(req, res) {
 
         const roomData = matchDoc.data();
 
+        // 🌟 POST Method (Action တွေအတွက်: ready, cancel)
         if (req.method === 'POST') {
             let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
             let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
@@ -41,26 +42,31 @@ module.exports = async function handler(req, res) {
             }
 
             if (action === 'cancel') {
-                if (hostDevId === deviceId) {
-                    // Host cancel ရင် Room တစ်ခုလုံး ပျက်မည်
-                    await matchRef.delete();
-                    return res.status(200).json({ success: true, message: "Match cancelled and room deleted" });
-                } else if (joinerDevId === deviceId) {
-                    // Joiner cancel ရင် joiner data ဖျက်ပြီး status ကို waiting ပြန်ပြောင်းမည်
-                    await matchRef.update({
-                        joiner: FieldValue.delete(),
-                        status: 'waiting'
-                    });
-                    return res.status(200).json({ success: true, message: "Joiner cancelled, room is now waiting" });
-                } else {
-                    return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
+                if (!deviceId) {
+                    return res.status(400).json({ success: false, message: "Device ID is required" });
                 }
+
+                // Host ဖြစ်ရင် Room ကို လုံးဝဖြတ်မယ်
+                if (hostDevId === deviceId) {
+                    await matchRef.delete();
+                } 
+                // Joiner ဖြစ်ရင်တော့ Room ကို Waiting အခြေအနေပြန်ပြောင်းပြီး joiner ကို ဖြုတ်မယ်
+                else if (joinerDevId === deviceId) {
+                    await matchRef.update({
+                        status: 'waiting',
+                        joiner: null 
+                    });
+                } else {
+                    return res.status(403).json({ success: false, message: "Unauthorized" });
+                }
+
+                return res.status(200).json({ success: true, message: "Match cancelled successfully" });
             }
 
             return res.status(400).json({ success: false, message: "Invalid action" });
         }
 
-        // 🌟 GET Method (Detail အချက်အလက်များ)
+        // 🌟 GET Method (သို့မဟုတ် အခြား Method များအတွက် Detail အချက်အလက်များ)
         const mode = roomData.mode || '5vs5';
 
         let hostRegData = {};

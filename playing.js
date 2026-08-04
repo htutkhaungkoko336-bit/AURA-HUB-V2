@@ -341,7 +341,7 @@ export async function cancelMatch(roomId) {
         const response = await fetch('/api/room-detail-playing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId, action: 'cancel' })
+            body: JSON.stringify({ roomId, deviceId, action: 'cancel' }) // deviceId ထည့်ပေးရန်
         });
         const result = await response.json();
         if (result.success) {
