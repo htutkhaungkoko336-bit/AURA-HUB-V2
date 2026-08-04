@@ -42,15 +42,30 @@ module.exports = async function handler(req, res) {
 
             if (action === 'cancel') {
                 if (hostDevId === deviceId) {
-                    // Host cancel ရင် Room တစ်ခုလုံး ပျက်မည်
+                    // Host cancel ရင် Room တစ်ခုလုံး ပျက်မည်၊ Host ရဲ့ key/status ကိုပါ active ပြန်လုပ်ပေးရန်
                     await matchRef.delete();
+                    
+                    // ဥပမာ: registrations collection ထဲတွင် status ကို active ပြန်ပြောင်းလိုပါက (သို့မဟုတ် room status များကို reset လုပ်လိုပါက)
+                    const regSnap = await db.collection('registrations').where('deviceId', '==', deviceId).get();
+                    if (!regSnap.empty) {
+                        await regSnap.docs[0].ref.update({ status: 'active', currentRoomId: null });
+                    }
+
                     return res.status(200).json({ success: true, message: "Match cancelled and room deleted" });
+
                 } else if (joinerDevId === deviceId) {
-                    // Joiner cancel ရင် joiner data ဖျက်ပြီး status ကို waiting ပြန်ပြောင်းမည်
+                    // Joiner cancel ရင် joiner data ဖျက်ပြီး room ကို waiting ပြန်ပြောင်းမည်
                     await matchRef.update({
                         joiner: FieldValue.delete(),
                         status: 'waiting'
                     });
+
+                    // Joiner ရဲ့ key/status ကို active ပြန်လုပ်ပေးရန်
+                    const joinerRegSnap = await db.collection('registrations').where('deviceId', '==', deviceId).get();
+                    if (!joinerRegSnap.empty) {
+                        await joinerRegSnap.docs[0].ref.update({ status: 'active', currentRoomId: null });
+                    }
+
                     return res.status(200).json({ success: true, message: "Joiner cancelled, room is now waiting" });
                 } else {
                     return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
@@ -112,7 +127,7 @@ module.exports = async function handler(req, res) {
             deviceId: joinerDeviceId || roomData.joiner?.deviceId || '',
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
             contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || roomData.joiner?.contact || '-',
-            confirmed: roomData.joiner?.confirmed || false,
+            confirmed: joinerRegData.confirmed || roomData.joiner?.confirmed || false,
             players: extractPlayers(joinerRegData, roomData.joiner || {})
         };
 
