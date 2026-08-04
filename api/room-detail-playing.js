@@ -41,35 +41,35 @@ module.exports = async function handler(req, res) {
             }
 
             if (action === 'cancel') {
+                let updateData = {};
+                let regUpdateQuery = db.collection('registrations').where('deviceId', '==', deviceId).get();
+
                 if (hostDevId === deviceId) {
-                    // Host cancel ရင် Room တစ်ခုလုံး ပျက်မည်၊ Host ရဲ့ key/status ကိုပါ active ပြန်လုပ်ပေးရန်
-                    await matchRef.delete();
-                    
-                    // ဥပမာ: registrations collection ထဲတွင် status ကို active ပြန်ပြောင်းလိုပါက (သို့မဟုတ် room status များကို reset လုပ်လိုပါက)
-                    const regSnap = await db.collection('registrations').where('deviceId', '==', deviceId).get();
-                    if (!regSnap.empty) {
-                        await regSnap.docs[0].ref.update({ status: 'active', currentRoomId: null });
-                    }
-
-                    return res.status(200).json({ success: true, message: "Match cancelled and room deleted" });
-
+                    // Host cancel ရင် Host data ကို ဖျက်ပြီး Room ကို waiting အနေအထားသို့ ပြန်ပြောင်းမည်
+                    updateData = {
+                        host: FieldValue.delete(),
+                        status: 'waiting'
+                    };
                 } else if (joinerDevId === deviceId) {
-                    // Joiner cancel ရင် joiner data ဖျက်ပြီး room ကို waiting ပြန်ပြောင်းမည်
-                    await matchRef.update({
+                    // Joiner cancel ရင် Joiner data ကို ဖျက်ပြီး Room ကို waiting အနေအထားသို့ ပြန်ပြောင်းမည်
+                    updateData = {
                         joiner: FieldValue.delete(),
                         status: 'waiting'
-                    });
-
-                    // Joiner ရဲ့ key/status ကို active ပြန်လုပ်ပေးရန်
-                    const joinerRegSnap = await db.collection('registrations').where('deviceId', '==', deviceId).get();
-                    if (!joinerRegSnap.empty) {
-                        await joinerRegSnap.docs[0].ref.update({ status: 'active', currentRoomId: null });
-                    }
-
-                    return res.status(200).json({ success: true, message: "Joiner cancelled, room is now waiting" });
+                    };
                 } else {
                     return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
                 }
+
+                // Room ထဲက host သို့မဟုတ် joiner ကို ဖျက်ပြီး status ကို waiting ပြန်လုပ်ခြင်း
+                await matchRef.update(updateData);
+
+                // Cancel လုပ်တဲ့သူရဲ့ registration status ကို active ပြန်လုပ်ပေးခြင်း (Room အသစ်ပြန်ထောင်နိုင်ရန်)
+                const regSnap = await regUpdateQuery;
+                if (!regSnap.empty) {
+                    await regSnap.docs[0].ref.update({ status: 'active', currentRoomId: null });
+                }
+
+                return res.status(200).json({ success: true, message: "Cancelled successfully, returned to waiting room" });
             }
 
             return res.status(400).json({ success: false, message: "Invalid action" });
@@ -117,7 +117,7 @@ module.exports = async function handler(req, res) {
         };
 
         if (mode === '1vs1') {
-            hostInfo.playerName = hostRegData.playerName || roomData.host?.playerName || roomData.playerName || 'N/A';
+            hostInfo.playerName = hostRegData.playerName || roomData.host?.playerName || roomData.host?.playerName || 'N/A';
             hostInfo.heroName = hostRegData.heroName || roomData.host?.heroName || 'N/A';
         } else {
             hostInfo.squadName = hostRegData.squadName || roomData.host?.squadName || roomData.host?.teamName || 'Team A';
