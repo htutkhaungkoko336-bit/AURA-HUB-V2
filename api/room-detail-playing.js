@@ -48,14 +48,25 @@ module.exports = async function handler(req, res) {
 
                 // Host ဖြစ်ရင် Room ကို လုံးဝဖြတ်မယ်
                 if (hostDevId === deviceId) {
+                    // လိုအပ်ပါက Host ရဲ့ Key ကိုပါ active ပြန်ပြောင်းချင်ရင် ဒီနေရာမှာ ထည့်နိုင်ပါတယ်
                     await matchRef.delete();
                 } 
-                // Joiner ဖြစ်ရင်တော့ Room ကို Waiting အခြေအနေပြန်ပြောင်းပြီး joiner ကို ဖြုတ်မယ်
+                // Joiner ဖြစ်ရင်တော့ Room ကို Waiting အခြေအနေပြန်ပြောင်းပြီး joiner ကို ဖြုတ်မယ်၊ ပြီးတော့ Joiner ရဲ့ Key ကို active ပြန်ပြောင်းမယ်
                 else if (joinerDevId === deviceId) {
                     await matchRef.update({
                         status: 'waiting',
                         joiner: null 
                     });
+
+                    // 🌟 Joiner ရဲ့ Key ကို 'active' ပြန်ပြောင်းပေးခြင်း
+                    const keysQuery = await db.collection('userKeys').where('deviceId', '==', deviceId).get();
+                    if (!keysQuery.empty) {
+                        const keyRef = keysQuery.docs[0].ref;
+                        await keyRef.update({
+                            status: 'active',
+                            roomId: FieldValue.delete() // roomId ကိုပါ ဖြုတ်ပေးလိုက်သည်
+                        });
+                    }
                 } else {
                     return res.status(403).json({ success: false, message: "Unauthorized" });
                 }
@@ -117,7 +128,7 @@ module.exports = async function handler(req, res) {
         let joinerInfo = {
             deviceId: joinerDeviceId || roomData.joiner?.deviceId || '',
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
-            contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || roomData.joiner?.contact || '-',
+            contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || joinerRegData.joiner?.contact || '-',
             confirmed: roomData.joiner?.confirmed || false,
             players: extractPlayers(joinerRegData, roomData.joiner || {})
         };
