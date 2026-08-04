@@ -46,9 +46,31 @@ module.exports = async function handler(req, res) {
                     return res.status(400).json({ success: false, message: "Device ID is required" });
                 }
 
-                // Host ဖြစ်ရင် Room ကို လုံးဝဖြတ်မယ်
+                // Host ဖြစ်ရင် Room ကို လုံးဝဖြတ်မယ် ပြီးရင် Host နဲ့ Joiner နှစ်ယောက်စလုံးရဲ့ Key တွေကို active ပြန်ပြောင်းမယ်
                 if (hostDevId === deviceId) {
-                    // လိုအပ်ပါက Host ရဲ့ Key ကိုပါ active ပြန်ပြောင်းချင်ရင် ဒီနေရာမှာ ထည့်နိုင်ပါတယ်
+                    // ၁။ Host ရဲ့ Key ကို active ပြန်ပြောင်းခြင်း
+                    const hostKeysQuery = await db.collection('userKeys').where('deviceId', '==', hostDevId).get();
+                    if (!hostKeysQuery.empty) {
+                        const hostKeyRef = hostKeysQuery.docs[0].ref;
+                        await hostKeyRef.update({
+                            status: 'active',
+                            roomId: FieldValue.delete()
+                        });
+                    }
+
+                    // ၂။ Joiner ရှိနေခဲ့ရင် Joiner ရဲ့ Key ကိုပါ active ပြန်ပြောင်းခြင်း
+                    if (joinerDevId) {
+                        const joinerKeysQuery = await db.collection('userKeys').where('deviceId', '==', joinerDevId).get();
+                        if (!joinerKeysQuery.empty) {
+                            const joinerKeyRef = joinerKeysQuery.docs[0].ref;
+                            await joinerKeyRef.update({
+                                status: 'active',
+                                roomId: FieldValue.delete()
+                            });
+                        }
+                    }
+
+                    // ၃။ Room ကို ဖျက်ပစ်ခြင်း
                     await matchRef.delete();
                 } 
                 // Joiner ဖြစ်ရင်တော့ Room ကို Waiting အခြေအနေပြန်ပြောင်းပြီး joiner ကို ဖြုတ်မယ်၊ ပြီးတော့ Joiner ရဲ့ Key ကို active ပြန်ပြောင်းမယ်
@@ -58,13 +80,12 @@ module.exports = async function handler(req, res) {
                         joiner: null 
                     });
 
-                    // 🌟 Joiner ရဲ့ Key ကို 'active' ပြန်ပြောင်းပေးခြင်း
                     const keysQuery = await db.collection('userKeys').where('deviceId', '==', deviceId).get();
                     if (!keysQuery.empty) {
                         const keyRef = keysQuery.docs[0].ref;
                         await keyRef.update({
                             status: 'active',
-                            roomId: FieldValue.delete() // roomId ကိုပါ ဖြုတ်ပေးလိုက်သည်
+                            roomId: FieldValue.delete()
                         });
                     }
                 } else {
@@ -113,7 +134,7 @@ module.exports = async function handler(req, res) {
         let hostInfo = {
             deviceId: hostDeviceId || roomData.host?.deviceId || '',
             logo: hostRegData.logo || roomData.host?.logo || roomData.logo || 'default-logo.png',
-            contact: hostRegData.kpayNo || hostRegData.leaderPhone || hostRegData.contact || roomData.host?.leaderPhone || roomData.host?.contact || roomData.leaderPhone || '-',
+            contact: hostRegData.kpayNo || hostRegData.leaderPhone || hostRegData.contact || roomData.host?.leaderPhone || roomData.host?.contact || hostRegData.contact || '-',
             confirmed: roomData.host?.confirmed || false,
             players: extractPlayers(hostRegData, roomData.host || {})
         };
@@ -128,7 +149,7 @@ module.exports = async function handler(req, res) {
         let joinerInfo = {
             deviceId: joinerDeviceId || roomData.joiner?.deviceId || '',
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
-            contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || joinerRegData.joiner?.contact || '-',
+            contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || roomData.joiner?.contact || '-',
             confirmed: roomData.joiner?.confirmed || false,
             players: extractPlayers(joinerRegData, roomData.joiner || {})
         };
