@@ -335,7 +335,7 @@ export async function cancelMatch(roomId) {
     let deviceId = localStorage.getItem('aura_device_id') || '';
     if (!deviceId) return;
 
-    if (!confirm('ဒီပွဲစဉ်ကို ဖျက်သိမ်းမှာ သေချာပါသလား?')) return;
+    if (!confirm('ဒီပွဲစဉ်ကို ဖျက်သိမ်းမှာ သေချာပါသလား? (Joiner ဖျက်ပါက Room သည် Waiting သို့ ပြန်သွားမည်ဖြစ်ပြီး၊ Host ဖျက်ပါက Room လုံးဝ ပျက်သွားမည်ဖြစ်ပါသည်။)')) return;
 
     try {
         const response = await fetch('/api/room-detail-playing', {
@@ -354,7 +354,6 @@ export async function cancelMatch(roomId) {
         console.error("Cancel Error:", error);
     }
 }
-
 export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {

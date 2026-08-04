@@ -1,5 +1,5 @@
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
 const app = getApps().length === 0 ? initializeApp({ 
     credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) 
@@ -13,7 +13,6 @@ module.exports = async function handler(req, res) {
 
         if (!roomId) return res.status(400).json({ success: false, message: "Room ID လိုအပ်ပါသည်။" });
 
-        // rooms collection တစ်ခုတည်းကိုသာ တိုက်ရိုက်စစ်ဆေးသည်
         let matchRef = db.collection('rooms').doc(roomId);
         let matchDoc = await matchRef.get();
         
@@ -24,17 +23,17 @@ module.exports = async function handler(req, res) {
         const roomData = matchDoc.data();
 
         if (req.method === 'POST') {
-            if (action === 'ready') {
-                let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
-                let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
+            let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
+            let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
 
+            if (action === 'ready') {
                 let updateData = {};
                 if (hostDevId === deviceId) {
                     updateData['host.confirmed'] = status;
                 } else if (joinerDevId === deviceId) {
                     updateData['joiner.confirmed'] = status;
                 } else {
-                    return res.status(403).json({ success: false, message: "ခွင့်ပြုချက်မရှိပါ။ (Device ID မကိုက်ညီပါ)" });
+                    return res.status(403).json({ success: false, message: "ခွင့်ပြုချက်မရှိပါ။" });
                 }
 
                 await matchRef.update(updateData);
@@ -42,12 +41,17 @@ module.exports = async function handler(req, res) {
             }
 
             if (action === 'cancel') {
-                let hostDevId = roomData.host?.deviceId || roomData.hostDeviceId;
-                let joinerDevId = roomData.joiner?.deviceId || roomData.joinerDeviceId;
-
-                if (hostDevId === deviceId || joinerDevId === deviceId) {
+                if (hostDevId === deviceId) {
+                    // Host cancel ရင် Room တစ်ခုလုံး ပျက်မည်
                     await matchRef.delete();
-                    return res.status(200).json({ success: true, message: "Match cancelled" });
+                    return res.status(200).json({ success: true, message: "Match cancelled and room deleted" });
+                } else if (joinerDevId === deviceId) {
+                    // Joiner cancel ရင် joiner data ဖျက်ပြီး status ကို waiting ပြန်ပြောင်းမည်
+                    await matchRef.update({
+                        joiner: FieldValue.delete(),
+                        status: 'waiting'
+                    });
+                    return res.status(200).json({ success: true, message: "Joiner cancelled, room is now waiting" });
                 } else {
                     return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
                 }
@@ -56,7 +60,7 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ success: false, message: "Invalid action" });
         }
 
-        // 🌟 GET Method (Detail အချက်အလက်များ ဆွဲထုတ်သည့်အခါ)
+        // 🌟 GET Method (Detail အချက်အလက်များ)
         const mode = roomData.mode || '5vs5';
 
         let hostRegData = {};
