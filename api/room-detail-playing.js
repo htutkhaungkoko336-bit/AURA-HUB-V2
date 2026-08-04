@@ -1,5 +1,5 @@
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const { getFirestore } = require('firebase-admin/firestore');
 
 const app = getApps().length === 0 ? initializeApp({ 
     credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) 
@@ -41,17 +41,36 @@ module.exports = async function handler(req, res) {
             }
 
             if (action === 'cancel') {
-                if (hostDevId === deviceId) {
-                    // Host cancel ရင် Room တစ်ခုလုံး ပျက်မည်
+                if (hostDevId === deviceId || joinerDevId === deviceId) {
+                    // Host ဖြစ်စေ၊ Joiner ဖြစ်စေ cancel လုပ်ရင် Room တစ်ခုလုံးကို ဖျက်ပစ်မည်
                     await matchRef.delete();
-                    return res.status(200).json({ success: true, message: "Match cancelled and room deleted" });
-                } else if (joinerDevId === deviceId) {
-                    // Joiner cancel ရင် joiner data ဖျက်ပြီး status ကို waiting ပြန်ပြောင်းမည်
-                    await matchRef.update({
-                        joiner: FieldValue.delete(),
-                        status: 'waiting'
-                    });
-                    return res.status(200).json({ success: true, message: "Joiner cancelled, room is now waiting" });
+
+                    // Room ထဲမှာ ပါဝင်နေတဲ့ Host နဲ့ Joiner နှစ်ဦးစလုံးရဲ့ Key (userKeys) နဲ့ registrations များကို active ပြန်လုပ်မည်
+                    const deviceIdsToReset = [hostDevId, joinerDevId].filter(Boolean);
+                    
+                    for (const devId of deviceIdsToReset) {
+                        // 1. registrations status ကို active ပြန်ပြောင်းရန်
+                        const regSnap = await db.collection('registrations').where('deviceId', '==', devId).get();
+                        if (!regSnap.empty) {
+                            await regSnap.docs[0].ref.update({ 
+                                status: 'active', 
+                                currentRoomId: null 
+                            });
+                        }
+
+                        // 2. userKeys ထဲက key status ကို active ပြန်ပြောင်းပြီး roomId ကို ဖြုတ်ရန်
+                        const keySnap = await db.collection('userKeys').doc(devId).collection('userKeys').where('roomId', '==', roomId).get();
+                        if (!keySnap.empty) {
+                            for (const keyDoc of keySnap.docs) {
+                                await keyDoc.ref.update({
+                                    status: 'active',
+                                    roomId: null
+                                });
+                            }
+                        }
+                    }
+
+                    return res.status(200).json({ success: true, message: "Match cancelled, room deleted and keys are now active." });
                 } else {
                     return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
                 }
@@ -102,7 +121,7 @@ module.exports = async function handler(req, res) {
         };
 
         if (mode === '1vs1') {
-            hostInfo.playerName = hostRegData.playerName || roomData.host?.playerName || roomData.playerName || 'N/A';
+            hostInfo.playerName = hostRegData.playerName || roomData.host?.playerName || roomData.host?.playerName || 'N/A';
             hostInfo.heroName = hostRegData.heroName || roomData.host?.heroName || 'N/A';
         } else {
             hostInfo.squadName = hostRegData.squadName || roomData.host?.squadName || roomData.host?.teamName || 'Team A';
@@ -112,7 +131,7 @@ module.exports = async function handler(req, res) {
             deviceId: joinerDeviceId || roomData.joiner?.deviceId || '',
             logo: joinerRegData.logo || roomData.joiner?.logo || 'default-logo.png',
             contact: joinerRegData.kpayNo || joinerRegData.leaderPhone || joinerRegData.contact || roomData.joiner?.leaderPhone || roomData.joiner?.contact || '-',
-            confirmed: roomData.joiner?.confirmed || false,
+            confirmed: joinerRegData.confirmed || roomData.joiner?.confirmed || false,
             players: extractPlayers(joinerRegData, roomData.joiner || {})
         };
 
