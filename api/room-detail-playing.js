@@ -1,5 +1,5 @@
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const { getFirestore } = require('firebase-admin/firestore');
 
 const app = getApps().length === 0 ? initializeApp({ 
     credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) 
@@ -41,35 +41,27 @@ module.exports = async function handler(req, res) {
             }
 
             if (action === 'cancel') {
-                let updateData = {};
-                let regUpdateQuery = db.collection('registrations').where('deviceId', '==', deviceId).get();
+                if (hostDevId === deviceId || joinerDevId === deviceId) {
+                    // Host သို့မဟုတ် Joiner ဘယ်သူပဲ cancel လုပ်လုပ် Room ကို လုံးဝဖျက်ပစ်မည်
+                    await matchRef.delete();
 
-                if (hostDevId === deviceId) {
-                    // Host cancel ရင် Host data ကို ဖျက်ပြီး Room ကို waiting အနေအထားသို့ ပြန်ပြောင်းမည်
-                    updateData = {
-                        host: FieldValue.delete(),
-                        status: 'waiting'
-                    };
-                } else if (joinerDevId === deviceId) {
-                    // Joiner cancel ရင် Joiner data ကို ဖျက်ပြီး Room ကို waiting အနေအထားသို့ ပြန်ပြောင်းမည်
-                    updateData = {
-                        joiner: FieldValue.delete(),
-                        status: 'waiting'
-                    };
+                    // Room ထဲမှာ ပါဝင်နေတဲ့ Host နဲ့ Joiner နှစ်ဦးစလုံးရဲ့ Key (registrations) များကို active ပြန်လုပ်ပေးမည်
+                    const deviceIdsToReset = [hostDevId, joinerDevId].filter(Boolean);
+                    
+                    for (const devId of deviceIdsToReset) {
+                        const regSnap = await db.collection('registrations').where('deviceId', '==', devId).get();
+                        if (!regSnap.empty) {
+                            await regSnap.docs[0].ref.update({ 
+                                status: 'active', 
+                                currentRoomId: null 
+                            });
+                        }
+                    }
+
+                    return res.status(200).json({ success: true, message: "Match cancelled and room deleted, keys are now active." });
                 } else {
                     return res.status(403).json({ success: false, message: "ဖျက်ရန် ခွင့်ပြုချက်မရှိပါ။" });
                 }
-
-                // Room ထဲက host သို့မဟုတ် joiner ကို ဖျက်ပြီး status ကို waiting ပြန်လုပ်ခြင်း
-                await matchRef.update(updateData);
-
-                // Cancel လုပ်တဲ့သူရဲ့ registration status ကို active ပြန်လုပ်ပေးခြင်း (Room အသစ်ပြန်ထောင်နိုင်ရန်)
-                const regSnap = await regUpdateQuery;
-                if (!regSnap.empty) {
-                    await regSnap.docs[0].ref.update({ status: 'active', currentRoomId: null });
-                }
-
-                return res.status(200).json({ success: true, message: "Cancelled successfully, returned to waiting room" });
             }
 
             return res.status(400).json({ success: false, message: "Invalid action" });
