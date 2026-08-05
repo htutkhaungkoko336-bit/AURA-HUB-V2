@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
                 return res.status(200).json({ success: true, message: "Updated successfully" });
             }
 
-                if (action === 'cancel') {
+            if (action === 'cancel') {
                 if (!deviceId) {
                     return res.status(400).json({ success: false, message: "Device ID is required" });
                 }
@@ -73,11 +73,17 @@ module.exports = async function handler(req, res) {
                     // ၃။ Room ကို ဖျက်ပစ်ခြင်း
                     await matchRef.delete();
                 } 
-                // Joiner ဖြစ်ရင်တော့ Room ကို Waiting အခြေအနေပြန်ပြောင်းပြီး Joiner ရဲ့ Data အားလုံးကို ဖြုတ်မယ်၊ ပြီးတော့ Joiner ရဲ့ Key ကို active ပြန်ပြောင်းမယ်
+                // Joiner ဖြစ်ရင် Room ကို Waiting အခြေအနေပြန်ပြောင်းပြီး Joiner ရဲ့ Data အားလုံးကို ဖြုတ်မယ်
                 else if (joinerDevId === deviceId) {
                     await matchRef.update({
                         status: 'waiting',
-                        joiner: FieldValue.delete() // Joiner နဲ့ဆိုင်တဲ့ data အားလုံးကို room ထဲက လုံးဝဖယ်ရှားခြင်း
+                        joiner: FieldValue.delete(),
+                        joinerDeviceId: FieldValue.delete(),
+                        playerName: FieldValue.delete(),
+                        mlbbId: FieldValue.delete(),
+                        teamName: FieldValue.delete(),
+                        logo: FieldValue.delete(),
+                        heroName: FieldValue.delete()
                     });
 
                     // 🌟 Joiner ရဲ့ Key ကို 'active' ပြန်ပြောင်းပေးခြင်း
