@@ -692,7 +692,7 @@ window.createNewRoom = async function() {
     const roomData = {
         deviceId: deviceId,
         teamName: teamName,
-        logo: logoUrl.startsWith('data:') ? '' : logoUrl, // Base64 ဖြစ်နေရင် Backend က handle လုပ်ဖို့ (သို့) URL သက်သက်ဖြစ်ရင် ပို့ရန်
+        logo: logoUrl.startsWith('data:') ? '' : logoUrl, 
         mlbbId: mlbbId,
         playerName: playerName,
         mode: currentMode,
@@ -722,6 +722,21 @@ window.createNewRoom = async function() {
                 status: 'in-use',
                 createdAt: 'Just now'
             });
+
+            // 🌟 Room ထောင်ပြီးပါက Create Room နှင့် Refund ခလုတ်များကို မှိန်ထားမည် (Disabled & Opacity 0.4)
+            const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
+            const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
+            
+            if (createBtn) {
+                createBtn.style.opacity = '0.4';
+                createBtn.style.pointerEvents = 'none';
+                createBtn.style.cursor = 'not-allowed';
+            }
+            if (refundBtn) {
+                refundBtn.style.opacity = '0.4';
+                refundBtn.style.pointerEvents = 'none';
+                refundBtn.style.cursor = 'not-allowed';
+            }
 
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
