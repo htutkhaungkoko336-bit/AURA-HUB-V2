@@ -623,9 +623,10 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.display = 'none';
             }, 500);
         }
-        // ၂။ ဘောက်စ်အရှည်ကို ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
+        // ၂။ ဘောက်စ်အရှည်ကို Create Room နဲ့ Refund ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
         if (dockBox) {
             dockBox.style.width = '330px'; 
+            dockBox.style.padding = '0 14px';
         }
         // ၃။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်စေမည်
         if (actionWrapper) {
@@ -638,9 +639,10 @@ window.toggleActionWheel = function() {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ဘောက်စ်အရှည်ကို မူလအတိုင်း ပြန်ကျုံ့မည်
+        // ၂။ ဘောက်စ်အရှည်ကို လျှော့ချထားသော မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့မည်
         if (dockBox) {
-            dockBox.style.width = '220px'; 
+            dockBox.style.width = '185px'; 
+            dockBox.style.padding = '0 10px';
         }
         // ၃။ BACK ခလုတ်ကို ပြန်ပေါ်စေမည်
         if (externalBackBtn) {
@@ -655,7 +657,6 @@ window.toggleActionWheel = function() {
         }
     }
 }
-
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
