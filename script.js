@@ -610,7 +610,7 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ညာဘက် Back Button ကို ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -622,15 +622,15 @@ window.toggleActionWheel = function() {
             }, 300);
         }
 
-        // အပေါ်အောက် ခလုတ်၂ခုလုံးကို ပေါ်လာစေရန် အမြင့်တိုးပေးမည် (ခလုတ်၂ခုစာအတွက် 95px ခန့်ထားသည်)
+        // ၂။ အပေါ်အောက် ခလုတ်များကို အမြင့်ဖွင့်ပေးပြီး ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
-            actionWrapper.style.maxHeight = '95px'; 
-            actionWrapper.style.marginBottom = '6px';
+            actionWrapper.style.maxHeight = '120px'; // ခလုတ်အရွယ်အစားအပေါ်မူတည်၍ လိုအပ်ပါက ချိန်နိုင်သည်
+            actionWrapper.style.marginBottom = '8px';
         }
     } else {
-        // အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
+        // ၁။ အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
@@ -638,7 +638,7 @@ window.toggleActionWheel = function() {
             actionWrapper.style.marginBottom = '0px';
         }
 
-        // Back Button ကို ပြန်ပေါ်လာစေမည်
+        // ၂။ Back Button ကို ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -652,26 +652,6 @@ window.toggleActionWheel = function() {
     }
 }
 
-// Create Room နှိပ်လိုက်သည့်အခါ ခလုတ်ပြောင်းလဲမည့် ပုံစံ
-window.handleCreateRoom = function() {
-    // မူလ Room ထောင်သည့် function ကို ဒီနေရာမှာ ခေါ်ပါ
-    if (typeof createNewRoom === 'function') {
-        createNewRoom();
-    }
-
-    // Create Room ခလုတ်ကို ဖျောက်ပြီး Refund တစ်ခုတည်းသာ ကျန်အောင် လုပ်မည်
-    const activeBtns = document.getElementById('dock-active-btns');
-    const inuseBtns = document.getElementById('dock-inuse-btns');
-    
-    if (activeBtns) activeBtns.style.display = 'none';
-    if (inuseBtns) inuseBtns.style.display = 'flex';
-
-    // Wrapper ရဲ့ အမြင့်ကို Refund ခလုတ်တစ်ခုစာအတွက် လျှော့ချပေးမည် (ဥပမာ 45px သို့)
-    const actionWrapper = document.getElementById('dock-action-wrapper');
-    if (actionWrapper) {
-        actionWrapper.style.maxHeight = '45px';
-    }
-}
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
