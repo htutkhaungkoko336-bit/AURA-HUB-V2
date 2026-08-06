@@ -607,11 +607,10 @@ window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
-    const dockBox = document.getElementById('dock-box');
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -620,32 +619,26 @@ window.toggleActionWheel = function() {
             externalBackBtn.style.borderWidth = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 500); // Transition duration (0.5s) နဲ့ တိုက်ဆိုင်ထားသည်
+            }, 300);
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို တိကျသော အကျယ်အဝန်း (ဥပမာ 330px) သို့ ချောမွေ့စွာ ရှည်ထွက်စေမည်
-        if (dockBox) {
-            dockBox.style.width = '330px';
-            dockBox.style.padding = '12px 18px';
-            dockBox.style.justifyContent = 'space-between';
-        }
-        // ၃။ အတွင်းရှိ ခလုတ်များကို ပေါ်လာစေမည်
+
+        // ၂။ အပေါ်အောက် ခလုတ်များကို အမြင့်ဖွင့်ပေးပြီး ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
+            actionWrapper.style.maxHeight = '120px'; // ခလုတ်အရွယ်အစားအပေါ်မူတည်၍ လိုအပ်ပါက ချိန်နိုင်သည်
+            actionWrapper.style.marginBottom = '8px';
         }
     } else {
-        // ၁။ အတွင်းရှိ ခလုတ်များကို အရင် ဖျောက်မည်
+        // ၁။ အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
+            actionWrapper.style.maxHeight = '0px';
+            actionWrapper.style.marginBottom = '0px';
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့စေမည်
-        if (dockBox) {
-            dockBox.style.width = '185px';
-            dockBox.style.padding = '12px 14px';
-            dockBox.style.justifyContent = 'flex-start';
-        }
-        // ၃။ Back Button ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
+
+        // ၂။ Back Button ကို ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -658,7 +651,6 @@ window.toggleActionWheel = function() {
         }
     }
 }
-
 
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
