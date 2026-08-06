@@ -602,18 +602,17 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateBuyButtonStatus, 5000); 
 });
 
-let isWheelOpen = false; // ပုံမှန်အခြေအနေမှာ Back ခလုတ်နဲ့ သော့ပါပေါ်နေမည်
+let isWheelOpen = false;
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
     const dockBox = document.getElementById('dock-box');
-    const dockTextArea = document.getElementById('dock-text-area');
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ BACK ခလုတ်ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည်
+        // ၁။ BACK ခလုတ်ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -624,36 +623,26 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.display = 'none';
             }, 500);
         }
-        // ၂။ စာသားကို ဖျောက်မည်
-        if (dockTextArea) {
-            dockTextArea.style.opacity = '0';
-            dockTextArea.style.visibility = 'hidden';
-        }
-        // ၃။ ဘောက်စ်အရှည်ကို BACK ခလုတ်နေရာအထိ ဆန့်ထွက်စေမည် (ဥပမာ 330px)
+        // ၂။ ဘောက်စ်အရှည်ကို ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
         if (dockBox) {
             dockBox.style.width = '330px'; 
         }
-        // ၄။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်လာစေမည်
+        // ၃။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်စေမည် (စာသားကတော့ သော့ဘေးမှာ ဆက်ပေါ်နေမည်)
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
-        // ၁။ ခလုတ်များကို အရင် ဖျောက်မည်
+        // ၁။ ခလုတ်များကို ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ဘောက်စ်ကို မူလအရှည် (220px) သို့ ပြန်ကျုံ့မည်
+        // ၂။ ဘောက်စ်အရှည်ကို မူလအတိုင်း ပြန်ကျုံ့မည်
         if (dockBox) {
             dockBox.style.width = '220px'; 
         }
-        // ၃။ စာသားကို ပြန်ပေါ်စေမည်
-        if (dockTextArea) {
-            dockTextArea.style.visibility = 'visible';
-            dockTextArea.style.opacity = '1';
-        }
-        // ၄။ BACK ခလုတ်ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
+        // ၃။ BACK ခလုတ်ကို ပြန်ပေါ်စေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {

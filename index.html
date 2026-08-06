@@ -352,13 +352,13 @@
         <!-- Main Dock Box -->
         <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 0 14px; height: 66px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 220px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
             
-            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် စာသားများ (ပုံမှန်ပေါ်နေမည်) -->
+            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် အပေါ်အောက် စာသားများ (အမြဲပေါ်နေမည်) -->
             <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
                 <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
                     <span id="dock-icon-element" style="font-size: 1.25rem;">🗝️</span>
                 </div>
                 
-                <div id="dock-text-area" style="display: flex; flex-direction: column; opacity: 1; visibility: visible; transition: opacity 0.3s ease; white-space: nowrap;">
+                <div id="dock-text-area" style="display: flex; flex-direction: column; white-space: nowrap;">
                     <div style="font-size: 0.8rem; font-weight: bold; color: #dac02d;">5v5 MODE</div>
                     <div style="font-size: 0.7rem; color: #aaa;">50K Key</div>
                 </div>
@@ -387,7 +387,7 @@
 
         </div>
 
-        <!-- အပြင်ဘက် ညာဘက် Back Button (ပုံမှန်ပေါ်နေပြီး နှိပ်လိုက်ပါက ပျောက်သွားမည်) -->
+        <!-- အပြင်ဘက် ညာဘက် Back Button -->
         <button id="dock-external-back-btn" onclick="window.goBack()" 
                 style="height: 66px; width: 100px; max-width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
                        background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
