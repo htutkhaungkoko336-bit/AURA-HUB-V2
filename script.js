@@ -623,7 +623,7 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.display = 'none';
             }, 500);
         }
-        // ၂။ ဘောက်စ်အရှည်ကို Create Room နဲ့ Refund ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
+        // ၂။ ဘောက်စ်အရှည်ကို ဆန့်ထုတ်မည်
         if (dockBox) {
             dockBox.style.width = '330px'; 
             dockBox.style.padding = '0 14px';
@@ -639,7 +639,7 @@ window.toggleActionWheel = function() {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ဘောက်စ်အရှည်ကို လျှော့ချထားသော မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့မည်
+        // ၂။ ဘောက်စ်အရှည်ကို ပြန်ကျုံ့မည်
         if (dockBox) {
             dockBox.style.width = '185px'; 
             dockBox.style.padding = '0 10px';
@@ -657,6 +657,43 @@ window.toggleActionWheel = function() {
         }
     }
 }
+
+// 🌟 ဝင်လာတဲ့ User မှာ ကိုယ်ပိုင် Active Room ရှိမရှိ စစ်ဆေးပြီး Dock UI ကို ပုံစံပြောင်းပေးမည့် Function
+function checkUserActiveRoom(rooms) {
+    const deviceId = localStorage.getItem('aura_device_id');
+    const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
+    const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
+    
+    // လက်ရှိ User ထောင်ထားသော room ပါဝင်ခြင်း ရှိမရှိ စစ်ဆေးမည်
+    const hasMyRoom = rooms.some(room => String(room.deviceId) === String(deviceId));
+
+    if (hasMyRoom) {
+        // Room ထောင်ထားပြီးသားဆိုလျှင် ခလုတ်များကို မှိန်ထားမည်
+        if (createBtn) {
+            createBtn.style.opacity = '0.4';
+            createBtn.style.pointerEvents = 'none';
+            createBtn.style.cursor = 'not-allowed';
+        }
+        if (refundBtn) {
+            refundBtn.style.opacity = '0.4';
+            refundBtn.style.pointerEvents = 'none';
+            refundBtn.style.cursor = 'not-allowed';
+        }
+    } else {
+        // Room မရှိတော့/ဖျက်ပြီးဆိုလျှင် ခလုတ်များကို ပုံမှန်အတိုင်း ပြန်ဖြစ်စေမည်
+        if (createBtn) {
+            createBtn.style.opacity = '1';
+            createBtn.style.pointerEvents = 'auto';
+            createBtn.style.cursor = 'pointer';
+        }
+        if (refundBtn) {
+            refundBtn.style.opacity = '1';
+            refundBtn.style.pointerEvents = 'auto';
+            refundBtn.style.cursor = 'pointer';
+        }
+    }
+}
+
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
@@ -665,11 +702,9 @@ window.createNewRoom = async function() {
         return;
     }
 
-    // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
     const currentMode = window.currentMode || '5vs5';
     const is1v1Visible = (currentMode === '1vs1');
 
-    // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
     let teamName = "";
     let logoUrl = "";
     let mlbbId = "";
@@ -712,7 +747,6 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // 🌟 3. UI ပေါ်သို့ User ဖြည့်ထားတဲ့ အချက်အလက်အတိုင်း Room Card ထည့်ပေးခြင်း
             appendRoomCardToUI({
                 roomId: result.roomId,
                 deviceId: deviceId,
@@ -724,7 +758,7 @@ window.createNewRoom = async function() {
                 createdAt: 'Just now'
             });
 
-            // 🌟 Room ထောင်ပြီးပါက Create Room နှင့် Refund ခလုတ်များကို မှိန်ထားမည် (Disabled & Opacity 0.4)
+            // 🌟 ခလုတ်များကို မှိန်မည်
             const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
             const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
             
@@ -746,6 +780,7 @@ window.createNewRoom = async function() {
             if (inuseBtns) inuseBtns.style.display = 'flex';
             
             updateBuyButtonStatus();
+            loadActiveRooms(); // 🌟 Room စာရင်းကိုပါ တစ်ခါတည်း အသစ်ဆွဲမည်
 
         } else {
             alert(result.message);
@@ -834,6 +869,9 @@ async function loadActiveRooms() {
                     appendRoomCardToUI(room); 
                 });
             }
+
+            // 🌟 Active rooms တွေ ဝင်လာတိုင်း User ကိုယ်တိုင် room ထောင်ထားခြင်းရှိမရှိ စစ်ဆေးမည်
+            checkUserActiveRoom(result.rooms);
         }
     } catch (error) {
         console.error("Failed to load rooms:", error);
@@ -868,7 +906,6 @@ window.cancelMyRoom = async function(roomId) {
 
             loadActiveRooms();
 
-            // 🌟 Room ဖျက်လိုက်ပါက Create Room နှင့် Refund ခလုတ်များကို ပုံမှန်အခြေအနေသို့ ပြန်ပြောင်းပေးမည် (Opacity ပြန်ပြည့်မည်၊ နှိပ်လို့ရမည်)
             const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
             const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
             
