@@ -612,26 +612,26 @@ window.toggleActionWheel = function() {
     const dockTextArea = document.getElementById('dock-text-area');
 
     if (isWheelOpen) {
-        // သော့ကို နှိပ်လိုက်တဲ့အခါ စာသားပျောက်ပြီး ခလုတ်နှစ်ခု ဘေးတိုက်ပေါ်လာမည်၊ ဘောက်စ် အကျယ်ချဲ့မည်
+        // သော့ကို နှိပ်လိုက်တဲ့အခါ စာသားပျောက်ပြီး ဘောက်စ်ကို အရင် BACK ခလုတ်ရှိရာအထိ အရှည်ဆန့်မည် (ဥပမာ 330px)
         if (dockTextArea) {
             dockTextArea.style.opacity = '0';
             dockTextArea.style.visibility = 'hidden';
         }
         if (dockBox) {
-            dockBox.style.width = '215px'; // ခလုတ်နှစ်ခု ဘေးတိုက်ဆံ့မည့် အကျယ်
+            dockBox.style.width = '330px'; 
         }
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
-        // သော့ကို ပြန်နှိပ်လိုက်တဲ့အခါ ခလုတ်တွေပျောက်ပြီး မူလစာသားနဲ့ သော့ ပြန်ပေါ်မည်
+        // သော့ကို ပြန်နှိပ်လိုက်တဲ့အခါ ခလုတ်တွေပျောက်ပြီး မူလအရှည်သို့ ပြန်ကျုံ့ကာ သော့နဲ့ စာသား ပြန်ပေါ်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
         if (dockBox) {
-            dockBox.style.width = '200px'; // မူလစာသားဆံ့မည့် အကျယ်
+            dockBox.style.width = '220px'; 
         }
         if (dockTextArea) {
             dockTextArea.style.visibility = 'visible';

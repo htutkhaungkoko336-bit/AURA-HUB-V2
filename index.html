@@ -347,10 +347,10 @@
 <!-- Bottom Sheet Action Dock Container -->
 <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
     
-    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
+    <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
         
-        <!-- Main Dock Box -->
-        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 0 14px; height: 66px; display: flex; align-items: center; justify-content: flex-start; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 200px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
+        <!-- Main Dock Box (BACK ခလုတ်နေရာအထိ အပြည့်ဆန့်မည့် Box) -->
+        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 0 14px; height: 66px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 220px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
             
             <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် စာသားများ (ပထမဆုံး ပေါ်နေမည့်အရာ) -->
             <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
@@ -365,19 +365,19 @@
             </div>
 
             <!-- ညာဘက်ခြမ်း: Create Room နှင့် Refund ခလုတ်များ (ကနဦးတွင် ဖုံးထားမည်၊ နှိပ်မှပေါ်မည်) -->
-            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0; position: absolute; left: 66px;">
+            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
                 <div id="dock-action-area" style="display: flex; flex-direction: row; gap: 8px; align-items: center;">
                     
                     <!-- Create Room ခလုတ် -->
                     <div style="display: flex; flex-direction: column;">
-                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 7px 10px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.72rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
+                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 7px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.75rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
                             Create Room
                         </button>
                     </div>
 
                     <!-- Refund ခလုတ် -->
                     <div style="display: flex; flex-direction: column;">
-                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 7px 10px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.72rem; text-align: center; white-space: nowrap;">
+                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 7px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-align: center; white-space: nowrap;">
                             Refund
                         </button>
                     </div>
@@ -386,19 +386,6 @@
             </div>
 
         </div>
-
-        <!-- အပြင်ဘက် ညာဘက် Back Button -->
-        <button id="dock-external-back-btn" onclick="window.goBack()" 
-                style="height: 66px; width: 100px; max-width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
-                       background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-                       color: #c9a66b; font-weight: bold; cursor: pointer; 
-                       transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
-                       flex-shrink: 0; opacity: 1; visibility: visible; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 0;"
-                onmouseover="this.style.background='rgba(201, 166, 107, 0.2)'; this.style.borderColor='rgba(201, 166, 107, 0.8)';"
-                onmouseout="this.style.background='rgba(20, 20, 20, 0.85)'; this.style.borderColor='rgba(201, 166, 107, 0.4)';"
-        >
-            <span style="display: inline-block;">BACK</span>
-        </button>
 
     </div>
 </div>
