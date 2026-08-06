@@ -350,35 +350,34 @@
     <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
         
         <!-- Main Dock Box -->
-        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 70px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
+        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 0 14px; height: 66px; display: flex; align-items: center; justify-content: flex-start; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 200px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
             
-            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် (ဒီဟာလေးပဲ ပထမဆုံးပေါ်နေမည်) -->
+            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် စာသားများ (ပထမဆုံး ပေါ်နေမည့်အရာ) -->
             <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
                 <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
                     <span id="dock-icon-element" style="font-size: 1.25rem;">🗝️</span>
                 </div>
                 
-                <!-- နှိပ်လိုက်မှ ပေါ်လာမည့် စာသားအလွှာ -->
-                <div id="dock-text-area" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
-                    <div style="font-size: 0.8rem; font-weight: bold; color: #dac02d; white-space: nowrap;">5v5 MODE</div>
-                    <div style="font-size: 0.7rem; color: #aaa; white-space: nowrap;">50K Key</div>
+                <div id="dock-text-area" style="display: flex; flex-direction: column; opacity: 1; visibility: visible; transition: opacity 0.3s ease; white-space: nowrap;">
+                    <div style="font-size: 0.8rem; font-weight: bold; color: #dac02d;">5v5 MODE</div>
+                    <div style="font-size: 0.7rem; color: #aaa;">50K Key</div>
                 </div>
             </div>
 
-            <!-- ညာဘက်ခြမ်း: Create Room နှင့် Refund ခလုတ်များ -->
-            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
-                <div id="dock-action-area" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+            <!-- ညာဘက်ခြမ်း: Create Room နှင့် Refund ခလုတ်များ (ကနဦးတွင် ဖုံးထားမည်၊ နှိပ်မှပေါ်မည်) -->
+            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0; position: absolute; left: 66px;">
+                <div id="dock-action-area" style="display: flex; flex-direction: row; gap: 8px; align-items: center;">
                     
-                    <!-- Create Room ခလုတ် (အပေါ်) -->
-                    <div style="display: flex; flex-direction: column; width: 100%;">
-                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.75rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
+                    <!-- Create Room ခလုတ် -->
+                    <div style="display: flex; flex-direction: column;">
+                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 7px 10px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.72rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
                             Create Room
                         </button>
                     </div>
 
-                    <!-- Refund ခလုတ် (အောက်) -->
-                    <div style="display: flex; flex-direction: column; width: 100%;">
-                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-align: center; white-space: nowrap;">
+                    <!-- Refund ခလုတ် -->
+                    <div style="display: flex; flex-direction: column;">
+                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 7px 10px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.72rem; text-align: center; white-space: nowrap;">
                             Refund
                         </button>
                     </div>
