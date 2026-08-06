@@ -602,8 +602,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateBuyButtonStatus, 5000); 
 });
 
-
-
 let isWheelOpen = false;
 
 window.toggleActionWheel = function() {
@@ -611,9 +609,11 @@ window.toggleActionWheel = function() {
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
     const dockBox = document.getElementById('dock-box');
+    const dockTextArea = document.getElementById('dock-text-area');
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
+        // ၁။ ညာဘက် Back Button ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -624,25 +624,43 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.display = 'none';
             }, 500);
         }
+        // ၂။ ဘောက်စ်ကို စာသားနဲ့ ခလုတ်တွေ အားလုံးဆံ့မည့် အကျယ် (ဥပမာ 260px) သို့ ချဲ့မည်
         if (dockBox) {
-            dockBox.style.width = '230px'; // ခလုတ် ၂ ခု ဒေါင်လိုက်ဆံ့မည့် အကျယ်
+            dockBox.style.width = '260px';
             dockBox.style.padding = '12px 16px';
             dockBox.style.justifyContent = 'space-between';
         }
+        // ၃။ သော့ဘေးက စာသားကို ပေါ်လာစေမည်
+        if (dockTextArea) {
+            dockTextArea.style.display = 'block';
+            setTimeout(() => {
+                dockTextArea.style.opacity = '1';
+            }, 50);
+        }
+        // ၄။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
+        // ၁။ စာသားနဲ့ ခလုတ်များကို အရင် ဖျောက်မည်
+        if (dockTextArea) {
+            dockTextArea.style.opacity = '0';
+            setTimeout(() => {
+                dockTextArea.style.display = 'none';
+            }, 300);
+        }
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
+        // ၂။ ဘောက်စ်ကို သော့အိုင်ကွန်တစ်ခုစာအရွယ်အစား (70px) သို့ ပြန်ကျုံ့မည်
         if (dockBox) {
-            dockBox.style.width = '185px';
+            dockBox.style.width = '70px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
+        // ၃။ Back Button ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -655,7 +673,6 @@ window.toggleActionWheel = function() {
         }
     }
 }
-
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     

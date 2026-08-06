@@ -350,20 +350,22 @@
     <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
         
         <!-- Main Dock Box -->
-        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 220px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
+        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 70px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
             
-            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
+            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် (ဒီဟာလေးပဲ ပထမဆုံးပေါ်နေမည်) -->
             <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
                 <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
                     <span id="dock-icon-element" style="font-size: 1.25rem;">🗝️</span>
                 </div>
                 
-                <div id="dock-text-area">
-                    <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
+                <!-- နှိပ်လိုက်မှ ပေါ်လာမည့် စာသားအလွှာ -->
+                <div id="dock-text-area" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
+                    <div style="font-size: 0.8rem; font-weight: bold; color: #dac02d; white-space: nowrap;">5v5 MODE</div>
+                    <div style="font-size: 0.7rem; color: #aaa; white-space: nowrap;">50K Key</div>
                 </div>
             </div>
 
-            <!-- ညာဘက်ခြမ်း: Create Room နဲ့ Refund ခလုတ် ၂ ခုစလုံးကို အပေါ်အောက် ဒေါင်လိုက် တစ်ခါတည်းပြရန် -->
+            <!-- ညာဘက်ခြမ်း: Create Room နှင့် Refund ခလုတ်များ -->
             <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
                 <div id="dock-action-area" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
                     
