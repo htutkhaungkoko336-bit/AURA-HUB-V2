@@ -610,7 +610,7 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ညာဘက် Back Button ကို ဖျောက်မည်
+        // ညာဘက် Back Button ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -622,15 +622,15 @@ window.toggleActionWheel = function() {
             }, 300);
         }
 
-        // ၂။ အပေါ်အောက် ခလုတ်များကို အမြင့်ဖွင့်ပေးပြီး ပေါ်လာစေမည်
+        // အပေါ်အောက် ခလုတ် ၂ ခုစာအတွက် အမြင့်ကို ပေါ်လာစေရန် ဖွင့်ပေးမည် (95px)
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
-            actionWrapper.style.maxHeight = '120px'; // ခလုတ်အရွယ်အစားအပေါ်မူတည်၍ လိုအပ်ပါက ချိန်နိုင်သည်
-            actionWrapper.style.marginBottom = '8px';
+            actionWrapper.style.maxHeight = '95px'; 
+            actionWrapper.style.marginBottom = '8px'; // အောက်ခံ Key ခလုတ်နဲ့ အကွာအဝေး
         }
     } else {
-        // ၁။ အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
+        // အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
@@ -638,7 +638,7 @@ window.toggleActionWheel = function() {
             actionWrapper.style.marginBottom = '0px';
         }
 
-        // ၂။ Back Button ကို ပြန်ပေါ်လာစေမည်
+        // Back Button ကို ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -651,7 +651,6 @@ window.toggleActionWheel = function() {
         }
     }
 }
-
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
