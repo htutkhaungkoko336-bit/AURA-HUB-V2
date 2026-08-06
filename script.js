@@ -607,10 +607,11 @@ window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
+    const dockBox = document.getElementById('dock-box');
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ ညာဘက် Back Button ကို ဖျောက်မည်
+        // ၁။ BACK ခလုတ်ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -619,26 +620,30 @@ window.toggleActionWheel = function() {
             externalBackBtn.style.borderWidth = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 300);
+            }, 500);
         }
-
-        // ၂။ အပေါ်အောက် ခလုတ်များကို အမြင့်ဖွင့်ပေးပြီး ပေါ်လာစေမည်
+        // ၂။ ဘောက်စ်အရှည်ကို Create Room နဲ့ Refund ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
+        if (dockBox) {
+            dockBox.style.width = '330px'; 
+            dockBox.style.padding = '0 14px';
+        }
+        // ၃။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်စေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
-            actionWrapper.style.maxHeight = '120px'; // ခလုတ်အရွယ်အစားအပေါ်မူတည်၍ လိုအပ်ပါက ချိန်နိုင်သည်
-            actionWrapper.style.marginBottom = '8px';
         }
     } else {
-        // ၁။ အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
+        // ၁။ ခလုတ်များကို ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
-            actionWrapper.style.maxHeight = '0px';
-            actionWrapper.style.marginBottom = '0px';
         }
-
-        // ၂။ Back Button ကို ပြန်ပေါ်လာစေမည်
+        // ၂။ ဘောက်စ်အရှည်ကို လျှော့ချထားသော မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့မည်
+        if (dockBox) {
+            dockBox.style.width = '185px'; 
+            dockBox.style.padding = '0 10px';
+        }
+        // ၃။ BACK ခလုတ်ကို ပြန်ပေါ်စေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -651,7 +656,6 @@ window.toggleActionWheel = function() {
         }
     }
 }
-
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     

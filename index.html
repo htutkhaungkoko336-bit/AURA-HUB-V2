@@ -344,59 +344,64 @@
         </button>
     </div>
 
-    <!-- Bottom Sheet Action Dock Container -->
-    <div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
+<!-- Bottom Sheet Action Dock Container -->
+<div id="action-wheel-container" style="position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 450px; z-index: 1000; display: none;">
+    
+    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
         
-        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
+        <!-- Main Dock Box (အလျားကို 185px သို့ လျှော့ချထားပါသည်) -->
+        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 0 10px; height: 66px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
             
-            <!-- Main Dock Box -->
-            <div id="dock-box" style="position: relative; z-index: 1000; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 14px; display: flex; flex-direction: column-reverse; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 200px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-sizing: border-box;">
-                
-                <!-- မူလ Key ခလုတ်နေရာ (အောက်ဆုံးမှာ ရှိနေမည်) -->
-                <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; justify-content: flex-start; flex-shrink: 0;">
-                    <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
-                        <span id="dock-icon-element" style="font-size: 1.25rem;">🗝️</span>
-                    </div>
-                    
-                    <div id="dock-text-area">
-                        <div id="dock-status-text" style="font-size: 0.9rem; font-weight: bold; color: #c9a66b;">Active Key</div>
-                    </div>
+            <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် အပေါ်အောက် စာသားများ -->
+            <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 8px; cursor: pointer; flex-shrink: 0;">
+                <div style="width: 42px; height: 42px; background: radial-gradient(circle, rgba(218,192,45,0.25) 0%, rgba(20,20,20,0.9) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dac02d; box-shadow: 0 0 12px rgba(218,192,45,0.4); flex-shrink: 0;">
+                    <span id="dock-icon-element" style="font-size: 1.25rem;">🗝️</span>
                 </div>
+                
+                <div id="dock-text-area" style="display: flex; flex-direction: column; white-space: nowrap;">
+                    <div style="font-size: 0.8rem; font-weight: bold; color: #dac02d;">5v5 MODE</div>
+                    <div style="font-size: 0.7rem; color: #aaa;">50K Key</div>
+                </div>
+            </div>
 
-                <!-- အပေါ်အောက် ပေါ်လာမည့် Action Wrapper (Create Room / Refund) -->
-                <div id="dock-action-wrapper" style="max-height: 0px; opacity: 0; visibility: hidden; overflow: hidden; transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease; display: flex; flex-direction: column; width: 100%; gap: 8px;">
+            <!-- ညာဘက်ခြမ်း: Create Room နှင့် Refund ခလုတ်များ (နှိပ်မှပေါ်မည်) -->
+            <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
+                <div id="dock-action-area" style="display: flex; flex-direction: row; gap: 8px; align-items: center;">
                     
-                    <div id="dock-active-btns" style="display: flex; flex-direction: column; width: 100%;">
-                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 10px 16px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); width: 100%;">
+                    <!-- Create Room ခလုတ် -->
+                    <div style="display: flex; flex-direction: column;">
+                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 7px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.75rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
                             Create Room
                         </button>
                     </div>
 
-                    <div id="dock-inuse-btns" style="display: none; flex-direction: column; width: 100%;">
-                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 10px 12px; border-radius: 14px; font-weight: bold; cursor: pointer; font-size: 0.8rem; width: 100%;">
+                    <!-- Refund ခလုတ် -->
+                    <div style="display: flex; flex-direction: column;">
+                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 7px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-align: center; white-space: nowrap;">
                             Refund
                         </button>
                     </div>
-                    
-                </div>
 
+                </div>
             </div>
-            <!-- အပြင်ဘက် ညာဘက် Back Button -->
-            <button id="dock-external-back-btn" onclick="window.goBack()" 
-                    style="height: 66px; width: 100px; max-width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
-                           background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-                           color: #c9a66b; font-weight: bold; cursor: pointer; 
-                           transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
-                           flex-shrink: 0; opacity: 1; visibility: visible; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 0;"
-                    onmouseover="this.style.background='rgba(201, 166, 107, 0.2)'; this.style.borderColor='rgba(201, 166, 107, 0.8)';"
-                    onmouseout="this.style.background='rgba(20, 20, 20, 0.85)'; this.style.borderColor='rgba(201, 166, 107, 0.4)';"
-            >
-                <span style="display: inline-block;">BACK</span>
-            </button>
 
         </div>
-    </div>
 
+        <!-- အပြင်ဘက် ညာဘက် Back Button -->
+        <button id="dock-external-back-btn" onclick="window.goBack()" 
+                style="height: 66px; width: 100px; max-width: 100px; border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; 
+                       background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+                       color: #c9a66b; font-weight: bold; cursor: pointer; 
+                       transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
+                       flex-shrink: 0; opacity: 1; visibility: visible; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 0;"
+                onmouseover="this.style.background='rgba(201, 166, 107, 0.2)'; this.style.borderColor='rgba(201, 166, 107, 0.8)';"
+                onmouseout="this.style.background='rgba(20, 20, 20, 0.85)'; this.style.borderColor='rgba(201, 166, 107, 0.4)';"
+        >
+            <span style="display: inline-block;">BACK</span>
+        </button>
+
+    </div>
+</div>
     <!-- User Detail Popup Modal (iOS Style) -->
     <div id="room-detail-modal" class="ios-modal-overlay" style="display: none;" onclick="closeRoomDetailModal(event)">
         <div class="ios-modal-card" onclick="event.stopPropagation()">
