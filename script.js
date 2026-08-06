@@ -620,15 +620,15 @@ window.toggleActionWheel = function() {
             externalBackBtn.style.borderWidth = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 500); // Transition duration (0.5s) နဲ့ တိုက်ဆိုင်ထားသည်
+            }, 500);
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို တိကျသော အကျယ်အဝန်း (ဥပမာ 330px) သို့ ချောမွေ့စွာ ရှည်ထွက်စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို ခလုတ် ၂ ခုစာဆံ့မည့် အကျယ်သို့ ချောမွေ့စွာ ရှည်ထွက်စေမည် (ဥပမာ 310px)
         if (dockBox) {
-            dockBox.style.width = '330px';
+            dockBox.style.width = '310px';
             dockBox.style.padding = '12px 18px';
             dockBox.style.justifyContent = 'space-between';
         }
-        // ၃။ အတွင်းရှိ ခလုတ်များကို ပေါ်လာစေမည်
+        // ၃။ အတွင်းရှိ ဒေါင်လိုက်ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
@@ -639,7 +639,7 @@ window.toggleActionWheel = function() {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့စေမည်
+        // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစားသို့ ပြန်ကျုံ့စေမည်
         if (dockBox) {
             dockBox.style.width = '185px';
             dockBox.style.padding = '12px 14px';
@@ -659,7 +659,6 @@ window.toggleActionWheel = function() {
     }
 }
 
-
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
@@ -668,11 +667,9 @@ window.createNewRoom = async function() {
         return;
     }
 
-    // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
     const currentMode = window.currentMode || '5vs5';
     const is1v1Visible = (currentMode === '1vs1');
 
-    // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
     let teamName = "";
     let logoUrl = "";
     let mlbbId = "";
@@ -696,7 +693,7 @@ window.createNewRoom = async function() {
     const roomData = {
         deviceId: deviceId,
         teamName: teamName,
-        logo: logoUrl.startsWith('data:') ? '' : logoUrl, // Base64 ဖြစ်နေရင် Backend က handle လုပ်ဖို့ (သို့) URL သက်သက်ဖြစ်ရင် ပို့ရန်
+        logo: logoUrl.startsWith('data:') ? '' : logoUrl,
         mlbbId: mlbbId,
         playerName: playerName,
         mode: currentMode,
@@ -715,7 +712,6 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // 🌟 3. UI ပေါ်သို့ User ဖြည့်ထားတဲ့ အချက်အလက်အတိုင်း Room Card ထည့်ပေးခြင်း
             appendRoomCardToUI({
                 roomId: result.roomId,
                 deviceId: deviceId,
@@ -727,6 +723,7 @@ window.createNewRoom = async function() {
                 createdAt: 'Just now'
             });
 
+            // တောင်းဆိုထားသည့်အတိုင်း Create Room ခလုတ်ကို ဖျောက်ပြီး Refund ခလုတ်ကို နေရာင်စားထိုးပြသရန်
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
 
