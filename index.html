@@ -350,7 +350,7 @@
     <div style="display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;">
         
         <!-- Main Dock Box -->
-        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 185px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
+        <div id="dock-box" style="background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(201, 166, 107, 0.4); border-radius: 24px; padding: 12px 14px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 220px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; box-sizing: border-box;">
             
             <!-- ဘယ်ဘက်ခြမ်း: သော့အိုင်ကွန် နှင့် Status -->
             <div onclick="toggleActionWheel()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
@@ -363,20 +363,20 @@
                 </div>
             </div>
 
-            <!-- ညာဘက်ခြမ်း: အပေါ်အောက် ဒေါင်လိုက်စီထားသော လုပ်ဆောင်ချက် ခလုတ်များ -->
+            <!-- ညာဘက်ခြမ်း: Create Room နဲ့ Refund ခလုတ် ၂ ခုစလုံးကို အပေါ်အောက် ဒေါင်လိုက် တစ်ခါတည်းပြရန် -->
             <div id="dock-action-wrapper" style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; display: flex; align-items: center; flex-shrink: 0;">
                 <div id="dock-action-area" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
                     
                     <!-- Create Room ခလုတ် (အပေါ်) -->
-                    <div id="dock-active-btns" style="display: flex; flex-direction: column; width: 100%;">
-                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 7px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.8rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
+                    <div style="display: flex; flex-direction: column; width: 100%;">
+                        <button onclick="createNewRoom()" style="background: linear-gradient(135deg, #c9a66b, #9a7b45); color: #111; border: none; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.75rem; box-shadow: 0 4px 12px rgba(201,166,107,0.3); text-align: center; white-space: nowrap;">
                             Create Room
                         </button>
                     </div>
 
                     <!-- Refund ခလုတ် (အောက်) -->
-                    <div id="dock-inuse-btns" style="display: none; flex-direction: column; width: 100%;">
-                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 7px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.8rem; text-align: center; white-space: nowrap;">
+                    <div style="display: flex; flex-direction: column; width: 100%;">
+                        <button onclick="quitAndRefund()" style="background: #ff4d4d; color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-align: center; white-space: nowrap;">
                             Refund
                         </button>
                     </div>
