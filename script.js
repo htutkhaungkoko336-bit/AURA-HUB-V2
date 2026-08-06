@@ -601,18 +601,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
-
 let isWheelOpen = false;
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
     const actionWrapper = document.getElementById('dock-action-wrapper');
-    const dockBox = document.getElementById('dock-box');
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ BACK ခလုတ်ကို ဖျောက်မည်
+        // ၁။ ညာဘက် Back Button ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -621,30 +619,26 @@ window.toggleActionWheel = function() {
             externalBackBtn.style.borderWidth = '0px';
             setTimeout(() => {
                 externalBackBtn.style.display = 'none';
-            }, 500);
+            }, 300);
         }
-        // ၂။ ဘောက်စ်အရှည်ကို Create Room နဲ့ Refund ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
-        if (dockBox) {
-            dockBox.style.width = '330px'; 
-            dockBox.style.padding = '0 14px';
-        }
-        // ၃။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်စေမည်
+
+        // ၂။ အပေါ်အောက် ခလုတ်များကို အမြင့်ဖွင့်ပေးပြီး ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
+            actionWrapper.style.maxHeight = '120px'; // ခလုတ်အရွယ်အစားအပေါ်မူတည်၍ လိုအပ်ပါက ချိန်နိုင်သည်
+            actionWrapper.style.marginBottom = '8px';
         }
     } else {
-        // ၁။ ခလုတ်များကို ဖျောက်မည်
+        // ၁။ အပေါ်အောက် ခလုတ်များကို ပြန်ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
+            actionWrapper.style.maxHeight = '0px';
+            actionWrapper.style.marginBottom = '0px';
         }
-        // ၂။ ဘောက်စ်အရှည်ကို လျှော့ချထားသော မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့မည်
-        if (dockBox) {
-            dockBox.style.width = '185px'; 
-            dockBox.style.padding = '0 10px';
-        }
-        // ၃။ BACK ခလုတ်ကို ပြန်ပေါ်စေမည်
+
+        // ၂။ Back Button ကို ပြန်ပေါ်လာစေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -657,6 +651,7 @@ window.toggleActionWheel = function() {
         }
     }
 }
+
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
@@ -693,7 +688,7 @@ window.createNewRoom = async function() {
     const roomData = {
         deviceId: deviceId,
         teamName: teamName,
-        logo: logoUrl.startsWith('data:') ? '' : logoUrl, 
+        logo: logoUrl.startsWith('data:') ? '' : logoUrl, // Base64 ဖြစ်နေရင် Backend က handle လုပ်ဖို့ (သို့) URL သက်သက်ဖြစ်ရင် ပို့ရန်
         mlbbId: mlbbId,
         playerName: playerName,
         mode: currentMode,
@@ -724,21 +719,6 @@ window.createNewRoom = async function() {
                 createdAt: 'Just now'
             });
 
-            // 🌟 Room ထောင်ပြီးပါက Create Room နှင့် Refund ခလုတ်များကို မှိန်ထားမည် (Disabled & Opacity 0.4)
-            const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
-            const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
-            
-            if (createBtn) {
-                createBtn.style.opacity = '0.4';
-                createBtn.style.pointerEvents = 'none';
-                createBtn.style.cursor = 'not-allowed';
-            }
-            if (refundBtn) {
-                refundBtn.style.opacity = '0.4';
-                refundBtn.style.pointerEvents = 'none';
-                refundBtn.style.cursor = 'not-allowed';
-            }
-
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
 
@@ -756,11 +736,11 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
 
+    // Room card များများလာပါက scroll လုပ်နိုင်ရန် CSS စနစ် ထည့်သွင်းခြင်း
     matchContent.style.maxHeight = '65vh';
     matchContent.style.overflowY = 'auto';
     matchContent.style.paddingRight = '4px';
@@ -771,11 +751,13 @@ function appendRoomCardToUI(room) {
     const logoUrl = room.logo || 'default-logo.png';
     const mode = room.mode || '5vs5';
     
+    // Fee စာသား သန့်စင်ခြင်း နှင့် 5000 -> 5K ပုံစံပြောင်းခြင်း
     let rawFee = room.entryFee || '0 Ks';
     let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '').trim();
     let numericFee = parseInt(cleanFee.replace(/[^0-9]/g, '')) || 0;
     let feeText = numericFee >= 1000 ? (numericFee / 1000) + 'K' : cleanFee;
 
+    // 25000 နဲ့ 50000 ဆိုရင် BO3၊ ကျန်တာဆိုရင် BO1
     let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
 
     let mainTitle = '';
@@ -784,12 +766,14 @@ function appendRoomCardToUI(room) {
     } else {
         mainTitle = room.squadName || room.teamName || 'Squad Name';
     }
+    // room object တစ်ခုလုံးကို encode လုပ်ပြီး string အနေနဲ့ ထည့်ပေးခြင်း
     const roomString = encodeURIComponent(JSON.stringify(room));
 
     const actionButtonHTML = isOwner 
         ? `<button class="ios-action-btn btn-cancel-room" onclick="event.stopPropagation(); cancelMyRoom('${room.roomId}')">Cancel</button>`
         : `<button class="ios-action-btn btn-join-plus" onclick="event.stopPropagation(); joinOrViewRoom('${room.roomId}', '${roomString}')">+</button>`;
     
+    // 🌟 FEE, MODE, BO သုံးခုစလုံးကို ရိုးရှင်းသပ်ရပ်စွာ တစ်န်းတည်းပြမည့် ပုံစံ
     const cardHTML = `
         <div class="room-card-ios" onclick="openSquadDetail('${room.roomId}')">
             <div class="room-left">
@@ -811,11 +795,11 @@ function appendRoomCardToUI(room) {
 
     matchContent.insertAdjacentHTML('afterbegin', cardHTML);
 }
-
 async function loadActiveRooms() {
     try {
         const response = await fetch('/api/active-rooms');
         
+        // 🌟 Response က JSON ဟုတ်မဟုတ် အရင်စစ်ဆေးခြင်း 🌟
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const textResponse = await response.text();
@@ -828,7 +812,7 @@ async function loadActiveRooms() {
         if (result.success) {
             const matchContent = document.getElementById('match-content');
             if (matchContent) {
-                matchContent.innerHTML = ''; 
+                matchContent.innerHTML = ''; // အဟောင်းတွေ ရှင်းထုတ်မည်
 
                 result.rooms.forEach(room => {
                     appendRoomCardToUI(room); 
@@ -839,10 +823,12 @@ async function loadActiveRooms() {
         console.error("Failed to load rooms:", error);
     }
 }
-
+// စာမျက်နှာ စဖွင့်ချင်း ခေါ်ရန်
 loadActiveRooms();
 
+// 🌟 တခြားသူများ Room ထောင်ထားသည်များကို Live မြင်ရရန် (ဥပမာ - ၃ စက္ကန့် တစ်ကြိမ် Auto Update လုပ်မည်)
 setInterval(() => {
+    // Match Center သို့မဟုတ် Room List ပွင့်နေမှသာ Fetch လုပ်ရန် (Resource သက်သာစေရန်)
     const matchCenter = document.getElementById('page-match-center');
     if (matchCenter && matchCenter.style.display !== 'none') {
         loadActiveRooms();
@@ -866,29 +852,17 @@ window.cancelMyRoom = async function(roomId) {
         if (result.success) {
             alert("Room ကို အောင်မြင်စွာ ဖျက်သိမ်းလိုက်ပါပြီ။");
 
+            // ၁။ UI ပေါ်က Room Card များကို ချက်ချင်းပြန်ဆွဲထုတ်ပြီး ရှင်းလင်းခြင်း (သို့မဟုတ် Card ကို ဖျောက်ခြင်း)
             loadActiveRooms();
 
-            // 🌟 Room ဖျက်လိုက်ပါက Create Room နှင့် Refund ခလုတ်များကို ပုံမှန်အခြေအနေသို့ ပြန်ပြောင်းပေးမည် (Opacity ပြန်ပြည့်မည်၊ နှိပ်လို့ရမည်)
-            const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
-            const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
-            
-            if (createBtn) {
-                createBtn.style.opacity = '1';
-                createBtn.style.pointerEvents = 'auto';
-                createBtn.style.cursor = 'pointer';
-            }
-            if (refundBtn) {
-                refundBtn.style.opacity = '1';
-                refundBtn.style.pointerEvents = 'auto';
-                refundBtn.style.cursor = 'pointer';
-            }
-
+            // ၂။ Dock Buttons များကို Create New Room ပြန်ပေါ်လာအောင် ပြောင်းခြင်း
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
 
             if (activeBtns) activeBtns.style.display = 'flex';
             if (inuseBtns) inuseBtns.style.display = 'none';
 
+            // ၃။ Status ကိုပါ တစ်ခါတည်း update လုပ်ပေးရန်
             updateBuyButtonStatus();
 
         } else {
@@ -900,7 +874,6 @@ window.cancelMyRoom = async function(roomId) {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
     }
 };
-
 window.openSquadDetail = async function(roomId) {
     const modal = document.getElementById('room-detail-modal');
     const modalBody = document.getElementById('modal-body-content');
@@ -960,6 +933,7 @@ window.openSquadDetail = async function(roomId) {
     }
 };
 
+// Modal ကို ပိတ်ရန် function
 window.closeRoomDetailModal = function() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
