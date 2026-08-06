@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateBuyButtonStatus, 5000); 
 });
 
-let isWheelOpen = false; // ပုံမှန်အခြေအနေမှာ သော့နဲ့ စာသားပေါ်နေမည်
+let isWheelOpen = false; // ပုံမှန်အခြေအနေမှာ Back ခလုတ်နဲ့ သော့ပါပေါ်နေမည်
 
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
@@ -610,32 +610,59 @@ window.toggleActionWheel = function() {
     const actionWrapper = document.getElementById('dock-action-wrapper');
     const dockBox = document.getElementById('dock-box');
     const dockTextArea = document.getElementById('dock-text-area');
+    const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // သော့ကို နှိပ်လိုက်တဲ့အခါ စာသားပျောက်ပြီး ဘောက်စ်ကို အရင် BACK ခလုတ်ရှိရာအထိ အရှည်ဆန့်မည် (ဥပမာ 330px)
+        // ၁။ BACK ခလုတ်ကို ဖြည်းဖြည်းချင်း ကျုံ့ဖျောက်မည်
+        if (externalBackBtn) {
+            externalBackBtn.style.opacity = '0';
+            externalBackBtn.style.width = '0px';
+            externalBackBtn.style.minWidth = '0px';
+            externalBackBtn.style.padding = '0px';
+            externalBackBtn.style.borderWidth = '0px';
+            setTimeout(() => {
+                externalBackBtn.style.display = 'none';
+            }, 500);
+        }
+        // ၂။ စာသားကို ဖျောက်မည်
         if (dockTextArea) {
             dockTextArea.style.opacity = '0';
             dockTextArea.style.visibility = 'hidden';
         }
+        // ၃။ ဘောက်စ်အရှည်ကို BACK ခလုတ်နေရာအထိ ဆန့်ထွက်စေမည် (ဥပမာ 330px)
         if (dockBox) {
             dockBox.style.width = '330px'; 
         }
+        // ၄။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်လာစေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
-        // သော့ကို ပြန်နှိပ်လိုက်တဲ့အခါ ခလုတ်တွေပျောက်ပြီး မူလအရှည်သို့ ပြန်ကျုံ့ကာ သော့နဲ့ စာသား ပြန်ပေါ်မည်
+        // ၁။ ခလုတ်များကို အရင် ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
+        // ၂။ ဘောက်စ်ကို မူလအရှည် (220px) သို့ ပြန်ကျုံ့မည်
         if (dockBox) {
             dockBox.style.width = '220px'; 
         }
+        // ၃။ စာသားကို ပြန်ပေါ်စေမည်
         if (dockTextArea) {
             dockTextArea.style.visibility = 'visible';
             dockTextArea.style.opacity = '1';
+        }
+        // ၄။ BACK ခလုတ်ကို ဖြည်းဖြည်းချင်း ပြန်ပေါ်လာစေမည်
+        if (externalBackBtn) {
+            externalBackBtn.style.display = 'flex';
+            setTimeout(() => {
+                externalBackBtn.style.width = '100px';
+                externalBackBtn.style.minWidth = '';
+                externalBackBtn.style.padding = '0';
+                externalBackBtn.style.borderWidth = '1px';
+                externalBackBtn.style.opacity = '1';
+            }, 50);
         }
     }
 }
