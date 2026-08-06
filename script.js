@@ -603,6 +603,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 let isWheelOpen = false;
 
+let isWheelOpen = false;
+
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
@@ -622,9 +624,9 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.display = 'none';
             }, 500);
         }
-        // ၂။ ရွှေရောင်ဘောင်ကို ခလုတ် ၂ ခုစာဆံ့မည့် အကျယ်သို့ ချောမွေ့စွာ ရှည်ထွက်စေမည် (ဥပမာ 310px)
+        // ၂။ ရွှေရောင်ဘောင်ကို ခလုတ် ၂ ခုစာ ဒေါင်လိုက်ဆံ့မည့် အကျယ်သို့ ချောမွေ့စွာ ရှည်ထွက်စေမည် (ဥပမာ 320px)
         if (dockBox) {
-            dockBox.style.width = '310px';
+            dockBox.style.width = '320px';
             dockBox.style.padding = '12px 18px';
             dockBox.style.justifyContent = 'space-between';
         }
@@ -641,7 +643,7 @@ window.toggleActionWheel = function() {
         }
         // ၂။ ရွှေရောင်ဘောင်ကို မူလအရွယ်အစားသို့ ပြန်ကျုံ့စေမည်
         if (dockBox) {
-            dockBox.style.width = '185px';
+            dockBox.style.width = '220px';
             dockBox.style.padding = '12px 14px';
             dockBox.style.justifyContent = 'flex-start';
         }
@@ -658,7 +660,6 @@ window.toggleActionWheel = function() {
         }
     }
 }
-
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
