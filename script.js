@@ -477,6 +477,9 @@ async function updateBuyButtonStatus() {
             `;
         }
 
+        // Dock ပေါ်ရှိ စာသားများကိုပါ ချက်ချင်း လိုက်ပြောင်းပေးရန်
+        updateDockText(registeredMode, tierText);
+
         // CONFIRM ဖြစ်နေချိန် (သို့မဟုတ် Status အလုပ်လုပ်နေချိန်)
         if (data.status === 'confirm' || data.status === 'approved' || data.status === 'active') {
             buyBtn.style.display = 'none';
@@ -547,14 +550,14 @@ async function updateBuyButtonStatus() {
     } catch (e) {
         console.error("Status check failed:", e);
     }
-}// Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
+}
+
+// Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
 window.openRegistrationPage = () => {
-    // ၁။ UI ပေါ်ရှိ Page များအားလုံးကို ဖျောက်ပါ
     document.querySelectorAll('.sub-page, #page-match-center, #main-dashboard').forEach(el => {
         el.style.display = 'none';
     });
 
-    // ၂။ လက်ရှိ mode ပေါ်မူတည်ပြီး သက်ဆိုင်ရာ registration page ကို ပြန်ပြပါ
     if (window.currentMode === '5vs5') {
         const page5vs5 = document.getElementById('page-5vs5');
         if (page5vs5) page5vs5.style.display = 'block';
@@ -563,19 +566,17 @@ window.openRegistrationPage = () => {
         if (page1vs1) page1vs1.style.display = 'block';
     }
 
-    // ၃။ Submit Button ကို ပြန်ပြပေးပါ (Reject ဖြစ်ပြီး ပြန်ပြင်တဲ့အခါ ပေါ်လာစေရန်)
     const submitBtn = document.getElementById('submit-btn');
     if (submitBtn) {
         submitBtn.style.display = 'block'; 
     }
-    
-    // (Optional) အချက်အလက်ဟောင်းများ ပြန်တင်လိုလျှင် ဤနေရာတွင် ထည့်ပါ
-    // if (typeof loadSavedData === 'function') loadSavedData();
 };
+
 document.addEventListener('DOMContentLoaded', () => {
     updateBuyButtonStatus();
     setInterval(updateBuyButtonStatus, 5000); 
 });
+
 let isWheelOpen = false;
 
 window.toggleActionWheel = function() {
@@ -586,7 +587,6 @@ window.toggleActionWheel = function() {
     const externalBackBtn = document.getElementById('dock-external-back-btn');
 
     if (isWheelOpen) {
-        // ၁။ BACK ခလုတ်ကို ဖျောက်မည်
         if (externalBackBtn) {
             externalBackBtn.style.opacity = '0';
             externalBackBtn.style.width = '0px';
@@ -597,28 +597,23 @@ window.toggleActionWheel = function() {
                 externalBackBtn.style.display = 'none';
             }, 500);
         }
-        // ၂။ ဘောက်စ်အရှည်ကို Create Room နဲ့ Refund ခလုတ်တွေဆံ့အောင် ဆန့်ထုတ်မည်
         if (dockBox) {
             dockBox.style.width = '330px'; 
             dockBox.style.padding = '0 14px';
         }
-        // ၃။ Create Room နဲ့ Refund ခလုတ်များကို ပေါ်စေမည်
         if (actionWrapper) {
             actionWrapper.style.visibility = 'visible';
             actionWrapper.style.opacity = '1';
         }
     } else {
-        // ၁။ ခလုတ်များကို ဖျောက်မည်
         if (actionWrapper) {
             actionWrapper.style.opacity = '0';
             actionWrapper.style.visibility = 'hidden';
         }
-        // ၂။ ဘောက်စ်အရှည်ကို လျှော့ချထားသော မူလအရွယ်အစား (185px) သို့ ပြန်ကျုံ့မည်
         if (dockBox) {
             dockBox.style.width = '185px'; 
             dockBox.style.padding = '0 10px';
         }
-        // ၃။ BACK ခလုတ်ကို ပြန်ပေါ်စေမည်
         if (externalBackBtn) {
             externalBackBtn.style.display = 'flex';
             setTimeout(() => {
@@ -631,19 +626,29 @@ window.toggleActionWheel = function() {
         }
     }
 }
-// Dock ပေါ်ရှိ Mode နဲ့ Key တန်ဖိုးကို Dynamic ဖြစ်စေရန် update လုပ်မည့် function
-window.updateDockInfo = function(mode, keyTier) {
-    const modeTextEl = document.getElementById('dock-mode-text');
-    const keyTextEl = document.getElementById('dock-key-text');
+
+// လက်ရှိ Mode နဲ့ Price အလိုက် Dock ပေါ်က စာသားကို ပြောင်းပေးမည့် function
+function updateDockText(mode, price) {
+    const modeEl = document.getElementById('dock-mode-text');
+    const keyEl = document.getElementById('dock-key-text');
     
-    if (modeTextEl) {
-        modeTextEl.innerText = `${mode.toUpperCase()} MODE`;
+    if (modeEl) {
+        modeEl.innerText = `${mode.toUpperCase()} MODE`;
     }
-    
-    if (keyTextEl) {
-        keyTextEl.innerText = formatKeyTier(keyTier);
+    if (keyEl && price) {
+        keyEl.innerText = price; 
     }
 }
+
+window.nextMap = () => {
+    currentIndex = (currentIndex + 1) % mapData.length;
+    window.currentMode = mapData[currentIndex].mode;
+    
+    // Map ပြောင်းလိုက်တာနဲ့ Dock ပေါ်က စာသားပါ တစ်ခါတည်း လိုက်ပြောင်းပေးမည်
+    updateDockText(window.currentMode, '50K Key');
+    
+    updateUI();
+};
 window.createNewRoom = async function() {
     const deviceId = localStorage.getItem('aura_device_id');
     
