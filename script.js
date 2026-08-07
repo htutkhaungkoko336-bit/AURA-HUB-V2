@@ -450,6 +450,7 @@ function formatKeyTier(tier) {
     return tier + ' Ks Key';
 }
 
+
 async function updateBuyButtonStatus() {
     const deviceId = localStorage.getItem('aura_device_id');
     const buyBtn = document.getElementById('buy-room-btn');
@@ -465,8 +466,7 @@ async function updateBuyButtonStatus() {
 
         const data = await response.json();
         
-        const registeredMode = (data.mode || '5vs5').toLowerCase(); // ဥပမာ - '1vs1' သို့မဟုတ် '5vs5'
-        const currentActiveMode = (window.currentMode || '5vs5').toLowerCase(); // လက်ရှိ UI မှာ ရွေးထားတဲ့ mode
+        const registeredMode = (data.mode || '5vs5').toLowerCase(); 
         const tierText = formatKeyTier(data.keyTier);
         
         const statusText = document.getElementById('dock-status-text');
@@ -477,23 +477,8 @@ async function updateBuyButtonStatus() {
             `;
         }
 
-        // 🌟 1. User register တင်ထားတဲ့ mode နဲ့ လက်ရှိ ဖွင့်ထားတဲ့ mode မတူဘူးဆိုရင် (ဥပမာ - 1vs1 တင်ထားပြီး 5vs5 ထဲ ဝင်နေရင်)
-        if (registeredMode !== currentActiveMode) {
-            if (buyBtn) buyBtn.style.display = 'none';
-            if (buyRoomContainer) buyRoomContainer.style.display = 'none';
-            if (actionBtns) actionBtns.style.display = 'none';
-            
-            const activeBtns = document.getElementById('dock-active-btns');
-            const inuseBtns = document.getElementById('dock-inuse-btns');
-            if (activeBtns) activeBtns.style.display = 'none';
-            if (inuseBtns) inuseBtns.style.display = 'none';
-
-            // Back ခလုတ် တစ်ခုတည်းသာ ပေါ်စေရန်
-            if (backBtn) backBtn.style.display = 'block';
-            return; // ဒီနေရာမှာပဲ ရပ်မယ်
-        }
-        // ၁။ CONFIRM ဖြစ်နေရင်
-        if (data.status === 'confirm') {
+        // CONFIRM ဖြစ်နေချိန် (သို့မဟုတ် Status အလုပ်လုပ်နေချိန်)
+        if (data.status === 'confirm' || data.status === 'approved' || data.status === 'active') {
             buyBtn.style.display = 'none';
             if (backBtn) backBtn.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'none';
@@ -508,14 +493,7 @@ async function updateBuyButtonStatus() {
             
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
-            const statusText = document.getElementById('dock-status-text');
 
-            if (statusText) {
-                statusText.innerHTML = `
-                    <div style="font-size: 13px; font-weight: bold; color: #FFD700; line-height: 1.2;">${registeredMode} MODE</div>
-                    <div style="font-size: 11px; color: #aaa; line-height: 1.2; margin-top: 2px;">${tierText}</div>
-                `;
-            }
             if (data.hasActiveRoom || data.keyStatus === 'in-use') {
                 if (activeBtns) activeBtns.style.display = 'none';
                 if (inuseBtns) inuseBtns.style.display = 'flex';
@@ -525,7 +503,7 @@ async function updateBuyButtonStatus() {
             }
         }
         else if (data.status === 'reject') {
-            if (isResubmitMode) return; 
+            if (window.isResubmitMode) return; 
 
             if (actionBtns) actionBtns.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'flex'; 
@@ -541,8 +519,7 @@ async function updateBuyButtonStatus() {
             
             buyBtn.onclick = () => {
                 alert(`❌ Reject ဖြစ်ရသည့်အကြောင်းရင်း:\n${data.rejectReason || 'မဖော်ပြထားပါ'}`);
-                
-                isResubmitMode = true; 
+                window.isResubmitMode = true; 
 
                 buyBtn.innerText = "RESUBMIT NOW";
                 buyBtn.style.backgroundColor = "#dac02d";
@@ -555,8 +532,8 @@ async function updateBuyButtonStatus() {
                 };
             };
         }
-        // ၃။ PENDING ဖြစ်နေရင်
         else {
+            // PENDING အနေအထား
             if (actionBtns) actionBtns.style.display = 'none';
             if (buyRoomContainer) buyRoomContainer.style.display = 'flex';
             if (backBtn) backBtn.style.display = 'block';
@@ -567,12 +544,10 @@ async function updateBuyButtonStatus() {
             buyBtn.style.pointerEvents = "none";
         }
 
-        lastStatus = data.status;
     } catch (e) {
         console.error("Status check failed:", e);
     }
-}
-// Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
+}// Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
 window.openRegistrationPage = () => {
     // ၁။ UI ပေါ်ရှိ Page များအားလုံးကို ဖျောက်ပါ
     document.querySelectorAll('.sub-page, #page-match-center, #main-dashboard').forEach(el => {
