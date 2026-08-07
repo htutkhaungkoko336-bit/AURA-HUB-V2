@@ -756,40 +756,6 @@ window.createNewRoom = async function() {
     }
 }
 
-// 🌟 User မှာ Active Room ရှိမရှိ စစ်ဆေးပြီး ခလုတ်များကို ပုံစံပြောင်းပေးမည့် Function
-function checkUserActiveRoom(rooms) {
-    const deviceId = localStorage.getItem('aura_device_id');
-    const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
-    const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
-    
-    // hostDeviceId သို့မဟုတ် deviceId နှစ်ခုစလုံးကို လိုက်ဖက်ညီအောင် စစ်ဆေးပေးခြင်း
-    const hasMyRoom = rooms.some(room => String(room.hostDeviceId || room.deviceId) === String(deviceId));
-
-    if (hasMyRoom) {
-        if (createBtn) {
-            createBtn.style.opacity = '0.4';
-            createBtn.style.pointerEvents = 'none';
-            createBtn.style.cursor = 'not-allowed';
-        }
-        if (refundBtn) {
-            refundBtn.style.opacity = '0.4';
-            refundBtn.style.pointerEvents = 'none';
-            refundBtn.style.cursor = 'not-allowed';
-        }
-    } else {
-        if (createBtn) {
-            createBtn.style.opacity = '1';
-            createBtn.style.pointerEvents = 'auto';
-            createBtn.style.cursor = 'pointer';
-        }
-        if (refundBtn) {
-            refundBtn.style.opacity = '1';
-            refundBtn.style.pointerEvents = 'auto';
-            refundBtn.style.cursor = 'pointer';
-        }
-    }
-}
-
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
@@ -799,9 +765,7 @@ function appendRoomCardToUI(room) {
     matchContent.style.paddingRight = '4px';
 
     const currentDeviceId = localStorage.getItem('aura_device_id');
-    // 🌟 hostDeviceId ကိုပါ ထည့်သွင်းစစ်ဆေးပေးခြင်းဖြင့် 1vs1 မှာပါ ကိုပိုင် room ကို မှန်ကန်စွာ သိရှိစေမည်
-    const roomOwnerId = room.hostDeviceId || room.deviceId;
-    const isOwner = String(roomOwnerId) === String(currentDeviceId);
+    const isOwner = String(room.deviceId) === String(currentDeviceId);
 
     const logoUrl = room.logo || 'default-logo.png';
     const mode = room.mode || '5vs5';
@@ -869,9 +833,6 @@ async function loadActiveRooms() {
                     appendRoomCardToUI(room); 
                 });
             }
-
-            // 🌟 Room စာရင်းများ ဝင်လာတိုင်း User ၏ Active Room ရှိမရှိ စစ်ဆေးမည်
-            checkUserActiveRoom(result.rooms);
         }
     } catch (error) {
         console.error("Failed to load rooms:", error);
@@ -906,7 +867,7 @@ window.cancelMyRoom = async function(roomId) {
 
             loadActiveRooms();
 
-            // 🌟 Room ဖျက်ပြီးပါက ခလုတ်များကို ပုံမှန်အခြေအနေသို့ ပြန်ပြောင်းမည်
+            // 🌟 Room ဖျက်လိုက်ပါက Create Room နှင့် Refund ခလုတ်များကို ပုံမှန်အခြေအနေသို့ ပြန်ပြောင်းပေးမည် (Opacity ပြန်ပြည့်မည်၊ နှိပ်လို့ရမည်)
             const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
             const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
             
