@@ -123,26 +123,33 @@ function updateUI() {
     }
 }
 // --- Registration & Validation Logic ---
-window.joinRoom = (price) => {
-    // ၁။ လက်ရှိ mode ကို mapData ကနေယူ (သို့မဟုတ် window.currentMode ကိုသုံး)
-    const mode = window.currentMode || '5vs5'; 
+window.joinRoom = (price, modeParam) => {
+    // 🌟 ေပးလိုက်တဲ့ Mode ပါလာရင် အဲ့ဒါကို သုံးမယ်၊ မပါလာမှ Map Preview ရဲ့ mode ကို ယူမယ်
+    const currentMap = mapData[currentIndex];
+    window.currentMode = modeParam || (currentMap ? currentMap.mode : (window.currentMode || '5vs5'));
     
-    // ၂။ Room Select Page ကို ပိတ်မယ်
+    // Room Select Page ကို ပိတ်မယ်
     document.getElementById('page-room-select').style.display = 'none';
 
-    // ၃။ Mode ပေါ်မူတည်ပြီး Page ဖွင့်ပြီး Fee ကို ထည့်ပေးမယ်
-    if (mode === '5vs5') {
+    // Mode ပေါ်မူတည်ပြီး သက်ဆိုင်ရာ Page နဲ့ Fee ကို ဖွင့်မယ်
+    if (window.currentMode === '5vs5') {
         const page5vs5 = document.getElementById('page-5vs5');
-        page5vs5.style.display = 'block';
-        // HTML ထဲက fee-5vs5 ID ကို ရှာပြီး ဈေးနှုန်းပြောင်း
+        if (page5vs5) page5vs5.style.display = 'block';
+        
         const feeDisplay = document.getElementById('fee-5vs5');
         if (feeDisplay) feeDisplay.innerText = `Entry Fee: ${price} Ks`;
+        
+        const page1vs1 = document.getElementById('page-1vs1');
+        if (page1vs1) page1vs1.style.display = 'none';
     } else {
         const page1vs1 = document.getElementById('page-1vs1');
-        page1vs1.style.display = 'block';
-        // HTML ထဲက fee-1vs1 ID ကို ရှာပြီး ဈေးနှုန်းပြောင်း
+        if (page1vs1) page1vs1.style.display = 'block';
+        
         const feeDisplay = document.getElementById('fee-1vs1');
         if (feeDisplay) feeDisplay.innerText = `Entry Fee: ${price} Ks`;
+        
+        const page5vs5 = document.getElementById('page-5vs5');
+        if (page5vs5) page5vs5.style.display = 'none';
     }
 };
 window.validate5vs5 = function() {
