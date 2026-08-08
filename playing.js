@@ -122,12 +122,20 @@ export async function openPlayingMatchDetail(roomId) {
         let hostLogo = host.logo || 'default-logo.png';
         let joinerLogo = joiner.logo || 'default-logo.png';
 
+        // 🌟 Ready ဖြစ်မဖြစ် အခြေအနေကို စစ်ဆေးခြင်း
+        let hostReady = host.confirmed === true;
+        let joinerReady = joiner.confirmed === true;
+
+        // အစိမ်းရောင် လင်းမည့် Style (Box shadow နဲ့ border)
+        let hostLogoBorder = hostReady ? 'border: 2px solid #32CD32; box-shadow: 0 0 12px rgba(50, 205, 50, 0.8);' : 'border: 1.5px solid #FFD700;';
+        let joinerLogoBorder = joinerReady ? 'border: 2px solid #32CD32; box-shadow: 0 0 12px rgba(50, 205, 50, 0.8);' : 'border: 1.5px solid #FFD700;';
+
         let currentDeviceId = localStorage.getItem('aura_device_id') || '';
         let isHost = currentDeviceId === host.deviceId;
         let isJoiner = currentDeviceId === joiner.deviceId;
         let isHostOrJoiner = isHost || isJoiner;
 
-        let isConfirmed = isHost ? (host.confirmed === true) : (joiner.confirmed === true);
+        let isConfirmed = isHost ? hostReady : joinerReady;
 
         let actionButtonsHTML = '';
         if (isHostOrJoiner) {
@@ -151,9 +159,12 @@ export async function openPlayingMatchDetail(roomId) {
             <div style="display: flex; flex-direction: column; gap: 10px; color: #fff; width: 100%;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
-                        ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
+                    
+                    <!-- Host Logo & Status -->
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; position: relative;">
+                        ${hostReady ? '<span style="position: absolute; top: -5px; right: 25px; width: 10px; height: 10px; background: #32CD32; border-radius: 50%; box-shadow: 0 0 8px #32CD32;"></span>' : ''}
+                        <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; ${hostLogoBorder}" alt="Logo">
+                        ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: ${hostReady ? '#32CD32' : '#FFD700'}; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                     </div>
 
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; padding: 0 6px;">
@@ -164,14 +175,15 @@ export async function openPlayingMatchDetail(roomId) {
                         </div>
                     </div>
 
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center;">
-                        <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1.5px solid #FFD700;" alt="Logo">
-                        ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #FFD700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
+                    <!-- Joiner Logo & Status -->
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; position: relative;">
+                        ${joinerReady ? '<span style="position: absolute; top: -5px; right: 25px; width: 10px; height: 10px; background: #32CD32; border-radius: 50%; box-shadow: 0 0 8px #32CD32;"></span>' : ''}
+                        <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; ${joinerLogoBorder}" alt="Logo">
+                        ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: ${joinerReady ? '#32CD32' : '#FFD700'}; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                     </div>
                 </div>
         `;
-
-        if (mode === '1vs1') {
+            if (mode === '1vs1') {
             let hostPlayer = host.playerName || 'N/A';
             let hostHero = host.heroName || 'N/A';
             let joinerPlayer = joiner.playerName || 'Waiting...';
