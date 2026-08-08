@@ -377,7 +377,7 @@ export function closeRoomDetailModal() {
     }
 }
 export async function quitAndRefund() {
-    let isConfirmed = confirm("Fee ကြေးချန်၍ ကျန်သည့်ငွေအား ပြန်လွှဲပေးပါမည်။ အတည်ပြုပါက Confirm ကိုနှိပ်ပေးပါ။");
+    let isConfirmed = confirm("Fee ကြေးချန်၍ ကျန်သည့်ငွေအား ပြန်လွှဲပေးပါမည်။ အတည်ပြုပါက Okey ကိုနှိပ်ပေးပါ။");
     
     if (!isConfirmed) {
         return;
@@ -390,12 +390,11 @@ export async function quitAndRefund() {
     }
 
     try {
-        const response = await fetch('/api/request-refund', {
+        const response = await fetch('/api/create-room', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ deviceId })
-        });
-        
+            body: JSON.stringify({ action: 'refund', deviceId })
+        });        
         const result = await response.json();
 
         if (result.success) {

@@ -11,14 +11,35 @@ const db = getFirestore(app);
 
 module.exports = async function handler(req, res) {
     if (req.method === 'POST') {
-        const { deviceId, teamName, logo, mlbbId, playerName, mode, entryFee } = req.body;
+        const { action, deviceId, teamName, logo, mlbbId, playerName, mode, entryFee } = req.body;
 
         if (!deviceId) {
             return res.status(400).json({ success: false, message: "Device ID မတွေ့ရှိပါ။" });
         }
 
         try {
-            // ၁။ User မှာ Active Key ရှိမရှိ Field ထဲက deviceId နဲ့ Query ထုတ်၍ စစ်ဆေးခြင်း
+            // ၁။ REFUND တောင်းဆိုမှုကို စစ်ဆေးခြင်း
+            if (action === 'refund') {
+                const keysQuery = await db.collection('userKeys').where('deviceId', '==', deviceId).get();
+
+                if (keysQuery.empty) {
+                    return res.status(404).json({ success: false, message: "Associated key not found." });
+                }
+
+                const keyDoc = keysQuery.docs[0];
+                
+                // (ဤနေရာတွင် Admin ဆီသို့ Telegram Bot သို့မဟုတ် Notification လှမ်းပို့မည့် ကုဒ်များကို လိုအပ်ပါက ထည့်သွင်းနိုင်ပါသည်)
+
+                // User Key ကို Database မှ ဖျက်ပစ်ခြင်း (သို့မဟုတ် status ပြောင်းခြင်း)
+                await keyDoc.ref.delete();
+
+                return res.status(200).json({ 
+                    success: true, 
+                    message: "Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။" 
+                });
+            }
+
+            // ၂။ ROOM ဖန်တီးခြင်း လုပ်ငန်းစဉ် (Default)
             const keysQuery = await db.collection('userKeys').where('deviceId', '==', deviceId).get();
 
             if (keysQuery.empty) {
@@ -28,7 +49,6 @@ module.exports = async function handler(req, res) {
                 });
             }
 
-            // တွေ့သွားတဲ့ Document ကို ယူသုံးရန်
             const keyDoc = keysQuery.docs[0];
             const keyRef = keyDoc.ref; 
             const keyData = keyDoc.data();
@@ -40,7 +60,6 @@ module.exports = async function handler(req, res) {
                 });
             }
 
-            // ၂. အချိန်ကို ပြင်ဆင်ခြင်း
             const now = new Date();
             const formattedDate = new Intl.DateTimeFormat('en-GB', {
                 timeZone: 'Asia/Yangon',
@@ -48,7 +67,6 @@ module.exports = async function handler(req, res) {
                 hour: '2-digit', minute: '2-digit', hour12: true
             }).format(now);
 
-            // ၃။ `rooms` collection အသစ်ထဲသို့ Room အချက်အလက်များ သိမ်းဆည်းခြင်း
             const roomRef = await db.collection('rooms').add({
                 hostDeviceId: deviceId,
                 teamName: teamName || "My Team",
@@ -63,7 +81,6 @@ module.exports = async function handler(req, res) {
 
             const roomId = roomRef.id;
 
-            // ၄။ User ၏ Key Status ကို 'in-use' သို့ ပြောင်းလဲပြီး `roomId` ကို ချိတ်ပေးခြင်း
             await keyRef.update({
                 status: 'in-use',
                 roomId: roomId
@@ -76,7 +93,7 @@ module.exports = async function handler(req, res) {
             });
 
         } catch (error) {
-            console.error("Create Room Error:", error);
+            console.error("API Error:", error);
             return res.status(500).json({ success: false, message: error.message });
         }
     } else {
