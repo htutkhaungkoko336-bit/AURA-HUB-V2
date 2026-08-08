@@ -288,7 +288,7 @@ export async function openPlayingMatchDetail(roomId) {
     await fetchMatchDetail();
 
     // ၃ စက္ကန့်တစ်ကြိမ် (3000 ms) ဆက်တိုက် ခေါ်ယူပေးမည် (Real-time update အတွက်)
-    matchDetailInterval = setInterval(fetchMatchDetail, 500);
+    matchDetailInterval = setInterval(fetchMatchDetail, 1500);
 }
 export async function toggleMatchReady(roomId, status, btnElement) {
     let deviceId = localStorage.getItem('aura_device_id') || '';
