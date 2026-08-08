@@ -376,3 +376,37 @@ export function closeRoomDetailModal() {
         }
     }
 }
+export async function quitAndRefund() {
+    let isConfirmed = confirm("Fee ကြေးချန်၍ ကျန်သည့်ငွေအား ပြန်လွှဲပေးပါမည်။ အတည်ပြုပါက Confirm ကိုနှိပ်ပေးပါ။");
+    
+    if (!isConfirmed) {
+        return;
+    }
+
+    let deviceId = localStorage.getItem('aura_device_id') || '';
+    if (!deviceId) {
+        alert("Device ID မတွေ့ရှိရပါ။");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/request-refund', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deviceId })
+        });
+        
+        const result = await response.json();
+
+        if (result.success) {
+            localStorage.removeItem('aura_device_id');
+            alert("Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။ Admin ထံသို့ အကြောင်းကြားပြီးပါပြီ။");
+            window.location.href = '/index.html';
+        } else {
+            alert(result.message || 'Refund တောင်းဆို၍ မရသေးပါ။');
+        }
+    } catch (error) {
+        console.error("Refund Error:", error);
+        alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။");
+    }
+}
