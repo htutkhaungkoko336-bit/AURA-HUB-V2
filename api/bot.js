@@ -100,8 +100,8 @@ bot.action(/reason_(.+)_(.+)/, async (ctx) => {
 });
 
 // Admin မှ Refund ငွေလွှဲပြီးကြောင်း Confirm လုပ်သည့်အခါ
-bot.action(/refund_confirm_(.+)/, async (ctx) => {
-    const docId = ctx.match[1]; // Backend က ပို့လိုက်တဲ့ document ID (ဥပမာ: lqjn9SKEmZaOwrzOsel)
+bot.action(/^refund_confirm_(.+)$/, async (ctx) => {
+    const docId = ctx.match[1]; 
     try {
         const regRef = db.collection("registrations").doc(docId);
         const regDoc = await regRef.get();
