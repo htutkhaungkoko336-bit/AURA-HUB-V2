@@ -110,18 +110,18 @@ bot.action(/refund_confirm_(.+)/, async (ctx) => {
             return ctx.answerCbQuery("Error: အချက်အလက် မရှိပါ။");
         }
 
+        // Refund Status ကို confirm သို့ ပြောင်းလဲခြင်း
         await regRef.update({ 
-            refundStatus: "completed" 
+            refundStatus: "confirm" 
         });
         
-        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n💰 <b>Refund Status:</b> ငွေလွှဲပြီးစီးပါပြီ (Completed)", { parse_mode: "HTML" });
-        await ctx.answerCbQuery("Refund ငွေလွှဲပြီးကြောင်း အောင်မြင်စွာ မှတ်တမ်းတင်လိုက်ပါပြီ။");
+        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Refund Status:</b> Confirmed", { parse_mode: "HTML" });
+        await ctx.answerCbQuery("Refund ကို Confirmed လုပ်ပြီး အောင်မြင်စွာ မှတ်တမ်းတင်လိုက်ပါပြီ။");
     } catch (err) {
         console.error(err);
         await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
     }
 });
-
 module.exports = async (req, res) => {
     try {
         await bot.handleUpdate(req.body);
