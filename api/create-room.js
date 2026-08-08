@@ -20,20 +20,18 @@ module.exports = async function handler(req, res) {
         try {
             // Refund Action ရောက်လာသည့်အခါ
             if (action === 'refund') {
-                // Device ID နဲ့ တိုက်ဆိုင်တဲ့ registration စာရွက်စာတမ်းအားလုံးကို ရှာမည်
                 const regSnapshot = await db.collection('registrations').where('deviceId', '==', deviceId).get();
 
                 if (regSnapshot.empty) {
                     return res.status(404).json({ success: false, message: "Registration အချက်အလက် မတွေ့ရှိပါ။" });
                 }
 
-                // အသစ်ဆုံး Registration စာရွက်စာတမ်းကို ရယူရန် (သို့မဟုတ် ပထမဆုံးတွေ့တာကို ယူရန်)
                 const regDoc = regSnapshot.docs[0];
-                const docId = regDoc.id; // တိကျတဲ့ Document ID ကို ယူခြင်း
+                const docId = regDoc.id;
                 const regData = regDoc.data();
 
-                // ၁။ တွေ့ရှိတဲ့ သက်ဆိုင်ရာ Document ကို တိုက်ရိုက် update လုပ်ခြင်း
-                await db.collection('registrations').doc(docId).update({
+                // ၁။ registrations ထဲတွင် refundStatus နှင့် အချက်အလက်များ ထည့်သွင်းခြင်း
+                await regDoc.ref.update({
                     refundStatus: 'pending', 
                     refundRequestedAt: new Date().toISOString()
                 });
@@ -41,15 +39,15 @@ module.exports = async function handler(req, res) {
                 // ၂။ userKeys ထဲမှ Key ကို ဖျက်ခြင်း
                 await db.collection('userKeys').doc(deviceId).delete();
 
-                // ၃။ Refund Group ဆီသို့ Telegram Noti ပို့ခြင်း (docId ကို callback_data ထဲမှာ တိကျစွာ ထည့်မည်)
+                // ၃။ Refund Group ဆီသို့ Telegram Noti ပို့ခြင်း
                 const botToken = process.env.TELEGRAM_BOT_TOKEN;
-                const refundGroupId = process.env.TELEGRAM_REFUND_GROUP_ID;
+                const refundGroupId = process.env.TELEGRAM_REFUND_GROUP_ID; // Vercel ထဲက Refund Group ID
 
                 if (botToken && refundGroupId) {
                     const message = `🚨 <b>Refund တောင်းဆိုမှု အသစ်!</b>\n\n` +
                                     `👤 Player: ${regData.playerName || 'Unknown'}\n` +
                                     `🎮 MLBB ID: ${regData.mlbbId || 'N/A'}\n` +
-                                    `💰 KPay Ph No: ${regData.contact || regData.kpayPhone || regData.kpayNo || 'N/A'}\n` +
+                                    `💰 KPay Ph No: ${regData.contact || regData.kpayPhone || 'N/A'}\n` +
                                     `💵 Amount: ${regData.entryFee || 'N/A'}\n` +
                                     `📌 Status: Pending (ငွေလွှဲရန်လိုသည်)`;
 

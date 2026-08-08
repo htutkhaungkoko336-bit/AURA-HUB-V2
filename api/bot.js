@@ -100,28 +100,28 @@ bot.action(/reason_(.+)_(.+)/, async (ctx) => {
 });
 
 // Admin မှ Refund ငွေလွှဲပြီးကြောင်း Confirm လုပ်သည့်အခါ
-bot.action(/^refund_confirm_(.+)$/, async (ctx) => {
-    const docId = ctx.match[1]; 
+bot.action(/refund_confirm_(.+)/, async (ctx) => {
+    const docId = ctx.match[1];
     try {
         const regRef = db.collection("registrations").doc(docId);
         const regDoc = await regRef.get();
 
         if (!regDoc.exists) {
-            return ctx.answerCbQuery("Error: ဤ ID ဖြင့် Registration အချက်အလက် မရှိပါ။");
+            return ctx.answerCbQuery("Error: အချက်အလက် မရှိပါ။");
         }
 
-        // Refund Status ကို confirm သို့ ပြောင်းလဲခြင်း
         await regRef.update({ 
-            refundStatus: "confirm" 
+            refundStatus: "completed" 
         });
         
-        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n✅ <b>Refund Status:</b> Confirmed", { parse_mode: "HTML" });
-        await ctx.answerCbQuery("Refund ကို Confirmed လုပ်ပြီး အောင်မြင်စွာ မှတ်တမ်းတင်လိုက်ပါပြီ။");
+        await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n💰 <b>Refund Status:</b> ငွေလွှဲပြီးစီးပါပြီ (Completed)", { parse_mode: "HTML" });
+        await ctx.answerCbQuery("Refund ငွေလွှဲပြီးကြောင်း အောင်မြင်စွာ မှတ်တမ်းတင်လိုက်ပါပြီ။");
     } catch (err) {
-        console.error("Refund Confirm Error:", err);
-        await ctx.answerCbQuery("Error: Database အမှားအယွင်း ဖြစ်ပေါ်နေပါသည်။");
+        console.error(err);
+        await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
     }
 });
+
 module.exports = async (req, res) => {
     try {
         await bot.handleUpdate(req.body);
