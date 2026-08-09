@@ -99,7 +99,7 @@ bot.action(/reason_(.+)_(.+)/, async (ctx) => {
     }
 });
 
-// Admin မှ Refund ငွေလွှဲပြီးကြောင်း Confirm လုပ်သည့်အခါ
+// Admin မှ Refund ငွေလွှဲပြီးကြောင်း Confirm လုပ်သည့်အခါ (Key အသစ် မထွက်စေဘဲ Status သာ Completed ပြောင်းရန်)
 bot.action(/refund_confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     try {
@@ -107,17 +107,19 @@ bot.action(/refund_confirm_(.+)/, async (ctx) => {
         const regDoc = await regRef.get();
 
         if (!regDoc.exists) {
-            return ctx.answerCbQuery("Error: အချက်အလက် မရှိပါ။");
+            return ctx.answerCbQuery("Error: Registration အချက်အလက် မရှိပါ။");
         }
 
+        // Registrations ထဲတွင် refundStatus ကို completed သို့ ပြောင်းခြင်း
         await regRef.update({ 
             refundStatus: "completed" 
         });
         
+        // Telegram မက်ဆေ့ဂျ်ကို Status ပြောင်းလဲကြောင်း Edit လုပ်ခြင်း
         await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n💰 <b>Refund Status:</b> ငွေလွှဲပြီးစီးပါပြီ (Completed)", { parse_mode: "HTML" });
         await ctx.answerCbQuery("Refund ငွေလွှဲပြီးကြောင်း အောင်မြင်စွာ မှတ်တမ်းတင်လိုက်ပါပြီ။");
     } catch (err) {
-        console.error(err);
+        console.error("Refund Confirm Error:", err);
         await ctx.answerCbQuery("Error: Database အမှားအယွင်း");
     }
 });
