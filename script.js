@@ -95,14 +95,11 @@ window.buyNewRoom = buyNewRoom; // buyNewRoom ကို window object ထဲထ�
 
 window.nextMap = () => {
     currentIndex = (currentIndex + 1) % mapData.length;
-    
-    // 🌟 1. လက်ရှိ Map ရဲ့ Mode ကို တိုက်ရိုက်ယူမယ် (ဒါမှမဟုတ် UI မှာ active ဖြစ်နေတဲ့ Mode ကို ယူမယ်)
     window.currentMode = mapData[currentIndex].mode;
     
-    // 🌟 2. Dock ပေါ်က စာသားကို လက်ရှိ Mode အမှန်နဲ့ အပ်ဒိတ်လုပ်မယ်
     updateDockText(window.currentMode, '50K Key');
     
-    // 🌟 3. Mode တူ/မတူ စစ်ပြီး Create နဲ့ Refund ခလုတ်များကို မှိန်မည်/လင်းမည်
+    // 🌟 Map/Mode ပြောင်းတိုင်း ခလုတ်တွေ မှိန်သင့်မမှိန်သင့် စစ်ဆေးမည်
     updateModeButtonsState();
     
     updateUI();
@@ -877,7 +874,7 @@ async function loadActiveRooms() {
 }
 
 loadActiveRooms();
-
+fetchUserRegisteredMode(); // 🌟 အစစချင်း Load လုပ်တဲ့အချိန်မှာ User တင်ထားတဲ့ Mode ကိုပါ လှမ်းဆွဲမည်
 setInterval(() => {
     const matchCenter = document.getElementById('page-match-center');
     if (matchCenter && matchCenter.style.display !== 'none') {
@@ -1002,3 +999,24 @@ window.closeRoomDetailModal = function() {
         modal.style.display = 'none';
     }
 };
+// User Register တင်ထားသော Mode ကို Backend ကနေ ဆွဲယူစစ်ဆေးမည့် Function
+async function fetchUserRegisteredMode() {
+    const deviceId = localStorage.getItem('aura_device_id');
+    if (!deviceId) return;
+
+    try {
+        const response = await fetch('/api/get-user-registration?deviceId=' + encodeURIComponent(deviceId));
+        const result = await response.json();
+
+        if (result.success && result.mode) {
+            window.userRegisteredMode = result.mode; // 🌟 Backend ကရလာတဲ့ Mode ကို ထည့်မည် (ဥပမာ - '1vs1')
+        } else {
+            window.userRegisteredMode = '5vs5'; // Default
+        }
+
+        // တန်ဖိုးရောက်လာတာနဲ့ ခလုတ်တွေ မှိန်သင့်မမှိန်သင့် ချက်ချင်းစစ်မည်
+        updateModeButtonsState();
+    } catch (err) {
+        console.error("Failed to fetch registered mode:", err);
+    }
+}
