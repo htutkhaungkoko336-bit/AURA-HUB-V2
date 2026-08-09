@@ -1,5 +1,6 @@
 const { initializeApp, cert, getApps } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
+const { notify } = require('./notify'); // <-- ဒီနေရာမှာ notify.js ရှိတဲ့ လမ်းကြောင်းကို သေချာထည့်ပေးပါ
 
 const app = getApps().length === 0 
   ? initializeApp({
@@ -18,51 +19,53 @@ module.exports = async function handler(req, res) {
         }
 
         try {
-        // Refund Action ရောက်လာသည့်အခါ
-        if (action === 'refund') {
-            const regSnapshot = await db.collection('registrations').where('deviceId', '==', deviceId).get();
+            // Refund Action ရောက်လာသည့်အခါ
+            if (action === 'refund') {
+                const regSnapshot = await db.collection('registrations').where('deviceId', '==', deviceId).get();
 
-            if (regSnapshot.empty) {
-                return res.status(404).json({ success: false, message: "Registration အချက်အလက် မတွေ့ရှိပါ။" });
-            }
+                if (regSnapshot.empty) {
+                    return res.status(404).json({ success: false, message: "Registration အချက်အလက် မတွေ့ရှိပါ။" });
+                }
 
-            const regDoc = regSnapshot.docs[0];
-            const docId = regDoc.id;
-            const regData = regDoc.data();
+                const regDoc = regSnapshot.docs[0];
+                const docId = regDoc.id;
+                const regData = regDoc.data();
 
-            // ၁။ registrations ထဲတွင် refundStatus နှင့် အချက်အလက်များ ထည့်သွင်းခြင်း
-            await regDoc.ref.update({
-                refundStatus: 'pending', 
-                refundRequestedAt: new Date().toISOString()
-            });
-
-            // ၂။ userKeys ထဲမှ Key ကို ဖျက်ခြင်း
-            await db.collection('userKeys').doc(deviceId).delete();
-
-            // ၃။ rooms ထဲတွင် hostDeviceId နှင့် တူသော Room ရှိပါက ဖျက်ခြင်း
-            const roomSnapshot = await db.collection('rooms').where('hostDeviceId', '==', deviceId).get();
-            if (!roomSnapshot.empty) {
-                const batch = db.batch();
-                roomSnapshot.docs.forEach((roomDoc) => {
-                    batch.delete(roomDoc.ref);
+                // ၁။ registrations ထဲတွင် refundStatus နှင့် အချက်အလက်များ ထည့်သွင်းခြင်း
+                await regDoc.ref.update({
+                    refundStatus: 'pending', 
+                    refundRequestedAt: new Date().toISOString()
                 });
-                await batch.commit();
+
+                // ၂။ userKeys ထဲမှ Key ကို ဖျက်ခြင်း
+                await db.collection('userKeys').doc(deviceId).delete();
+
+                // ၃။ rooms ထဲတွင် hostDeviceId နှင့် တူသော Room ရှိပါက ဖျက်ခြင်း
+                const roomSnapshot = await db.collection('rooms').where('hostDeviceId', '==', deviceId).get();
+                if (!roomSnapshot.empty) {
+                    const batch = db.batch();
+                    roomSnapshot.docs.forEach((roomDoc) => {
+                        batch.delete(roomDoc.ref);
+                    });
+                    await batch.commit();
+                }
+
+                // ၄။ Refund Group ဆီသို့ Telegram Noti ပို့ခြင်း (notify function ကို သုံး၍)
+                try {
+                    await notify('REFUND', {
+                        id: docId,
+                        ...regData
+                    });
+                } catch (err) {
+                    console.error("Telegram Notify Error:", err);
+                }
+
+                return res.status(200).json({ 
+                    success: true, 
+                    message: "Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။ Key နှင့် Room များကို ဖျက်ပြီး Admin ထံ အကြောင်းကြားပြီးပါပြီ။" 
+                });
             }
 
-            // ၄။ Refund Group ဆီသို့ Telegram Noti ပို့ခြင်း (notify function ကို သုံး၍)
-            try {
-                await notify('REFUND', {
-                    id: docId,
-                    ...regData
-                });
-            } catch (err) {
-                console.error("Telegram Notify Error:", err);
-            }
-            return res.status(200).json({ 
-                success: true, 
-                message: "Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။ Key နှင့် Room များကို ဖျက်ပြီး Admin ထံ အကြောင်းကြားပြီးပါပြီ။" 
-            });
-}
             // ၂။ ROOM ဖန်တီးခြင်း လုပ်ငန်းစဉ် (Default)
             const keysQuery = await db.collection('userKeys').where('deviceId', '==', deviceId).get();
 
