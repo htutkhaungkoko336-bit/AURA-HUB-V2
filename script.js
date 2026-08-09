@@ -658,15 +658,8 @@ window.createNewRoom = async function() {
         return;
     }
 
-    // 🌟 1. လက်ရှိ Mode နှင့် User ဂျီစတြာ တင်ထားတဲ့ Mode ကို နှိုင်းယှဉ်စစ်ဆေးခြင်း
+    // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
     const currentMode = window.currentMode || '5vs5';
-    const userRegMode = window.userRegisteredMode || '5vs5'; // Backend ကနေ ရလာတဲ့ User ရဲ့ Register Mode
-
-    if (currentMode !== userRegMode) {
-        alert(`သင်သည် ${userRegMode} Mode ဖြင့်သာ Register တင်ထားပါသဖြင့် ဤ Mode တွင် Room ထောင်၍ မရပါ။`);
-        return;
-    }
-
     const is1v1Visible = (currentMode === '1vs1');
 
     // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
@@ -756,6 +749,7 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
+
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
