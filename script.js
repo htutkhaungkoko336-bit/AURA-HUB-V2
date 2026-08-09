@@ -749,6 +749,23 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
+function updateCreateRoomButtonVisibility() {
+    const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
+    if (!createBtn) return;
+
+    // လက်ရှိ UI မှာ ဖွင့်ထားတဲ့ Mode (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
+    const currentMode = window.currentMode || '5vs5';
+
+    // User ဂျီစတြာ တင်ထားတဲ့ Mode (Backend ကနေ ရလာတဲ့ data ပေါ်မူတည်ပြီး ထည့်ပေးရန်)
+    const userRegMode = window.userRegisteredMode || '5vs5'; 
+
+    // Mode တူမှသာ ခလုတ်ပေါ်မည်၊ မတူလျှင် လုံးဝဖျောက်ထားမည်
+    if (currentMode === userRegMode) {
+        createBtn.style.display = 'block'; // (သို့မဟုတ် 'flex')
+    } else {
+        createBtn.style.display = 'none';  // မတူရင် ခလုတ်ပျောက်သွားမည်
+    }
+}
 
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
