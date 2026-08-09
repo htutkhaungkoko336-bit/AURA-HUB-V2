@@ -49,34 +49,15 @@ module.exports = async function handler(req, res) {
                 await batch.commit();
             }
 
-            // ၄။ Refund Group ဆီသို့ Telegram Noti ပို့ခြင်း
-            const botToken = process.env.TELEGRAM_BOT_TOKEN;
-            const refundGroupId = process.env.TELEGRAM_REFUND_GROUP_ID;
-
-            if (botToken && refundGroupId) {
-                const message = `🚨 <b>Refund တောင်းဆိုမှု အသစ်!</b>\n\n` +
-                                `👤 Player: ${regData.playerName || 'Unknown'}\n` +
-                                `🎮 MLBB ID: ${regData.mlbbId || 'N/A'}\n` +
-                                `💰 KPay Ph No: ${regData.contact || regData.kpayPhone || 'N/A'}\n` +
-                                `💵 Amount: ${regData.entryFee || 'N/A'}\n` +
-                                `📌 Status: Pending (ငွေလွှဲရန်လိုသည်)`;
-
-                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: refundGroupId,
-                        text: message,
-                        parse_mode: 'HTML',
-                        reply_markup: {
-                            inline_keyboard: [
-                                [{ text: "💰 Refund ငွေလွှဲပြီးပြီ (Confirm)", callback_data: `refund_confirm_${docId}` }]
-                            ]
-                        }
-                    })
+            // ၄။ Refund Group ဆီသို့ Telegram Noti ပို့ခြင်း (notify function ကို သုံး၍)
+            try {
+                await notify('REFUND', {
+                    id: docId,
+                    ...regData
                 });
+            } catch (err) {
+                console.error("Telegram Notify Error:", err);
             }
-
             return res.status(200).json({ 
                 success: true, 
                 message: "Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။ Key နှင့် Room များကို ဖျက်ပြီး Admin ထံ အကြောင်းကြားပြီးပါပြီ။" 
