@@ -583,22 +583,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let isWheelOpen = false;
-// Mode တူမတူ စစ်ဆေးပြီး ခလုတ်ကို အလိုအလျောက် ထိန်းချုပ်မည့် function
 function updateModeButtonsState() {
     const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
     const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
     
-    const currentMode = (window.currentMode || '5vs5').toLowerCase();
-    const userRegMode = (window.userRegisteredMode || '5vs5').toLowerCase();
+    // လက်ရှိ ဖွင့်ထားတဲ့ Mode (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
+    const currentMode = window.currentMode || '5vs5';
     
+    // User ဂျီစတြာ တင်ထားတဲ့ Mode (Backend ကနေ ရလာတဲ့ data ပေါ်မူတည်ပြီး ထည့်ရန်)
+    const userRegMode = window.userRegisteredMode || '5vs5'; 
+
+    // Mode တူညီခြင်း ရှိ/မရှိ စစ်ဆေးခြင်း
     const isSameMode = (currentMode === userRegMode);
 
     if (createBtn) {
         if (isSameMode) {
+            // Mode တူရင် ချက်ချင်း တန်းလင်းစေမည် (နှိပ်လို့ရမည်)
             createBtn.style.opacity = '1';
             createBtn.style.pointerEvents = 'auto';
             createBtn.style.cursor = 'pointer';
         } else {
+            // Mode မတူရင် ခလုတ်ကို မှိန်ထားမည် (နှိပ်လို့မရ)
             createBtn.style.opacity = '0.4';
             createBtn.style.pointerEvents = 'none';
             createBtn.style.cursor = 'not-allowed';
@@ -617,6 +622,7 @@ function updateModeButtonsState() {
         }
     }
 }
+
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
@@ -696,31 +702,7 @@ window.createNewRoom = async function() {
     }
 
     // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
-    const currentMode = (window.currentMode || '5vs5').toLowerCase();
-    
-    // 🌟 User Register တင်ထားတဲ့ Mode (Backend/Global ကလာတဲ့ data ယူရန်)
-    const userRegMode = (window.userRegisteredMode || '5vs5').toLowerCase();
-
-    // 🌟 Mode တူညီခြင်း ရှိမရှိ စစ်ဆေးခြင်း
-    const isSameMode = (currentMode === userRegMode);
-
-    // ခလုတ်များကို ရှာဖွေခြင်း
-    const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
-    const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
-
-    // အကယ်၍ Mode မတူညီဘူးဆိုရင် Room ထောင်ခွင့်မပြုဘဲ ရပ်တန့်မည် (မှိန်ထားမည်)
-    if (!isSameMode) {
-        alert(`❌ Mode မကိုက်ညီပါ။ သင် Register တင်ထားသည်မှာ '${userRegMode.toUpperCase()}' ဖြစ်ပြီး လက်ရှိဖွင့်ထားသည်မှာ '${currentMode.toUpperCase()}' ဖြစ်နေပါသည်။`);
-        
-        // မှိန်ခိုင်းသည့် အခြေအနေကို သေချာစေရန်
-        if (createBtn) {
-            createBtn.style.opacity = '0.4';
-            createBtn.style.pointerEvents = 'none';
-            createBtn.style.cursor = 'not-allowed';
-        }
-        return;
-    }
-
+    const currentMode = window.currentMode || '5vs5';
     const is1v1Visible = (currentMode === '1vs1');
 
     // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
@@ -779,6 +761,9 @@ window.createNewRoom = async function() {
             });
 
             // 🌟 Room ထောင်ပြီးပါက Create Room နှင့် Refund ခလုတ်များကို မှိန်ထားမည် (Disabled & Opacity 0.4)
+            const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
+            const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
+            
             if (createBtn) {
                 createBtn.style.opacity = '0.4';
                 createBtn.style.pointerEvents = 'none';
@@ -807,6 +792,7 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
+
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
