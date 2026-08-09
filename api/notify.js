@@ -37,20 +37,23 @@ async function notify(type, data) {
     
     message += `\n\n<b>Status:</b> Pending`;
 
+    // 🔴 ဒီနေရာမှာ ID သေချာပါလာအောင် စစ်ဆေးပေးခြင်း (data.id မပါရင် data._id ကို ယူပါမည်)
+    const recordId = data.id || data._id;
+
     // Type ပေါ်မူတည်၍ ခလုတ်များကို သီးသန့်ခွဲထုတ်ခြင်း
     let inlineKeyboard;
     if (type === 'REFUND') {
         inlineKeyboard = {
             inline_keyboard: [
-                [{ text: "💰 Refund ငွေလွှဲပြီးပြီ (Confirm)", callback_data: `refund_confirm_${data.id}` }]
+                [{ text: "💰 Refund ငွေလွှဲပြီးပြီ (Confirm)", callback_data: `refund_confirm_${recordId}` }]
             ]
         };
     } else {
         inlineKeyboard = {
             inline_keyboard: [
                 [
-                    { text: '✅ Confirm', callback_data: `confirm_${data.id}` },
-                    { text: '❌ Reject', callback_data: `reject_${data.id}` }
+                    { text: '✅ Confirm', callback_data: `confirm_${recordId}` },
+                    { text: '❌ Reject', callback_data: `reject_${recordId}` }
                 ]
             ]
         };
