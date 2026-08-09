@@ -95,11 +95,14 @@ window.buyNewRoom = buyNewRoom; // buyNewRoom ကို window object ထဲထ�
 
 window.nextMap = () => {
     currentIndex = (currentIndex + 1) % mapData.length;
+    
+    // 🌟 1. လက်ရှိ Map ရဲ့ Mode ကို တိုက်ရိုက်ယူမယ် (ဒါမှမဟုတ် UI မှာ active ဖြစ်နေတဲ့ Mode ကို ယူမယ်)
     window.currentMode = mapData[currentIndex].mode;
     
+    // 🌟 2. Dock ပေါ်က စာသားကို လက်ရှိ Mode အမှန်နဲ့ အပ်ဒိတ်လုပ်မယ်
     updateDockText(window.currentMode, '50K Key');
     
-    // 🌟 ဒီမှာ တစ်ခါ ထည့်ခေါ်ပါ
+    // 🌟 3. Mode တူ/မတူ စစ်ပြီး Create နဲ့ Refund ခလုတ်များကို မှိန်မည်/လင်းမည်
     updateModeButtonsState();
     
     updateUI();
