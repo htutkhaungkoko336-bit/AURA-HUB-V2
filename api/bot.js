@@ -10,7 +10,7 @@ if (!getApps().length) {
 const db = getFirestore();
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
-// Confirm လုပ်ရင် Status ပြောင်းခြင်း နှင့် သီးသန့် Collection ထဲသို့ Key ဖန်တီးခြင်း
+// ၁။ Registration Confirm လုပ်လျှင် ရှေးမူမပျက် (မူလအတိုင်း Key အသစ် ဆောက်ပေးမည့် ပုံစံ)
 bot.action(/confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     try {
@@ -56,7 +56,7 @@ bot.action(/confirm_(.+)/, async (ctx) => {
     }
 });
 
-// Reject ခလုတ်နှိပ်လျှင် အကြောင်းရင်းများ ပြပေးခြင်း
+// ၂။ Reject ခလုတ်နှိပ်လျှင် အကြောင်းရင်းများ ပြပေးခြင်း
 bot.action(/reject_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n⚠️ Reject လုပ်ရမည့်အကြောင်းရင်းကို ရွေးချယ်ပါ:", {
@@ -72,7 +72,7 @@ bot.action(/reject_(.+)/, async (ctx) => {
     });
 });
 
-// အကြောင်းရင်းကို ရွေးချယ်ပြီးမှ Database ကို Update လုပ်ခြင်း
+// ၃။ Reject အကြောင်းရင်းကို ရွေးချယ်ပြီး Database Update လုပ်ခြင်း
 bot.action(/reason_(.+)_(.+)/, async (ctx) => {
     const reasonKey = ctx.match[1]; 
     const docId = ctx.match[2];
@@ -99,7 +99,7 @@ bot.action(/reason_(.+)_(.+)/, async (ctx) => {
     }
 });
 
-// Admin မှ Refund ငွေလွှဲပြီးကြောင်း Confirm လုပ်သည့်အခါ (Key အသစ် မထွက်စေဘဲ Status သာ Completed ပြောင်းရန်)
+// ၄။ (အဓိကပြင်ဆင်ချက်) Refund Group မှ Confirm နှိပ်လျှင် pending မှ completed သို့ တိုက်ရိုက်ပြောင်းရန်
 bot.action(/refund_btn_confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     try {
@@ -110,12 +110,11 @@ bot.action(/refund_btn_confirm_(.+)/, async (ctx) => {
             return ctx.answerCbQuery("Error: Registration အချက်အလက် မရှိပါ။");
         }
 
-        // Registrations ထဲတွင် refundStatus ကို completed သို့ ပြောင်းခြင်း
+        // Database ထဲတွင် refundStatus "pending" မှ "completed" သို့ တိုက်ရိုက်ပြောင်းခြင်း
         await regRef.update({ 
             refundStatus: "completed" 
         });
         
-        // Telegram မက်ဆေ့ဂျ်ကို Status ပြောင်းလဲကြောင်း Edit လုပ်ခြင်း
         await ctx.editMessageText(ctx.callbackQuery.message.text + "\n\n💰 <b>Refund Status:</b> ငွေလွှဲပြီးစီးပါပြီ (Completed)", { parse_mode: "HTML" });
         await ctx.answerCbQuery("Refund ငွေလွှဲပြီးကြောင်း အောင်မြင်စွာ မှတ်တမ်းတင်လိုက်ပါပြီ။");
     } catch (err) {
