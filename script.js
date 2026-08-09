@@ -25,8 +25,8 @@ window.quitAndRefund = quitAndRefund;
 // Playing Tab ကို နှိပ်လိုက်သည့်အချိန် (သို့မဟုတ် Page Load ဖြစ်ချိန်) တွင် ခေါ်သုံးရန်
 loadPlayingMatches();
 // ဥပမာ - LocalStorage ထဲမှ (သို့မဟုတ် app ထဲက) ရရှိထားသော deviceId
-const userDeviceId = localStorage.getItem('deviceId') || 'dev_zzy4sn1nx'; 
-
+// LocalStorage ထဲက 'aura_device_id' ကို အမှန်တကယ် ယူသုံးရန်
+const userDeviceId = localStorage.getItem('aura_device_id') || ('dev_' + Math.random().toString(36).substr(2, 9));
 // Tab ပြောင်းသည့် function (switchTab ထဲတွင် ထည့်သွင်းနိုင်သည်)
 window.switchTab = function(tabName) {
     // Tab contents များကို ဖုံးရန်/ပြရန် logic များ...
