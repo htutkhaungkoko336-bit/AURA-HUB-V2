@@ -94,15 +94,16 @@ window.goToRooms = goToRooms;
 window.buyNewRoom = buyNewRoom; // buyNewRoom ကို window object ထဲထည့်ပေးခြင်း
 
 window.nextMap = () => {
-    // Index ပြောင်းခြင်း
     currentIndex = (currentIndex + 1) % mapData.length;
-    
-    // Global Mode ကို Update လုပ်ခြင်း
     window.currentMode = mapData[currentIndex].mode;
+    
+    updateDockText(window.currentMode, '50K Key');
+    
+    // 🌟 ဒီမှာ တစ်ခါ ထည့်ခေါ်ပါ
+    updateModeButtonsState();
     
     updateUI();
 };
-
 function updateUI() {
     const map = mapData[currentIndex];
     
