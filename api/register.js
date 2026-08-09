@@ -22,6 +22,7 @@ export default async function handler(req, res) {
             deviceId: deviceId,
             mode: data.mode,
             status: "pending", // Update လုပ်တိုင်း status ကို pending ပြန်ဖြစ်စေမယ်
+            refund: "no",      // ပုံမှန်အခြေအနေတွင် refund က "no" ဟု သတ်မှတ်မည်
             updatedAt: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Yangon', hour12: true })
         };
 

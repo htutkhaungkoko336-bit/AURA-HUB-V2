@@ -37,18 +37,11 @@ async function notify(type, data) {
     
     message += `\n\n<b>Status:</b> Pending`;
 
-    // 🔴 ဒီနေရာမှာ ID သေချာပါလာအောင် စစ်ဆေးပေးခြင်း (data.id မပါရင် data._id ကို ယူပါမည်)
     const recordId = data.id || data._id;
 
-    // Type ပေါ်မူတည်၍ ခလုတ်များကို သီးသန့်ခွဲထုတ်ခြင်း
-    let inlineKeyboard;
-    if (type === 'REFUND') {
-        inlineKeyboard = {
-            inline_keyboard: [
-                [{ text: "💰 Refund ငွေလွှဲပြီးပြီ (Confirm)", callback_data: `refund_confirm_${recordId}` }]
-            ]
-        };
-    } else {
+    // Type ပေါ်မူတည်၍ ခလုတ်များကို သီးသန့်ခွဲထုတ်ခြင်း (REFUND အတွက် ခလုတ်လုံးဝမပါအောင် ဖြုတ်ထားသည်)
+    let inlineKeyboard = null;
+    if (type !== 'REFUND') {
         inlineKeyboard = {
             inline_keyboard: [
                 [
@@ -69,10 +62,11 @@ async function notify(type, data) {
     
     try {
         if (targetChatId) {
-            await bot.telegram.sendMessage(targetChatId, message, {
-                parse_mode: "HTML",
-                reply_markup: inlineKeyboard
-            });
+            const sendOptions = { parse_mode: "HTML" };
+            if (inlineKeyboard) {
+                sendOptions.reply_markup = inlineKeyboard;
+            }
+            await bot.telegram.sendMessage(targetChatId, message, sendOptions);
         }
     } catch (err) {
         console.error("Telegram Send Error:", err);

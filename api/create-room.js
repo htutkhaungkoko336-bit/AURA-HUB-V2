@@ -31,9 +31,10 @@ module.exports = async function handler(req, res) {
                 const docId = regDoc.id;
                 const regData = regDoc.data();
 
-                // ၁။ registrations ထဲတွင် refundStatus နှင့် အချက်အလက်များ ထည့်သွင်းခြင်း
+                // ၁။ registrations ထဲတွင် refundStatus, refund ("yes") နှင့် အချက်အလက်များ ထည့်သွင်းခြင်း
                 await regDoc.ref.update({
                     refundStatus: 'pending', 
+                    refund: 'yes', // Refund တောင်းလိုက်ပြီဖြစ်므로 'yes' ဟု သတ်မှတ်မည် (Confirm ခလုတ်ဖျောက်ရန်အတွက်)
                     refundRequestedAt: new Date().toISOString()
                 });
 
@@ -54,7 +55,8 @@ module.exports = async function handler(req, res) {
                 try {
                     await notify('REFUND', {
                         id: docId,
-                        ...regData
+                        ...regData,
+                        refund: 'yes'
                     });
                 } catch (err) {
                     console.error("Telegram Notify Error:", err);
@@ -72,7 +74,7 @@ module.exports = async function handler(req, res) {
             if (keysQuery.empty) {
                 return res.status(403).json({ 
                     success: false, 
-                    message: "သင့်တွင် အသုံးပြုနိုင်သော Key မရှိသေးပါ။ ကျေးဇူးပြု၍ Key အရင်ဝယ်ယူပါ။" 
+                    message: "သင့်တွင် အသုံးပြုနိုင်သော Key မရှိသေးပါ။ ကျေးဇူးပြု၍ Key အရင်ဝယ်ပါ။" 
                 });
             }
 
