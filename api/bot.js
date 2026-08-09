@@ -100,7 +100,7 @@ bot.action(/reason_(.+)_(.+)/, async (ctx) => {
 });
 
 // Admin မှ Refund ငွေလွှဲပြီးကြောင်း Confirm လုပ်သည့်အခါ (Key အသစ် မထွက်စေဘဲ Status သာ Completed ပြောင်းရန်)
-bot.action(/refund_confirm_(.+)/, async (ctx) => {
+bot.action(/refund_btn_confirm_(.+)/, async (ctx) => {
     const docId = ctx.match[1];
     try {
         const regRef = db.collection("registrations").doc(docId);
