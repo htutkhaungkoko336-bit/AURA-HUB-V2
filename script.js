@@ -658,8 +658,15 @@ window.createNewRoom = async function() {
         return;
     }
 
-    // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
+    // 🌟 1. လက်ရှိ Mode နှင့် User ဂျီစတြာ တင်ထားတဲ့ Mode ကို နှိုင်းယှဉ်စစ်ဆေးခြင်း
     const currentMode = window.currentMode || '5vs5';
+    const userRegMode = window.userRegisteredMode || '5vs5'; // Backend ကနေ ရလာတဲ့ User ရဲ့ Register Mode
+
+    if (currentMode !== userRegMode) {
+        alert(`သင်သည် ${userRegMode} Mode ဖြင့်သာ Register တင်ထားပါသဖြင့် ဤ Mode တွင် Room ထောင်၍ မရပါ။`);
+        return;
+    }
+
     const is1v1Visible = (currentMode === '1vs1');
 
     // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
@@ -749,24 +756,6 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-function updateCreateRoomButtonVisibility() {
-    const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
-    if (!createBtn) return;
-
-    // လက်ရှိ UI မှာ ဖွင့်ထားတဲ့ Mode (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
-    const currentMode = window.currentMode || '5vs5';
-
-    // User ဂျီစတြာ တင်ထားတဲ့ Mode (Backend ကနေ ရလာတဲ့ data ပေါ်မူတည်ပြီး ထည့်ပေးရန်)
-    const userRegMode = window.userRegisteredMode || '5vs5'; 
-
-    // Mode တူမှသာ ခလုတ်ပေါ်မည်၊ မတူလျှင် လုံးဝဖျောက်ထားမည်
-    if (currentMode === userRegMode) {
-        createBtn.style.display = 'block'; // (သို့မဟုတ် 'flex')
-    } else {
-        createBtn.style.display = 'none';  // မတူရင် ခလုတ်ပျောက်သွားမည်
-    }
-}
-
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
