@@ -102,8 +102,6 @@ window.nextMap = () => {
     // 🌟 2. Dock ပေါ်က စာသားကို လက်ရှိ Mode အမှန်နဲ့ အပ်ဒိတ်လုပ်မယ်
     updateDockText(window.currentMode, '50K Key');
     
-    // 🌟 3. Mode တူ/မတူ စစ်ပြီး Create နဲ့ Refund ခလုတ်များကို မှိန်မည်/လင်းမည်
-    updateModeButtonsState();
     
     updateUI();
 };
@@ -583,46 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let isWheelOpen = false;
-function updateModeButtonsState() {
-    const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
-    const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
-    
-    // လက်ရှိ ဖွင့်ထားတဲ့ Mode (ဥပမာ - '1vs1' သို့မဟုတ် '5vs5')
-    const currentMode = window.currentMode || '5vs5';
-    
-    // User ဂျီစတြာ တင်ထားတဲ့ Mode (Backend ကနေ ရလာတဲ့ data ပေါ်မူတည်ပြီး ထည့်ရန်)
-    const userRegMode = window.userRegisteredMode || '5vs5'; 
-
-    // Mode တူညီခြင်း ရှိ/မရှိ စစ်ဆေးခြင်း
-    const isSameMode = (currentMode === userRegMode);
-
-    if (createBtn) {
-        if (isSameMode) {
-            // Mode တူရင် ချက်ချင်း တန်းလင်းစေမည် (နှိပ်လို့ရမည်)
-            createBtn.style.opacity = '1';
-            createBtn.style.pointerEvents = 'auto';
-            createBtn.style.cursor = 'pointer';
-        } else {
-            // Mode မတူရင် ခလုတ်ကို မှိန်ထားမည် (နှိပ်လို့မရ)
-            createBtn.style.opacity = '0.4';
-            createBtn.style.pointerEvents = 'none';
-            createBtn.style.cursor = 'not-allowed';
-        }
-    }
-
-    if (refundBtn) {
-        if (isSameMode) {
-            refundBtn.style.opacity = '1';
-            refundBtn.style.pointerEvents = 'auto';
-            refundBtn.style.cursor = 'pointer';
-        } else {
-            refundBtn.style.opacity = '0.4';
-            refundBtn.style.pointerEvents = 'none';
-            refundBtn.style.cursor = 'not-allowed';
-        }
-    }
-}
-
 window.toggleActionWheel = function() {
     isWheelOpen = !isWheelOpen;
     
