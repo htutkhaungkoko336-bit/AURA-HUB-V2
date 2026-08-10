@@ -713,7 +713,7 @@ window.createNewRoom = async function() {
             appendRoomCardToUI({
                 roomId: result.roomId,
                 deviceId: deviceId,
-                teamName: roomData.teamName,
+                teamName: roomData.teamName,   
                 logo: roomData.logo,
                 mode: roomData.mode,
                 entryFee: roomData.entryFee,
