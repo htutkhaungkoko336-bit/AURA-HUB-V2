@@ -706,10 +706,9 @@ window.createNewRoom = async function() {
 
         const result = await response.json();
 
-        if (result.success) {
+if (result.success) {
             alert(result.message);
 
-            // 🌟 UI ပေါ်သို့ Room Card ထည့်ပေးခြင်း
             appendRoomCardToUI({
                 roomId: result.roomId,
                 deviceId: deviceId,
@@ -721,14 +720,23 @@ window.createNewRoom = async function() {
                 createdAt: 'Just now'
             });
 
-            // 🌟 UI ပေါ်က Create Button များနှင့် Refund ခလုတ်များကို ပိတ်ရန်
+            // 🌟 Create Room ခလုတ်များနှင့် Refund ခလုတ်များကို အတူတူ ပိတ်ရန် (မှိန်ရန်)
             const createBtn1v1 = document.querySelector('#page-1vs1 button[onclick*="createNewRoom"]');
             const createBtn5v5 = document.querySelector('#page-5vs5 button[onclick*="createNewRoom"]');
             const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
             
-            if (createBtn1v1) { createBtn1v1.style.opacity = '0.4'; createBtn1v1.style.pointerEvents = 'none'; }
-            if (createBtn5v5) { createBtn5v5.style.opacity = '0.4'; createBtn5v5.style.pointerEvents = 'none'; }
-            if (refundBtn) { refundBtn.style.opacity = '0.4'; refundBtn.style.pointerEvents = 'none'; }
+            if (createBtn1v1) { 
+                createBtn1v1.style.opacity = '0.4'; 
+                createBtn1v1.style.pointerEvents = 'none'; 
+            }
+            if (createBtn5v5) { 
+                createBtn5v5.style.opacity = '0.4'; 
+                createBtn5v5.style.pointerEvents = 'none'; 
+            }
+            if (refundBtn) { 
+                refundBtn.style.opacity = '0.4'; 
+                refundBtn.style.pointerEvents = 'none'; 
+            }
 
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
@@ -738,7 +746,8 @@ window.createNewRoom = async function() {
             
             updateBuyButtonStatus();
 
-        } else {
+        }
+         else {
             alert(result.message);
         }
 
