@@ -706,7 +706,7 @@ window.createNewRoom = async function() {
 
         const result = await response.json();
 
-        if (result.success) {
+if (result.success) {
             alert(result.message);
 
             appendRoomCardToUI({
@@ -720,13 +720,18 @@ window.createNewRoom = async function() {
                 createdAt: 'Just now'
             });
 
-            // 🌟 Dock ပေါ်က Create Room ခလုတ်နှင့် Refund ခလုတ်များကို အတူတူ ပိတ်ရန် (မှိန်ရန်)
-            const createBtn = document.getElementById('create-room-btn');
+            // 🌟 Create Room ခလုတ်များနှင့် Refund ခလုတ်များကို အတူတူ ပိတ်ရန် (မှိန်ရန်)
+            const createBtn1v1 = document.querySelector('#page-1vs1 button[onclick*="createNewRoom"]');
+            const createBtn5v5 = document.querySelector('#page-5vs5 button[onclick*="createNewRoom"]');
             const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
             
-            if (createBtn) { 
-                createBtn.style.opacity = '0.4'; 
-                createBtn.style.pointerEvents = 'none'; 
+            if (createBtn1v1) { 
+                createBtn1v1.style.opacity = '0.4'; 
+                createBtn1v1.style.pointerEvents = 'none'; 
+            }
+            if (createBtn5v5) { 
+                createBtn5v5.style.opacity = '0.4'; 
+                createBtn5v5.style.pointerEvents = 'none'; 
             }
             if (refundBtn) { 
                 refundBtn.style.opacity = '0.4'; 
@@ -741,7 +746,8 @@ window.createNewRoom = async function() {
             
             updateBuyButtonStatus();
 
-        } else {
+        }
+         else {
             alert(result.message);
         }
 
