@@ -470,6 +470,10 @@ async function updateBuyButtonStatus() {
         const data = await response.json();
         
         const registeredMode = (data.mode || '5vs5').toLowerCase(); 
+        
+        // 🌟 User အမှန်တကယ် Register တင်ထားသည့် Mode ကို Global Variable တွင် သိမ်းဆည်းခြင်း
+        window.userRegisteredMode = registeredMode;
+
         const tierText = formatKeyTier(data.keyTier);
         
         const statusText = document.getElementById('dock-status-text');
@@ -554,7 +558,6 @@ async function updateBuyButtonStatus() {
         console.error("Status check failed:", e);
     }
 }
-
 // Registration Page ကို SPA ပုံစံဖြင့် ပြန်ဖွင့်ပေးမည့် function
 window.openRegistrationPage = () => {
     document.querySelectorAll('.sub-page, #page-match-center, #main-dashboard').forEach(el => {
@@ -659,18 +662,18 @@ window.createNewRoom = async function() {
         return;
     }
 
-    // 🌟 1. လက်ရှိ Mode ကို ယူမယ် (5vs5 သို့မဟုတ် 1vs1)
-    const currentMode = window.currentMode || '5vs5';
-    const is1v1Visible = (currentMode === '1vs1');
+    // 🌟 UI က Current Mode ကို မယူတော့ဘဲ User အမှန်တကယ် Register တင်ထားတဲ့ Mode ကိုသာ အဓိကယူမည်
+    const registeredMode = window.userRegisteredMode || window.currentMode || '5vs5';
+    const is1v1Mode = (registeredMode === '1vs1');
 
-    // 🌟 2. Form ထဲက User ဖြည့်ထားတဲ့ အချက်အလက်များကို တိုက်ရိုက်ကောက်ယူမယ်
     let teamName = "";
     let logoUrl = "";
     let mlbbId = "";
     let playerName = "";
     let entryFee = "";
 
-    if (is1v1Visible) {
+    // 🌟 Registered Mode အမှန်အတိုင်း သက်ဆိုင်ရာ Form တွေကနေ Data တွေကို တိကျစွာ ကောက်ယူမည်
+    if (is1v1Mode) {
         teamName = document.getElementById('solo-player-name')?.value || 'My Team';
         logoUrl = document.getElementById('logoPreview1vs1')?.src || '';
         mlbbId = document.querySelector('#page-1vs1 .player-row input[type="number"]')?.value || 'N/A';
@@ -690,7 +693,7 @@ window.createNewRoom = async function() {
         logo: logoUrl.startsWith('data:') ? '' : logoUrl, 
         mlbbId: mlbbId,
         playerName: playerName,
-        mode: currentMode,
+        mode: registeredMode, // 🌟 Mode အမှန်ကို ထည့်ပေးလိုက်သည်
         entryFee: entryFee
     };
 
@@ -706,7 +709,7 @@ window.createNewRoom = async function() {
         if (result.success) {
             alert(result.message);
 
-            // 🌟 3. UI ပေါ်သို့ User ဖြည့်ထားတဲ့ အချက်အလက်အတိုင်း Room Card ထည့်ပေးခြင်း
+            // 🌟 UI ပေါ်သို့ Room Card ထည့်ပေးခြင်း
             appendRoomCardToUI({
                 roomId: result.roomId,
                 deviceId: deviceId,
@@ -718,20 +721,14 @@ window.createNewRoom = async function() {
                 createdAt: 'Just now'
             });
 
-            // 🌟 Room ထောင်ပြီးပါက Create Room နှင့် Refund ခလုတ်များကို မှိန်ထားမည် (Disabled & Opacity 0.4)
-            const createBtn = document.querySelector('button[onclick*="createNewRoom"]');
+            // 🌟 UI ပေါ်က Create Button များနှင့် Refund ခလုတ်များကို ပိတ်ရန်
+            const createBtn1v1 = document.querySelector('#page-1vs1 button[onclick*="createNewRoom"]');
+            const createBtn5v5 = document.querySelector('#page-5vs5 button[onclick*="createNewRoom"]');
             const refundBtn = document.querySelector('button[onclick*="quitAndRefund"]');
             
-            if (createBtn) {
-                createBtn.style.opacity = '0.4';
-                createBtn.style.pointerEvents = 'none';
-                createBtn.style.cursor = 'not-allowed';
-            }
-            if (refundBtn) {
-                refundBtn.style.opacity = '0.4';
-                refundBtn.style.pointerEvents = 'none';
-                refundBtn.style.cursor = 'not-allowed';
-            }
+            if (createBtn1v1) { createBtn1v1.style.opacity = '0.4'; createBtn1v1.style.pointerEvents = 'none'; }
+            if (createBtn5v5) { createBtn5v5.style.opacity = '0.4'; createBtn5v5.style.pointerEvents = 'none'; }
+            if (refundBtn) { refundBtn.style.opacity = '0.4'; refundBtn.style.pointerEvents = 'none'; }
 
             const activeBtns = document.getElementById('dock-active-btns');
             const inuseBtns = document.getElementById('dock-inuse-btns');
@@ -750,7 +747,6 @@ window.createNewRoom = async function() {
         alert("ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။");
     }
 }
-
 function appendRoomCardToUI(room) {
     const matchContent = document.getElementById('match-content');
     if (!matchContent) return;
