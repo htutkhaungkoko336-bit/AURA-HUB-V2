@@ -151,16 +151,14 @@ export async function openPlayingMatchDetail(roomId) {
             let actionButtonsHTML = '';
             if (isHostOrJoiner) {
                 let readyText = isConfirmed ? 'Unready' : 'Ready';
-                let readyBg = isConfirmed 
-                    ? 'background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4);' 
-                    : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';
+                let defaultReadyBg = 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';
 
                 let cancelOpacity = isConfirmed ? '0.4' : '1';
                 let cancelCursor = isConfirmed ? 'not-allowed' : 'pointer';
 
                 actionButtonsHTML = `
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button onclick="toggleMatchReady('${roomId}', ${!isConfirmed}, this)" style="flex: 1; ${readyBg} padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">${readyText}</button>
+                        <button onclick="toggleMatchReady('${roomId}', ${!isConfirmed}, this)" style="flex: 1; ${defaultReadyBg} padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;">${readyText}</button>
                         <button onclick="${isConfirmed ? '' : `cancelMatch('${roomId}')`}" style="flex: 1; background: rgba(235, 56, 56, 0.2); color: #eb3838; border: 1px solid rgba(235, 56, 56, 0.4); padding: 8px; border-radius: 8px; font-weight: bold; font-size: 12px; opacity: ${cancelOpacity}; cursor: ${cancelCursor};">Cancel Match</button>
                     </div>
                 `;
