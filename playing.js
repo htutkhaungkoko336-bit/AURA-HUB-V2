@@ -152,8 +152,8 @@ export async function openPlayingMatchDetail(roomId) {
             if (isHostOrJoiner) {
                 let readyText = isConfirmed ? 'Unready' : 'Ready';
                 let readyBg = isConfirmed 
-                    ? 'background: rgba(255, 255, 255, 0.15); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3);' 
-                    : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';
+                ? 'background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4);' 
+                : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';    
                 let cancelOpacity = isConfirmed ? '0.4' : '1';
                 let cancelCursor = isConfirmed ? 'not-allowed' : 'pointer';
 
