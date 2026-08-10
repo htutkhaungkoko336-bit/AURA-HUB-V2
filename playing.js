@@ -1,4 +1,6 @@
-// playing.js
+// Global variables များ
+let matchDetailInterval = null;
+let playingMatchesInterval = null; // 🌟 Ongoing matches များကို Real-time စောင့်ကြည့်ရန်
 
 function formatFee(feeStr) {
     if (!feeStr) return '0K';
@@ -15,7 +17,6 @@ export async function loadPlayingMatches(deviceId) {
     }
 
     try {
-        // 🔥 type=matches အစား type=rooms နှင့် status=matched ကို သုံးရန် ပြင်ဆင်ခြင်း
         const response = await fetch(`/api/active-rooms?type=rooms&status=matched&deviceId=${deviceId}`);
         const result = await response.json();
 
@@ -57,7 +58,7 @@ export async function loadPlayingMatches(deviceId) {
                             
                             <div style="display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0;">
                                 <img src="${myData?.logo || 'default-logo.png'}" style="width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 1.5px solid rgba(255, 215, 0, 0.4); background: #2a2a2a; flex-shrink: 0;" alt="Logo">
-                                <span style="font-size: ` + `12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
+                                <span style="font-size: 12px; font-weight: 800; color: #fff; width: 100%; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; margin-top: 6px;">${myTitle}</span>
                             </div>
 
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; flex-shrink: 0; padding: 0 8px;">
@@ -84,12 +85,18 @@ export async function loadPlayingMatches(deviceId) {
         } else {
             container.innerHTML = `<p style="text-align: center; color: #888; margin-top: 20px;">No ongoing matches available</p>`;
         }
+
+        // 🌟 တကယ်လို့ အမြဲတမ်း Real-time စောင့်ကြည့်ဖို့ Interval မစတင်ရသေးရင် စတင်ပေးခြင်း
+        if (!playingMatchesInterval) {
+            playingMatchesInterval = setInterval(() => {
+                loadPlayingMatches(deviceId);
+            }, 3000); // ၃ စက္ကန့်တစ်ကြိမ် Server ကို တောင်းဆိုပြီး Match ရှိမရှိ စစ်နေမည်
+        }
+
     } catch (error) {
         console.error("Error loading playing matches:", error);
     }
 }
-// Global variable အနေဖြင့် interval ကို သိမ်းဆည်းရန်
-let matchDetailInterval = null;
 
 export async function openPlayingMatchDetail(roomId) {
     const modal = document.getElementById('room-detail-modal');
@@ -101,10 +108,8 @@ export async function openPlayingMatchDetail(roomId) {
     modalBody.innerHTML = `<div style="text-align: center; padding: 20px; color: #FFD700;">Loading...</div>`;
     modal.style.display = 'flex';
 
-    // ယခင်ဖွင့်ထားသော Modal အတွက် Interval ရှိุပါက clear လုပ်ရန်
     if (matchDetailInterval) clearInterval(matchDetailInterval);
 
-    // Real-time Fetch လုပ်မည့် Function သီးသန့်
     const fetchMatchDetail = async () => {
         try {
             const response = await fetch('/api/room-detail-playing?roomId=' + encodeURIComponent(roomId));
@@ -130,11 +135,9 @@ export async function openPlayingMatchDetail(roomId) {
             let hostLogo = host.logo || 'default-logo.png';
             let joinerLogo = joiner.logo || 'default-logo.png';
 
-            // Ready ဖြစ်မဖြစ် အခြေအနေကို စစ်ဆေးခြင်း
             let hostReady = host.confirmed === true;
             let joinerReady = joiner.confirmed === true;
 
-            // အစိမ်းရောင် လင်းမည့် Style (Box shadow နဲ့ border)
             let hostLogoBorder = hostReady ? 'border: 2px solid #32CD32; box-shadow: 0 0 12px rgba(50, 205, 50, 0.8);' : 'border: 1.5px solid #FFD700;';
             let joinerLogoBorder = joinerReady ? 'border: 2px solid #32CD32; box-shadow: 0 0 12px rgba(50, 205, 50, 0.8);' : 'border: 1.5px solid #FFD700;';
 
@@ -168,7 +171,6 @@ export async function openPlayingMatchDetail(roomId) {
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
                         
-                        <!-- Host Logo & Status -->
                         <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; position: relative;">
                             ${hostReady ? '<span style="position: absolute; top: -5px; right: 25px; width: 10px; height: 10px; background: #32CD32; border-radius: 50%; box-shadow: 0 0 8px #32CD32;"></span>' : ''}
                             <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; ${hostLogoBorder}" alt="Logo">
@@ -183,7 +185,6 @@ export async function openPlayingMatchDetail(roomId) {
                             </div>
                         </div>
 
-                        <!-- Joiner Logo & Status -->
                         <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; position: relative;">
                             ${joinerReady ? '<span style="position: absolute; top: -5px; right: 25px; width: 10px; height: 10px; background: #32CD32; border-radius: 50%; box-shadow: 0 0 8px #32CD32;"></span>' : ''}
                             <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; ${joinerLogoBorder}" alt="Logo">
@@ -284,12 +285,10 @@ export async function openPlayingMatchDetail(roomId) {
         }
     };
 
-    // ပထမအကြိမ် ချက်ချင်းခေါ်မည်
     await fetchMatchDetail();
-
-    // ၃ စက္ကန့်တစ်ကြိမ် (3000 ms) ဆက်တိုက် ခေါ်ယူပေးမည် (Real-time update အတွက်)
     matchDetailInterval = setInterval(fetchMatchDetail, 1500);
 }
+
 export async function toggleMatchReady(roomId, status, btnElement) {
     let deviceId = localStorage.getItem('aura_device_id') || '';
     if (!deviceId) return;
@@ -353,7 +352,7 @@ export async function cancelMatch(roomId) {
         const response = await fetch('/api/room-detail-playing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ roomId, deviceId, action: 'cancel' }) // deviceId ထည့်ပေးရန်
+            body: JSON.stringify({ roomId, deviceId, action: 'cancel' })
         });
         const result = await response.json();
         if (result.success) {
@@ -366,6 +365,7 @@ export async function cancelMatch(roomId) {
         console.error("Cancel Error:", error);
     }
 }
+
 export function closeRoomDetailModal() {
     const modal = document.getElementById('room-detail-modal');
     if (modal) {
@@ -376,6 +376,7 @@ export function closeRoomDetailModal() {
         }
     }
 }
+
 export async function quitAndRefund() {
     let isConfirmed = confirm("Fee ကြေးချန်၍ ကျန်သည့်ငွေအား ပြန်လွှဲပေးပါမည်။ အတည်ပြုပါက Okey ကိုနှိပ်ပေးပါ။");
     
@@ -398,6 +399,11 @@ export async function quitAndRefund() {
         const result = await response.json();
 
         if (result.success) {
+            // 🌟 ရှင်းလင်းသည့်အခါ Interval များကိုပါ clear လုပ်ပေးရန်
+            if (playingMatchesInterval) {
+                clearInterval(playingMatchesInterval);
+                playingMatchesInterval = null;
+            }
             localStorage.removeItem('aura_device_id');
             alert("Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။ Admin ထံသို့ အကြောင်းကြားပြီးပါပြီ။");
             window.location.href = '/index.html';
