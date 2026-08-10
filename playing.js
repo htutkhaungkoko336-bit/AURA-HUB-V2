@@ -152,8 +152,9 @@ export async function openPlayingMatchDetail(roomId) {
             if (isHostOrJoiner) {
                 let readyText = isConfirmed ? 'Unready' : 'Ready';
                 let readyBg = isConfirmed 
-                ? 'background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4);' 
-                : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';    
+                    ? 'background: rgba(50, 205, 50, 0.2); color: #32CD32; border: 1px solid rgba(50, 205, 50, 0.4);' 
+                    : 'background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none;';
+
                 let cancelOpacity = isConfirmed ? '0.4' : '1';
                 let cancelCursor = isConfirmed ? 'not-allowed' : 'pointer';
 
@@ -171,6 +172,7 @@ export async function openPlayingMatchDetail(roomId) {
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px;">
                         
                         <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; position: relative;">
+                            ${hostReady ? '<span style="position: absolute; top: -5px; right: 25px; width: 10px; height: 10px; background: #32CD32; border-radius: 50%; box-shadow: 0 0 8px #32CD32;"></span>' : ''}
                             <img src="${hostLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; ${hostLogoBorder}" alt="Logo">
                             ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: ${hostReady ? '#32CD32' : '#FFD700'}; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${host.squadName || 'Team A'}</span>` : ''}
                         </div>
@@ -184,6 +186,7 @@ export async function openPlayingMatchDetail(roomId) {
                         </div>
 
                         <div style="display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; position: relative;">
+                            ${joinerReady ? '<span style="position: absolute; top: -5px; right: 25px; width: 10px; height: 10px; background: #32CD32; border-radius: 50%; box-shadow: 0 0 8px #32CD32;"></span>' : ''}
                             <img src="${joinerLogo}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; ${joinerLogoBorder}" alt="Logo">
                             ${mode !== '1vs1' ? `<span style="font-size: 11px; font-weight: bold; margin-top: 4px; color: ${joinerReady ? '#32CD32' : '#FFD700'}; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${joiner.squadName || 'Team B'}</span>` : ''}
                         </div>
@@ -285,6 +288,7 @@ export async function openPlayingMatchDetail(roomId) {
     await fetchMatchDetail();
     matchDetailInterval = setInterval(fetchMatchDetail, 1500);
 }
+
 export async function toggleMatchReady(roomId, status, btnElement) {
     let deviceId = localStorage.getItem('aura_device_id') || '';
     if (!deviceId) return;
