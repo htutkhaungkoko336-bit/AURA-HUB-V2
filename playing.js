@@ -402,11 +402,7 @@ export async function quitAndRefund() {
                 clearInterval(playingMatchesInterval);
                 playingMatchesInterval = null;
             }
-            
-            // ⚠️ Device ID အဟောင်းကို ဖျက်လိုက်ပြီး, နောက်တစ်ခါ ဝင်လာရင် ID အသစ်ဖြစ်သွားအောင် 
-            // localStorage ထဲက device_id ကို ရှင်းထုတ်ပါ (သို့မဟုတ် index မှာ အသစ် generate လုပ်ခိုင်းပါ)
             localStorage.removeItem('aura_device_id');
-            
             alert("Refund တောင်းဆိုမှု အောင်မြင်ပါသည်။ Admin ထံသို့ အကြောင်းကြားပြီးပါပြီ။");
             window.location.href = '/index.html';
         } else {
