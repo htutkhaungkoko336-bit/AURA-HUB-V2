@@ -3,12 +3,13 @@ let matchDetailInterval = null;
 let playingMatchesInterval = null; // 🌟 Ongoing matches များကို Real-time စောင့်ကြည့်ရန်
 
 function formatFee(feeStr) {
-    if (!feeStr || feeStr === 'Entry Fee: 0 Ks' || feeStr === '0') return 'Free / 0K';
+    if (!feeStr) return '0K';
     let rawFee = feeStr.toString();
     let cleanFee = rawFee.replace(/^Entry Fee:\s*/i, '').replace(/^Fee:\s*/i, '').trim();
     let numericFee = parseInt(cleanFee.replace(/[^0-9]/g, '')) || 0;
     return numericFee >= 1000 ? (numericFee / 1000) + 'K' : cleanFee;
 }
+
 export async function loadPlayingMatches(deviceId) {
     if (!deviceId) {
         deviceId = localStorage.getItem('aura_device_id');
@@ -131,9 +132,7 @@ export async function openPlayingMatchDetail(roomId) {
             let numericFee = parseInt(match.entryFee?.toString().replace(/[^0-9]/g, '')) || 0;
             let boType = (numericFee === 25000 || numericFee === 50000) ? 'BO3' : 'BO1';
 
-            let hostLogo = host.logo && host.logo !== 'https://aura-hub-v2-omega.vercel.app/#' && host.logo.includes('.') 
-                ? host.logo 
-                : 'default-logo.png';
+            let hostLogo = host.logo || 'default-logo.png';
             let joinerLogo = joiner.logo || 'default-logo.png';
 
             let hostReady = host.confirmed === true;
