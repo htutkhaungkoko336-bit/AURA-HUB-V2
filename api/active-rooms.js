@@ -42,48 +42,36 @@ module.exports = async function handler(req, res) {
             }
 
             // မူလ Room များကို ဆွဲထုတ်သည့် Logic (Waiting Tab အတွက်)
-    // မူလ Room များကို ဆွဲထုတ်သည့် Logic (Waiting Tab အတွက်)
-    const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
-    let roomList = [];
+            const roomsSnapshot = await db.collection('rooms').where('status', '==', 'waiting').get();
+            let roomList = [];
 
-    for (const doc of roomsSnapshot.docs) {
-        let roomData = doc.data();
-        
-        const regSnapshot = await db.collection('registrations')
-            .where('deviceId', '==', roomData.hostDeviceId)
-            .get();
+            for (const doc of roomsSnapshot.docs) {
+                let roomData = doc.data();
+                
+                const regSnapshot = await db.collection('registrations')
+                    .where('deviceId', '==', roomData.hostDeviceId)
+                    .get();
 
-        let regData = {};
-        if (!regSnapshot.empty) {
-            regData = regSnapshot.docs[0].data();
-        }
+                let regData = {};
+                if (!regSnapshot.empty) {
+                    regData = regSnapshot.docs[0].data();
+                }
 
-        let rawLogo = regData.logo || roomData.logo || '';
-        // 🔥 Logo လင့်ခ်က hash ဖြစ်နေရင် (သို့) http နဲ့မစရင် ပုံမှန် placeholder သို့မဟုတ် အမှန်ပြင်ရန်
-        let validLogo = (rawLogo && rawLogo.startsWith('http') && !rawLogo.endsWith('#')) 
-            ? rawLogo 
-            : 'https://i.ibb.co/6Z29F3b/default-logo.png'; // လိုအပ်သော Default ပုံလင့်ခ်ထည့်ရန်
+                roomList.push({
+                    roomId: doc.id,
+                    deviceId: roomData.hostDeviceId,
+                    logo: regData.logo || roomData.logo || '',
+                    squadName: regData.squadName || roomData.teamName || 'My Team',
+                    heroName: regData.heroName || roomData.heroName || '',
+                    playerName: regData.playerName || roomData.playerName || '',
+                    mode: roomData.mode || '5vs5',
+                    entryFee: regData.entryFee || roomData.entryFee || '0',
+                    status: roomData.status,
+                    contact: regData.contact || roomData.contact || '' 
+                });
+            }
 
-        // 🔥 entryFee ကို စာသားသန့်စင်ရန်
-        let rawFee = regData.entryFee || roomData.entryFee || '0';
-        let cleanFee = typeof rawFee === 'string' ? rawFee.replace(/[^0-9]/g, '') : rawFee;
-        let formattedFee = cleanFee ? `${cleanFee} Ks` : '0 Ks';
-
-        roomList.push({
-            roomId: doc.id,
-            deviceId: roomData.hostDeviceId,
-            logo: validLogo,
-            squadName: regData.squadName || roomData.teamName || 'My Team',
-            heroName: regData.heroName || roomData.heroName || '',
-            playerName: regData.playerName || roomData.playerName || '',
-            mode: roomData.mode || '5vs5',
-            entryFee: formattedFee,
-            status: roomData.status,
-            contact: regData.contact || roomData.contact || '' 
-        });
-    }
-
-        return res.status(200).json({ success: true, rooms: roomList });
+            return res.status(200).json({ success: true, rooms: roomList });
         } catch (error) {
             console.error("Error fetching rooms/matches:", error);
             return res.status(500).json({ success: false, message: "Server Error" });
