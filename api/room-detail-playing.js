@@ -38,30 +38,6 @@ module.exports = async function handler(req, res) {
                 }
 
                 await matchRef.update(updateData);
-
-                // 🌟 နှစ်ဖက်စလုံး Ready (True) ဖြစ်သွားခြင်း ရှိမရှိ စစ်ဆေးပြီး Match Collection သို့ ဒေတာပို့ရန်
-                const updatedRoomDoc = await matchRef.get();
-                const updatedRoomData = updatedRoomDoc.data();
-
-                const isHostConfirmed = updatedRoomData.host?.confirmed === true;
-                const isJoinerConfirmed = updatedRoomData.joiner?.confirmed === true;
-
-                if (isHostConfirmed && isJoinerConfirmed) {
-                    const matchData = {
-                        roomId: roomId,
-                        entryFee: updatedRoomData.entryFee || '0 Ks',
-                        mode: updatedRoomData.mode || '5vs5',
-                        host: updatedRoomData.host,
-                        joiner: updatedRoomData.joiner,
-                        status: 'matched',
-                        createdAt: updatedRoomData.createdAt || new Date().toLocaleString(),
-                        matchedAt: new Date().toLocaleString()
-                    };
-
-                    // 'matches' collection အသစ်ထဲသို့ roomId ဖြင့် Data သိမ်းဆည်းမည်
-                    await db.collection('matches').doc(roomId).set(matchData);
-                }
-
                 return res.status(200).json({ success: true, message: "Updated successfully" });
             }
 
