@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../Eternal Aura"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "AURA HUB V2"
+	}
+}
